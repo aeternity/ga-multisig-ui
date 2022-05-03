@@ -52,6 +52,7 @@ export const aeInitClient = async () => {
  */
 export const aeInitProvider = async () => {
   const { sdk, networkId, contract, contractAddress } = toRefs(aeClient)
+  console.log('contractAddress', contractAddress)
   try {
     networkId.value = (await sdk.value.getNodeInfo()).nodeNetworkId
 

@@ -10,7 +10,6 @@ import {
 } from '@aeternity/aepp-sdk'
 
 import { reactive, toRefs } from 'vue'
-import { getMMM } from './test'
 import { COMPILER_URL, NETWORKS } from './configs'
 import multisigContract from './contracts/SimpleGAMultiSig.aes'
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
@@ -155,8 +154,6 @@ export const loadContractDetail = async (contractId) => {
 
 export const loadMyContracts = async () => {
   const { address, middleware } = toRefs(aeWallet)
-
-  console.log('getMMM', getMMM().value)
   const myContracts = middleware.value.find(({ signer }) => signer === address.value)
   console.log('myContracts', myContracts)
   return myContracts.multisigContracts

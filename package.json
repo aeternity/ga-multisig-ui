@@ -6,12 +6,15 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e --mode e2e",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "reinstall": "rm -rf node_modules/ && yarn cache clean && yarn install && yarn serve"
   },
   "dependencies": {
-    "@aeternity/aepp-sdk": "^10.0.0",
+    "@aeternity/aepp-sdk": "^11.0.1",
+    "buffer": "^6.0.3",
     "core-js": "^3.6.5",
-    "file-loader": "^6.2.0",
+    "raw-loader": "^4.0.2",
+    "simpledotcss": "^2.0.6",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"
   },
@@ -23,8 +26,8 @@
     "@vue/cli-plugin-unit-jest": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
-    "@vue/eslint-plugin": "^4.2.0",
     "@vue/eslint-config-standard": "^5.1.2",
+    "@vue/eslint-plugin": "^4.2.0",
     "@vue/test-utils": "^2.0.0-0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",

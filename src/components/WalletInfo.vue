@@ -12,6 +12,8 @@
       <strong>Address :: </strong> <span class="wallet-address">{{ address }}</span>
       <br />
       <strong>Balance :: </strong> <span class="wallet-balance">{{ balance }}</span>
+      <br />
+      <strong>Is GA :: </strong> <span class="wallet-balance">{{ isGa }}</span>
     </div>
 
     <img
@@ -29,9 +31,9 @@ import { aeWallet } from '../utils/aeternity'
 export default defineComponent({
   name: 'WalletInfo',
   setup () {
-    const { address, balance, walletStatus, activeWallet } = toRefs(aeWallet)
+    const { address, balance, walletStatus, activeWallet, isGa } = toRefs(aeWallet)
 
-    return { activeWallet, address, balance, walletStatus }
+    return { activeWallet, address, balance, walletStatus, isGa }
   }
 })
 </script>

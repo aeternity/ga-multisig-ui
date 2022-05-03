@@ -1,10 +1,10 @@
 <template>
     <div id="container">
         <img alt="Aeternity" src="./assets/logo.svg" style="width: 250px" />
-        <h1>Welcome To Aeternity</h1>
+        <h1>Multisig App</h1>
         <div id="nav">
-            <router-link to="/">Home</router-link> |
-            <router-link to="/about">About</router-link>
+            <router-link to="/">Create</router-link> |
+            <router-link to="/about">Load</router-link>
         </div>
     </div>
 
@@ -32,7 +32,6 @@ export default defineComponent({
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #2c3e50;
 }
 
 #container {
@@ -44,7 +43,6 @@ export default defineComponent({
 
 #nav a {
     font-weight: bold;
-    color: #2c3e50;
 }
 
 #nav a.router-link-exact-active {
