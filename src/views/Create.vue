@@ -4,8 +4,6 @@
     <br>
     <br>
     <br>
-    <!--    <button @click="handleClick">createGAFlow</button>-->
-    <!--    Result: {{ result }}-->
     <signers-form
       v-if="signer1 && signer2"
       :signer1="signer1"
@@ -34,7 +32,6 @@ import {
   MemoryAccount,
   Node,
   Universal,
-  TxBuilderHelper
 } from '@aeternity/aepp-sdk'
 import SignersForm from "../components/SignersForm"
 import ProposeForm from "../components/ProposeForm"
@@ -45,8 +42,7 @@ import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
-import { Buffer } from "buffer"
-import { aeWallet } from '../utils/aeternity'
+import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
 
 // todo store vs page sweetspot
 export default {
@@ -62,6 +58,7 @@ export default {
     signersAmount: 2,
     gaKeypair: null,
     isGa: null,
+    // todo gaAccount wtf
     consensusInfo: null,
     revokedInfo: null,
     signers: null,
@@ -76,6 +73,7 @@ export default {
     contractInstance: null,
     inputAddress: null,
     loadedContractInfo: null,
+    signerSdk: null,
   }),
   computed: {
 // todo conditions as computed properties
@@ -88,22 +86,20 @@ export default {
     },
 
     async handleCreateClicked () {
-      console.log('clicked')
       this.gaKeypair = Crypto.generateKeyPair()
 
-      const gaAccount = MemoryAccount({ keypair: this.gaKeypair })
-      console.log('aa')
+      this.gaAccount = MemoryAccount({ keypair: this.gaKeypair })
       // todo try universal as this in data
-      const signerSdk = await Universal({
+      this.signerSdk = await Universal({
         nodes: [{
           name: 'net',
           instance: await Node({ url: 'https://testnet.aeternity.io' }),
         }],
         compilerUrl: 'https://compiler.aepps.com',
-        accounts: [gaAccount],
+        accounts: [this.gaAccount],
       })
       console.log('ccc')
-      const contractInstanceInitial = await signerSdk.getContractInstance(
+      const contractInstanceInitial = await this.signerSdk.getContractInstance(
         { source: multisigContract })
 
       await contractInstanceInitial.compile()
@@ -116,7 +112,7 @@ export default {
         ],
       ]
 
-      const attachTX = await signerSdk.gaAttachTx({
+      const attachTX = await this.signerSdk.gaAttachTx({
         ownerId: this.gaKeypair.publicKey,
         code: contractInstanceInitial.bytecode,
         callData: contractInstanceInitial.calldata.encode(contractInstanceInitial._name, 'init', multisigArgs),
@@ -127,18 +123,18 @@ export default {
         },
       })
 
-      const { rawTx } = await signerSdk.send(attachTX.tx, {
+      const { rawTx } = await this.signerSdk.send(attachTX.tx, {
         innerTx: true,
-        onAccount: gaAccount,
+        onAccount: this.gaAccount,
       })
 
       await aeWallet.sdk.payForTransaction(rawTx)
 
-      this.isGa = await signerSdk.isGA(this.gaKeypair.publicKey)
+      this.isGa = await this.signerSdk.isGA(this.gaKeypair.publicKey)
 
-      this.contractAccount = await signerSdk.getAccount(this.gaKeypair.publicKey)
+      this.contractAccount = await this.signerSdk.getAccount(this.gaKeypair.publicKey)
 
-      this.contractInstance = await signerSdk.getContractInstance(
+      this.contractInstance = await this.signerSdk.getContractInstance(
         { source: multisigContract, contractAddress: this.contractAccount.contractId },
       )
 
@@ -150,17 +146,6 @@ export default {
     },
 
     async handleProposeClicked () {
-      const gaAccount = MemoryAccount({ keypair: this.gaKeypair })
-
-      const signerSdk = await Universal({
-        nodes: [{
-          name: 'net',
-          instance: await Node({ url: 'https://testnet.aeternity.io' }),
-        }],
-        compilerUrl: 'https://compiler.aepps.com',
-        accounts: [gaAccount],
-      })
-
       this.spendTx = await aeWallet.sdk.spendTx({
         senderId: this.gaKeypair.publicKey,
         recipientId: this.recipient.publicKey,
@@ -169,12 +154,12 @@ export default {
 
       const encoded = encode(unpackTx(this.spendTx).rlpEncoded, 'tx')
 
-      this.spendTxHash = this.buildAuthTxHash(encoded)
-      console.log('spendTxHash', this.spendTxHash)
-      const expirationHeight = await signerSdk.height() + 50
+      this.spendTxHash = await buildAuthTxHash(encoded)
+
+      const expirationHeight = await this.signerSdk.height() + 50
 
       const calldata = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'propose', [this.spendTxHash, { FixedTTL: [expirationHeight] }])
-      const contractCallTx = await signerSdk.contractCallTx({
+      const contractCallTx = await this.signerSdk.contractCallTx({
         callerId: this.signer1.publicKey,
         contractId: this.contractAccount.contractId,
         amount: 0,
@@ -183,7 +168,7 @@ export default {
         callData: calldata,
       })
 
-      const signedContractCallTx = await signerSdk.signTransaction(
+      const signedContractCallTx = await this.signerSdk.signTransaction(
         contractCallTx, { onAccount: this.signer1, innerTx: true },
       )
 
@@ -193,24 +178,11 @@ export default {
 
       this.proposedConsensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
       console.log('this.proposedConsensusInfo', this.proposedConsensusInfo)
-
     },
 
     async handleConfirmClicked () {
-      const gaAccount = MemoryAccount({ keypair: this.gaKeypair })
-
-      const signerSdk = await Universal({
-        nodes: [{
-          name: 'net',
-          instance: await Node({ url: 'https://testnet.aeternity.io' }),
-        }],
-        compilerUrl: 'https://compiler.aepps.com',
-        accounts: [gaAccount],
-      })
-
-
-      const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'confirm', [this.spendTxHash])
-      const contractCallTx2 = await signerSdk.contractCallTx({
+       const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'confirm', [this.spendTxHash])
+      const contractCallTx2 = await this.signerSdk.contractCallTx({
         callerId: this.signer2.publicKey,
         contractId: this.contractAccount.contractId,
         amount: 0,
@@ -219,7 +191,7 @@ export default {
         callData: calldata2,
       })
 
-      const signedContractCallTx2 = await signerSdk.signTransaction(
+      const signedContractCallTx2 = await this.signerSdk.signTransaction(
         contractCallTx2, { onAccount: this.signer2, innerTx: true },
       )
 
@@ -230,39 +202,27 @@ export default {
     },
 
     async handleSendClicked () {
-      // todo gaaccount to data
-      const gaAccount = MemoryAccount({ keypair: this.gaKeypair })
-
-      const signerSdk = await Universal({
-        nodes: [{
-          name: 'net',
-          instance: await Node({ url: 'https://testnet.aeternity.io' }),
-        }],
-        compilerUrl: 'https://compiler.aepps.com',
-        accounts: [gaAccount],
-      })
-
       const nonce = (await this.contractInstance.methods.get_nonce()).decodedResult
 
-      const balanceBefore = await signerSdk.getBalance(this.recipient.publicKey)
+      const balanceBefore = await this.signerSdk.getBalance(this.recipient.publicKey)
 
       console.log('recipient balanceBefore', balanceBefore)
 
-      // pre charge GA account create gaAccount on chai
+      // pre charge GA account create this.gaAccount on chai
       // todo do button workaround in app
       await aeWallet.sdk.spend(
         776440000000000,
         this.gaKeypair.publicKey,
       )
 
-      await signerSdk.send(
+      await this.signerSdk.send(
         this.spendTx,
         {
-          onAccount: gaAccount,
+          onAccount: this.gaAccount,
           authData: { source: multisigContract, args: [nonce] },
         })
 
-      const balanceAfter = await signerSdk.getBalance(this.recipient.publicKey)
+      const balanceAfter = await this.signerSdk.getBalance(this.recipient.publicKey)
       console.log('recipient balance After', balanceAfter)
 
       const consensusInfoAfterSend = (await this.contractInstance.methods.get_consensus_info()).decodedResult
@@ -270,21 +230,11 @@ export default {
     },
 
     async handleRevokeClicked () {
-      const gaAccount = MemoryAccount({ keypair: this.gaKeypair })
-
-      const signerSdk = await Universal({
-        nodes: [{
-          name: 'net',
-          instance: await Node({ url: 'https://testnet.aeternity.io' }),
-        }],
-        compilerUrl: 'https://compiler.aepps.com',
-        accounts: [gaAccount],
-      })
-
       const signer1Account = MemoryAccount({ keypair: this.signer1 })
+      // todo is account necessary?
 
       const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'revoke', [this.spendTxHash])
-      const contractCallTx2 = await signerSdk.contractCallTx({
+      const contractCallTx2 = await this.signerSdk.contractCallTx({
         callerId: this.signer1.publicKey,
         contractId: this.contractAccount.contractId,
         amount: 0,
@@ -293,7 +243,7 @@ export default {
         callData: calldata2,
       })
 
-      const signedContractCallTx2 = await signerSdk.signTransaction(
+      const signedContractCallTx2 = await this.signerSdk.signTransaction(
         contractCallTx2, { onAccount: signer1Account, innerTx: true },
       )
 
@@ -303,32 +253,13 @@ export default {
     },
 
     async loadContractInfo () {
+      const contractAccount = await this.signerSdk.getAccount(this.inputAddress.trim())
 
-      const signerSdk = await Universal({
-        nodes: [{
-          name: 'net',
-          instance: await Node({ url: 'https://testnet.aeternity.io' }),
-        }],
-        compilerUrl: 'https://compiler.aepps.com',
-      })
-
-      const contractAccount = await signerSdk.getAccount(this.inputAddress.trim())
-
-      const contractInstance = await signerSdk.getContractInstance(
+      const contractInstance = await this.signerSdk.getContractInstance(
         { source: multisigContract, contractAddress: contractAccount.contractId },
       )
 
       this.loadedContractInfo = (await contractInstance.methods.get_consensus_info()).decodedResult
-    },
-
-    buildAuthTxHash (rlpTransaction) {
-      // todo move to utils
-      //  eslint-disable-next-line
-      return new Uint8Array(Crypto.hash(Buffer.concat([
-          Buffer.from(aeWallet.sdk.getNetworkId()),
-          TxBuilderHelper.decode(rlpTransaction, 'tx'),
-        ])),
-      )
     },
   },
 }
