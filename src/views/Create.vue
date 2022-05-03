@@ -18,9 +18,9 @@
     <confirm-form
       @confirm-clicked="handleConfirmClicked"
       @revoke-clicked="handleRevokeClicked"/>
-          <send-form
-            @send-clicked="handleSendClicked"
-            @revoke-clicked="handleRevokeClicked" />
+    <send-form
+      @send-clicked="handleSendClicked"
+      @revoke-clicked="handleRevokeClicked"/>
     <!--    todo add charge button-->
     <br>
     Result: {{ result }}
@@ -31,7 +31,7 @@
 import {
   Crypto,
 } from '@aeternity/aepp-sdk'
-import { createGA } from '../store'
+import { createGAFlow } from '../store'
 import SignersForm from "../components/SignersForm"
 import ProposeForm from "../components/ProposeForm"
 import ConfirmForm from "../components/ConfirmForm"
@@ -49,14 +49,13 @@ export default {
     signer2: Crypto.generateKeyPair(),
     recipient: Crypto.generateKeyPair(),
     proposedAmount: 1000,
-
   }),
   computed: {
 // todo conditions as computed properties
   },
   methods: {
     async handleClick () {
-      this.result = await createGA()
+      this.result = await createGAFlow()
     },
     handleAmountUpdated (amount) {
       this.signersAmount = amount
