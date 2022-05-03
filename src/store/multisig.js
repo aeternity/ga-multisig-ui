@@ -1,13 +1,4 @@
-import {
-  RpcAepp,
-  Node,
-  BrowserWindowMessageConnection,
-  WalletDetector,
-  AmountFormatter,
-  Universal,
-  MemoryAccount,
-  Crypto,
-} from '@aeternity/aepp-sdk'
+import { Crypto, MemoryAccount, Node, TxBuilderHelper, Universal } from '@aeternity/aepp-sdk'
 
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
@@ -16,19 +7,9 @@ import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { Buffer } from "buffer"
 import { aeWallet } from "../utils/aeternity/wallet"
-import {
-  TxBuilderHelper,
-} from '@aeternity/aepp-sdk'
 
 
 export const multisig = reactive({
-  sdk: null,
-  activeWallet: null,
-  address: null,
-  balance: null,
-  walletStatus: null,
-  isStatic: false,
-  isGa: false,
   middleware: [
     {
       signer: 'ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7',
@@ -47,68 +28,35 @@ export const multisig = reactive({
   ],
 })
 
-export const loadContractDetail = async (contractId) => {
-  const node = await Node({ url: 'https://testnet.aeternity.io' })
-  const signerSdk = await Universal({
-    nodes: [{ name: 'testnet', instance: node }],
-    compilerUrl: 'https://compiler.aepps.com',
-  })
-  console.log('contractId', contractId)
 
-  const contractAccount = await signerSdk.getAccount(contractId)
-
-  const contractInstance = await signerSdk.getContractInstance(
-    { source: multisigContract, contractAddress: contractAccount.contractId },
-  )
-
-  const loadedContractInfo = (await contractInstance.methods.get_consensus_info()).decodedResult
-  console.log('loadedContractInfo', loadedContractInfo)
-  return loadedContractInfo
-}
-
-export const loadMyContracts = async () => {
-  const { address, middleware } = toRefs(aeWallet)
-  const myContracts = middleware.value.find(({ signer }) => signer === address.value)
-  console.log('myContracts', myContracts)
-  return myContracts.multisigContracts
-}
-
-export const createGA = async () => {
-
-}
-
-export const createGAFlow = async () => {
+export const createGA = async (signer1, signer2, signersAmount) => {
   const { sdk } = toRefs(aeWallet)
-
   const gaKeypair = Crypto.generateKeyPair()
   const multisigAccount = MemoryAccount({ keypair: gaKeypair })
 
-  const node = await Node({ url: 'https://testnet.aeternity.io' })
+  // todo get signer instance
+  const node = await Node({ url: 'https://net.aeternity.io' })
   const signerSdk = await Universal({
-    nodes: [{ name: 'testnet', instance: node }],
+    nodes: [{ name: 'net', instance: node }],
     compilerUrl: 'https://compiler.aepps.com',
     accounts: [multisigAccount],
   })
 
-  const contractInstance = await signerSdk.getContractInstance(
+  const contractInstanceInitial = await signerSdk.getContractInstance(
     { source: multisigContract })
 
-  const signer1 = Crypto.generateKeyPair()
-  const signer2 = Crypto.generateKeyPair()
-  const testRecipient = Crypto.generateKeyPair()
-
-  await contractInstance.compile()
+  await contractInstanceInitial.compile()
 
   const multisigArgs = [
-    2, [signer1.publicKey, signer2.publicKey],
+    signersAmount, [signer1.publicKey, signer2.publicKey],
   ]
 
   const attachTX = await signerSdk.gaAttachTx({
     ownerId: gaKeypair.publicKey,
-    code: contractInstance.bytecode,
-    callData: contractInstance.calldata.encode(contractInstance._name, 'init', multisigArgs),
+    code: contractInstanceInitial.bytecode,
+    callData: contractInstanceInitial.calldata.encode(contractInstanceInitial._name, 'init', multisigArgs),
     authFun: hash('authorize'),
-    gas: await contractInstance._estimateGas('init', multisigArgs),
+    gas: await contractInstanceInitial._estimateGas('init', multisigArgs),
     options: {
       innerTx: true,
     },
@@ -123,6 +71,7 @@ export const createGAFlow = async () => {
   await sdk.value.payForTransaction(rawTx)
 
   // this.isGa = await signerSdk.isGA(this.gaKeypair.publicKey)
+  // todo get contractinstance
   const contractAccount = await signerSdk.getAccount(gaKeypair.publicKey)
 
   const gaContract = await signerSdk.getContractInstance(
@@ -134,22 +83,30 @@ export const createGAFlow = async () => {
 
   console.log('consensusInfo', consensusInfo)
 
+}
+
+export const proposeTx = async () => {
+  const { sdk } = toRefs(aeWallet)
+
+  const Recipient = Crypto.generateKeyPair()
+
+
   // PROPOSE
 
-  const testSpendTx = await sdk.value.spendTx({
+  const SpendTx = await sdk.value.spendTx({
     senderId: gaKeypair.publicKey,
-    recipientId: testRecipient.publicKey,
+    recipientId: Recipient.publicKey,
     amount: 1000,
   })
 
-  const encoded = encode(unpackTx(testSpendTx).rlpEncoded, 'tx')
+  const encoded = encode(unpackTx(SpendTx).rlpEncoded, 'tx')
 
-  const testSpendTxHash = await buildAuthTxHash(encoded)
+  const SpendTxHash = await buildAuthTxHash(encoded)
 
   const expirationHeight = await signerSdk.height() + 50
-  console.log('testSpendTxHash', testSpendTxHash)
+  console.log('SpendTxHash', SpendTxHash)
   console.log('expirationHeight', expirationHeight)
-  const calldata = gaContract.calldata.encode('SimpleGAMultiSig', 'propose', [testSpendTxHash, { FixedTTL: [expirationHeight] }])
+  const calldata = gaContract.calldata.encode('SimpleGAMultiSig', 'propose', [SpendTxHash, { FixedTTL: [expirationHeight] }])
 
 
   const contractCallTx = await signerSdk.contractCallTx({
@@ -171,10 +128,12 @@ export const createGAFlow = async () => {
 
   const proposedConsensusInfo = (await gaContract.methods.get_consensus_info()).decodedResult
   console.log('proposedConsensusInfo', proposedConsensusInfo)
+}
 
-  // CONFIRM
 
-  const calldata2 = gaContract.calldata.encode('SimpleGAMultiSig', 'confirm', [testSpendTxHash])
+export const confirmTx = async () => {
+
+  const calldata2 = gaContract.calldata.encode('SimpleGAMultiSig', 'confirm', [SpendTxHash])
   const contractCallTx2 = await signerSdk.contractCallTx({
     callerId: signer2.publicKey,
     contractId: contractAccount.contractId,
@@ -192,12 +151,15 @@ export const createGAFlow = async () => {
 
   const confirmedInfo = (await gaContract.methods.get_consensus_info()).decodedResult
   console.log('consensusInfo - After Confirm', confirmedInfo)
+}
+
+export const sendTx = async () => {
 
 
   // SEND
   const nonce = (await gaContract.methods.get_nonce()).decodedResult
 
-  const balanceBefore = await signerSdk.getBalance(testRecipient.publicKey)
+  const balanceBefore = await signerSdk.getBalance(Recipient.publicKey)
 
   console.log('recipient balanceBefore', balanceBefore)
 
@@ -212,19 +174,88 @@ export const createGAFlow = async () => {
 
 
   await signerSdk.send(
-    testSpendTx,
+    SpendTx,
     {
       onAccount: gaAccount,
       authData: { source: multisigContract, args: [nonce] },
     })
 
-  const balanceAfter = await signerSdk.getBalance(testRecipient.publicKey)
+  const balanceAfter = await signerSdk.getBalance(Recipient.publicKey)
   console.log('recipient balance After', balanceAfter)
 
   const consensusInfoAfterSend = (await gaContract.methods.get_consensus_info()).decodedResult
   console.log('consensusInfo - After Send', consensusInfoAfterSend)
 
   return gaKeypair
+}
+
+export const revokeTx = async () => {
+  const signer1Account = MemoryAccount({ keypair: this.signer1 })
+
+  const calldata2 = this.contractInstanceInitial.calldata.encode('SimpleGAMultiSig', 'revoke', [this.SpendTxHash])
+  const contractCallTx2 = await signerSdk.contractCallTx({
+    callerId: this.signer1.publicKey,
+    contractId: this.contractAccount.contractId,
+    amount: 0,
+    gas: 1000000,
+    gasPrice: 1500000000,
+    callData: calldata2,
+  })
+
+  const signedContractCallTx2 = await signerSdk.signTransaction(
+    contractCallTx2, { onAccount: signer1Account, innerTx: true },
+  )
+
+  await this.payerSdk.payForTransaction(signedContractCallTx2)
+
+  this.revokedInfo = (await this.contractInstanceInitial.methods.get_consensus_info()).decodedResult
+
+}
+
+export const loadContractInfo = async () => {
+// todo reuse this
+  const signerSdk = await Universal({
+    nodes: [{
+      name: 'net',
+      instance: await Node({ url: 'https://net.aeternity.io' }),
+    }],
+    compilerUrl: 'https://compiler.aepps.com',
+  })
+
+  const contractAccount = await signerSdk.getAccount(this.inputAddress.trim())
+
+  const contractInstanceInitial = await signerSdk.getContractInstance(
+    { source: multisigContract, contractAddress: contractAccount.contractId },
+  )
+
+  this.loadedContractInfo = (await contractInstanceInitial.methods.get_consensus_info()).decodedResult
+}
+
+
+export const loadContractDetail = async (contractId) => {
+  const node = await Node({ url: 'https://net.aeternity.io' })
+  const signerSdk = await Universal({
+    nodes: [{ name: 'net', instance: node }],
+    compilerUrl: 'https://compiler.aepps.com',
+  })
+  console.log('contractId', contractId)
+
+  const contractAccount = await signerSdk.getAccount(contractId)
+
+  const contractInstanceInitial = await signerSdk.getContractInstance(
+    { source: multisigContract, contractAddress: contractAccount.contractId },
+  )
+
+  const loadedContractInfo = (await contractInstanceInitial.methods.get_consensus_info()).decodedResult
+  console.log('loadedContractInfo', loadedContractInfo)
+  return loadedContractInfo
+}
+
+export const loadMyContracts = async () => {
+  const { address, middleware } = toRefs(aeWallet)
+  const myContracts = middleware.value.find(({ signer }) => signer === address.value)
+  console.log('myContracts', myContracts)
+  return myContracts.multisigContracts
 }
 
 export const buildAuthTxHash = async (rlpTransaction) => {
@@ -238,33 +269,3 @@ export const buildAuthTxHash = async (rlpTransaction) => {
   )
 }
 
-export const aeFetchWalletInfo = async (sdk) => {
-  const { address, balance, walletStatus, isGa } = toRefs(aeWallet)
-
-  walletStatus.value = 'fetching_info'
-
-  try {
-    address.value = await sdk.address()
-
-    balance.value = await sdk.getBalance(address.value, {
-      format: AmountFormatter.AE_AMOUNT_FORMATS.AE,
-    })
-
-    const node = await Node({ url: 'https://testnet.aeternity.io' })
-
-    const universal = await Universal({
-      nodes: [{ name: 'testnet', instance: node }],
-      compilerUrl: 'https://compiler.aepps.com',
-    })
-
-    isGa.value = await universal.isGA(address.value)
-
-
-    walletStatus.value = null
-    return true
-  } catch (error) {
-    walletStatus.value = 'fetching_failed'
-    console.info('aeFetchWalletInfo error::', error)
-    return false
-  }
-}

@@ -6,20 +6,11 @@ import {
   AmountFormatter,
   Universal,
   MemoryAccount,
-  Crypto,
 } from '@aeternity/aepp-sdk'
 
 import { reactive, toRefs } from 'vue'
-import { getMMM } from '../../store/test'
 import { COMPILER_URL, NETWORKS } from './configs'
-import multisigContract from './contracts/SimpleGAMultiSig.aes'
-import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
-import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
-import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
-import { Buffer } from "buffer"
-import {
-  TxBuilderHelper,
-} from '@aeternity/aepp-sdk'
+
 
 
 export const aeWallet = reactive({
@@ -29,22 +20,6 @@ export const aeWallet = reactive({
   balance: null,
   walletStatus: null,
   isStatic: false,
-  middleware: [
-    {
-      signer: 'ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7',
-      multisigContracts: [
-        "ak_YQw2oFWR1iS6ao82fjwPg6JnHuRY9Bg67HVFQ9KmNyw2Cw6e6",
-        "ak_2Rb9X6kYEV89hpPP5Lw5K9khYc9CeYghMwBKwqWshcwAa3LNjg",
-      ],
-    },
-    {
-      signer: 'ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU',
-      multisigContracts: [
-        "ak_2oFR9ZLskmqNuGRhdVcThNR94ESUwgJqkNHEJAvmLM1DEd3bKP",
-        "ak_TeHTokAWoQgPukRkY7tQEa86jU6DnYjEb5YfwuLMYBLTFBD39",
-      ],
-    },
-  ],
 })
 
 export const aeInitWallet = async () => {
@@ -118,7 +93,7 @@ export const aeScanForWallets = async () => {
     if (!sdk.value) return
 
     activeWallet.value = newWallet
-
+   // todo add wallet boilerplate
     const connected = await sdk.value.connectToWallet(
       await newWallet.getConnection(),
     )

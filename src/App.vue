@@ -3,7 +3,7 @@
     <img alt="Aeternity" src="./assets/logo.svg" style="width: 250px"/>
     <h1>Multisig App</h1>
     <WalletInfo/>
-
+<!--todo My Multisig Accounts + Create Button-->
     <div id="nav">
       <router-link to="/">Create</router-link>
       <router-link to="/load">Load</router-link>
