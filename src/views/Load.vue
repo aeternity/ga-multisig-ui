@@ -13,6 +13,7 @@
       <div>
         {{ contractDetail }}
         <multisig-detail-list/>
+<!--        get status and resume action-->
       </div>
     </div>
 </template>

@@ -160,6 +160,10 @@ export const loadMyContracts = async () => {
 }
 
 export const createGA = async () => {
+
+}
+
+export const createGAFlow = async () => {
   const { sdk } = toRefs(aeWallet)
 
   const gaKeypair = Crypto.generateKeyPair()
