@@ -1,7 +1,6 @@
 <template>
     <div class="about">
         <h1>Contracts where I am signer</h1>
-        <WalletInfo />
       <div v-for="contract in myContracts">
         <div>
           {{ contract }}
@@ -13,16 +12,17 @@
       <h3>Detail:</h3>
       <div>
         {{ contractDetail }}
+        <multisig-detail-list/>
       </div>
     </div>
 </template>
 
 <script>
-import WalletInfo from '../components/WalletInfo.vue'
-import { loadMyContracts, loadContractDetail } from "../utils/aeternity"
+import { loadMyContracts, loadContractDetail } from "../store"
+import MultisigDetailList from "../components/MultisigDetailList"
 export default {
   name: 'About',
-  components: { WalletInfo },
+  components: { MultisigDetailList },
   data: () => ({
     myContracts: null,
     contractDetail: null,
@@ -31,7 +31,6 @@ export default {
     this.myContracts = await loadMyContracts()
   },
   methods: {
-
     async loadContractInfo (contract) {
       this.contractDetail = await loadContractDetail(contract)
       console.log('contract', contract)

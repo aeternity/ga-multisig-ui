@@ -10,7 +10,7 @@ import {
 } from '@aeternity/aepp-sdk'
 
 import { reactive, toRefs } from 'vue'
-import { getMMM } from './test'
+import { getMMM } from '../../store/test'
 import { COMPILER_URL, NETWORKS } from './configs'
 import multisigContract from './contracts/SimpleGAMultiSig.aes'
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
@@ -29,7 +29,6 @@ export const aeWallet = reactive({
   balance: null,
   walletStatus: null,
   isStatic: false,
-  isGa: false,
   middleware: [
     {
       signer: 'ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7',
@@ -207,7 +206,6 @@ export const createGA = async () => {
 
   await sdk.value.payForTransaction(rawTx)
 
-  // this.isGa = await signerSdk.isGA(this.gaKeypair.publicKey)
   const contractAccount = await signerSdk.getAccount(gaKeypair.publicKey)
 
   const gaContract = await signerSdk.getContractInstance(
@@ -324,7 +322,7 @@ export const buildAuthTxHash = async (rlpTransaction) => {
 }
 
 export const aeFetchWalletInfo = async (sdk) => {
-  const { address, balance, walletStatus, isGa } = toRefs(aeWallet)
+  const { address, balance, walletStatus } = toRefs(aeWallet)
 
   walletStatus.value = 'fetching_info'
 
@@ -335,15 +333,12 @@ export const aeFetchWalletInfo = async (sdk) => {
       format: AmountFormatter.AE_AMOUNT_FORMATS.AE,
     })
 
-    const node = await Node({ url: 'https://testnet.aeternity.io' })
+    // const node = await Node({ url: 'https://testnet.aeternity.io' })
 
-    const universal = await Universal({
-      nodes: [{ name: 'testnet', instance: node }],
-      compilerUrl: 'https://compiler.aepps.com',
-    })
-
-    isGa.value = await universal.isGA(address.value)
-
+    // const universal = await Universal({
+    //   nodes: [{ name: 'testnet', instance: node }],
+    //   compilerUrl: 'https://compiler.aepps.com',
+    // })
 
     walletStatus.value = null
     return true

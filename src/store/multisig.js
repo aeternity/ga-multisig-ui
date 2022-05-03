@@ -10,8 +10,8 @@ import {
 } from '@aeternity/aepp-sdk'
 
 import { reactive, toRefs } from 'vue'
-import { COMPILER_URL, NETWORKS } from './configs'
-import multisigContract from './contracts/SimpleGAMultiSig.aes'
+import { COMPILER_URL, NETWORKS } from '../utils/aeternity/configs'
+import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
