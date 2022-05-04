@@ -1,28 +1,31 @@
 {
-  "todos": [
+  "multisigContracts": [
     {
-      "id": 0,
-      "name": "Go to the gym",
-      "done": true
+      "contractId": "ct_fS7FD64xg8FhcGrGS43LWCNQVKuLokKFcXYekUgpQiuWxc32P",
+      "gaAddress": "ak_2grFEgXKrZmWUeJXtUB7nzwfPXcHjkUNYcXD2P91ZaJuLHzCUT",
+      "signers": [
+        "ak_9RX4eZCuTVEAWaeR9RxWwCqrZRLWV9jpkMqna1XoQWTHCV6nT",
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
+      ],
+      "id": 1
     },
     {
-      "id": 1,
-      "name": "Walk the dog",
-      "done": true
+      "contractId": "ct_23ammxPfYfazUuRZTw6bE6JvSc1tjyWPAQkf3dNz64uA5DHCxc",
+      "gaAddress": "ak_wfSaxnebpFaEyEHcYJezhq3pVuxurh5wxxCmEXKyXikD74WMh",
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2YuTcd7dpgfcaGjH2VyjAteuKMbfzc9PSyujMoHafmktfvnhvo"
+      ],
+      "id": 2
     },
     {
-      "id": 2,
-      "name": "Get some pizza",
-      "done": false
-    },
-    {
-      "name": "Finish this project",
-      "id": 3,
-      "done": false
-    },
-    {
-      "name": "aaaaaaaa",
-      "id": 4
+      "contractId": "ct_2NuhFkTef8ZhYLVEx2ipS7FCT1ZxwiqCq6jWfnjQzzak2f72ne",
+      "gaAddress": "ak_G7wk3YUq9wHKTZAp51Ei8tF64FYBRT9X51RpzJHquouN124CV",
+      "signers": [
+        "ak_2dN31bRWuc1rWBhgnRDs7HaMVT7zSQEPMii3MPb9fTqYAKBMrK",
+        "ak_2vjUJ7MCThPGLKFTKq2BCX759XHSyiUHGTXkemjUEyG6vPrWR9"
+      ],
+      "id": 3
     }
   ]
 }

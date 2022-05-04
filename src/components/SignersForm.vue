@@ -3,6 +3,7 @@
     <hr>
     <h3>2. Select Signers</h3>
     <label>Signer 1 </label>
+<!--    todo fix propagating-->
     <button @click="fillRandomAddress('recipient1')">Fill random address</button>
     <button @click="fillMyAddress('recipient1')">Fill my address</button>
     <br>

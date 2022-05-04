@@ -44,6 +44,7 @@ import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
 import { updateContractInfo } from '../store'
 import { COMPILER_URL } from '../utils/aeternity/configs'
+import axios from "axios"
 
 
 // todo store vs page sweetspot
@@ -153,10 +154,23 @@ export default {
       //
       // this.consensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
       //
-      // this.signers = (await this.contractInstance.methods.get_signers()).decodedResult
+      // todo storing to dob to store
+      this.signers = (await this.contractInstance.methods.get_signers()).decodedResult
       // this.version = (await this.contractInstance.methods.get_version()).decodedResult
       console.log('signers', this.signers)
       // todo save to localstorage
+
+      const dbURL = "http://localhost:3001/multisigContracts"
+      try {
+       await axios.post(dbURL,
+          {
+            contractId: this.contractAccount.contractId,
+            gaAddress: this.gaKeypair.publicKey,
+            signers: this.signers
+          })
+      } catch (e) {
+        console.error(e);
+      }
     },
 
     async proposeTx () {
