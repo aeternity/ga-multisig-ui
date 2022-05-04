@@ -2,7 +2,7 @@
   <div id="container">
     <img alt="Aeternity" src="./assets/logo.svg" style="width: 250px"/>
     <h1>Multisig App</h1>
-    <WalletInfo/>
+    <WalletInfo class="wallet-info"/>
 <!--todo My Multisig Accounts + Create Button-->
     <div id="nav">
       <router-link to="/">Create</router-link>
@@ -29,7 +29,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -50,5 +50,11 @@ export default defineComponent({
 
 #nav a.router-link-exact-active {
   color: #de3f6b;
+}
+
+.wallet-info {
+  position: fixed;
+  top: 0;
+  right: 0;
 }
 </style>

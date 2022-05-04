@@ -1,6 +1,5 @@
 <template>
   <div class="confirm-form">
-
     <h3>5. Confirm Tx</h3>
     <div>Tx proposed by Signer 1 will by confirmed by Signer 2 to get consensus</div>
     <button @click="$emit('confirm-clicked')">Confirm Tx</button>

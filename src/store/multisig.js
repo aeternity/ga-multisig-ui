@@ -3,13 +3,15 @@ import { Crypto, MemoryAccount, Node, TxBuilderHelper, Universal } from '@aetern
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
-import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
-import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { Buffer } from "buffer"
 import { aeWallet } from "../utils/aeternity/wallet"
 
 
 export const multisig = reactive({
+  version: null,
+  confirmations: null,
+  signers: null,
+  confirmationsRequired: null,
   middleware: [
     {
       signer: 'ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7',
@@ -28,6 +30,36 @@ export const multisig = reactive({
   ],
 })
 
+
+export const updateContractInfo = async (universal, publicKey) => {
+  console.log('update')
+  const { version, confirmations, confirmationsRequired, signers } = toRefs(multisig)
+
+  const contractAccount = await universal.getAccount(publicKey)
+  // todo fix je vubec potreba contractaddress ?
+
+  const contractInstance = await universal.getContractInstance(
+    {
+      source: multisigContract,
+      contractAddress: contractAccount.contractId
+    },
+  )
+  // confirmations.value = (await contractInstance.methods.get_consensus_info()).decodedResult
+  signers.value = (await contractInstance.methods.get_signers()).decodedResult
+  version.value = (await contractInstance.methods.get_version()).decodedResult
+  const consensus = (await contractInstance.methods.get_consensus_info()).decodedResult
+  console.log('consensus', consensus)
+  console.log('consensus.value', consensus.value)
+  confirmations.value = consensus.confirmed_by.length
+  confirmationsRequired.value = Number(consensus.confirmations_required)
+  // confirmationsRequired.value = Number(await contractInstance.methods.get_consensus_info().confirmations_required).decodedResult
+
+  console.log('version.value', version.value)
+  // console.log('STORE consensusInfo', consensusInfo)
+  // const contract = await aeWallet.contracts.getContract(multisigContract.id)
+  // multisig.version = contract.version
+  // multisig.confirmations = contract.confirmations
+}
 
 export const createGA = async (signer1, signer2, signersAmount) => {
   const { sdk } = toRefs(aeWallet)
@@ -85,132 +117,7 @@ export const createGA = async (signer1, signer2, signersAmount) => {
 
 }
 
-export const proposeTx = async () => {
-  const { sdk } = toRefs(aeWallet)
 
-  const Recipient = Crypto.generateKeyPair()
-
-
-  // PROPOSE
-
-  const SpendTx = await sdk.value.spendTx({
-    senderId: gaKeypair.publicKey,
-    recipientId: Recipient.publicKey,
-    amount: 1000,
-  })
-
-  const encoded = encode(unpackTx(SpendTx).rlpEncoded, 'tx')
-
-  const SpendTxHash = await buildAuthTxHash(encoded)
-
-  const expirationHeight = await signerSdk.height() + 50
-  console.log('SpendTxHash', SpendTxHash)
-  console.log('expirationHeight', expirationHeight)
-  const calldata = gaContract.calldata.encode('SimpleGAMultiSig', 'propose', [SpendTxHash, { FixedTTL: [expirationHeight] }])
-
-
-  const contractCallTx = await signerSdk.contractCallTx({
-    callerId: signer1.publicKey,
-    contractId: contractAccount.contractId,
-    amount: 0,
-    gas: 1000000,
-    gasPrice: 1500000000,
-    callData: calldata,
-  })
-
-  const signedContractCallTx = await signerSdk.signTransaction(
-    contractCallTx, { onAccount: signer1, innerTx: true },
-  )
-
-  await sdk.value.payForTransaction(
-    signedContractCallTx,
-  )
-
-  const proposedConsensusInfo = (await gaContract.methods.get_consensus_info()).decodedResult
-  console.log('proposedConsensusInfo', proposedConsensusInfo)
-}
-
-
-export const confirmTx = async () => {
-
-  const calldata2 = gaContract.calldata.encode('SimpleGAMultiSig', 'confirm', [SpendTxHash])
-  const contractCallTx2 = await signerSdk.contractCallTx({
-    callerId: signer2.publicKey,
-    contractId: contractAccount.contractId,
-    amount: 0,
-    gas: 1000000,
-    gasPrice: 1500000000,
-    callData: calldata2,
-  })
-
-  const signedContractCallTx2 = await signerSdk.signTransaction(
-    contractCallTx2, { onAccount: signer2, innerTx: true },
-  )
-
-  await sdk.value.payForTransaction(signedContractCallTx2)
-
-  const confirmedInfo = (await gaContract.methods.get_consensus_info()).decodedResult
-  console.log('consensusInfo - After Confirm', confirmedInfo)
-}
-
-export const sendTx = async () => {
-
-
-  // SEND
-  const nonce = (await gaContract.methods.get_nonce()).decodedResult
-
-  const balanceBefore = await signerSdk.getBalance(Recipient.publicKey)
-
-  console.log('recipient balanceBefore', balanceBefore)
-
-  // pre charge GA account create gaAccount on chai
-  // todo do button workaround in app
-  await sdk.value.spend(
-    776440000000000,
-    gaKeypair.publicKey,
-  )
-
-  const gaAccount = MemoryAccount({ keypair: gaKeypair })
-
-
-  await signerSdk.send(
-    SpendTx,
-    {
-      onAccount: gaAccount,
-      authData: { source: multisigContract, args: [nonce] },
-    })
-
-  const balanceAfter = await signerSdk.getBalance(Recipient.publicKey)
-  console.log('recipient balance After', balanceAfter)
-
-  const consensusInfoAfterSend = (await gaContract.methods.get_consensus_info()).decodedResult
-  console.log('consensusInfo - After Send', consensusInfoAfterSend)
-
-  return gaKeypair
-}
-
-export const revokeTx = async () => {
-  const signer1Account = MemoryAccount({ keypair: this.signer1 })
-
-  const calldata2 = this.contractInstanceInitial.calldata.encode('SimpleGAMultiSig', 'revoke', [this.SpendTxHash])
-  const contractCallTx2 = await signerSdk.contractCallTx({
-    callerId: this.signer1.publicKey,
-    contractId: this.contractAccount.contractId,
-    amount: 0,
-    gas: 1000000,
-    gasPrice: 1500000000,
-    callData: calldata2,
-  })
-
-  const signedContractCallTx2 = await signerSdk.signTransaction(
-    contractCallTx2, { onAccount: signer1Account, innerTx: true },
-  )
-
-  await this.payerSdk.payForTransaction(signedContractCallTx2)
-
-  this.revokedInfo = (await this.contractInstanceInitial.methods.get_consensus_info()).decodedResult
-
-}
 
 export const loadContractInfo = async () => {
 // todo reuse this

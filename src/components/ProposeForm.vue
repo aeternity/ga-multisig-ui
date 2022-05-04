@@ -1,7 +1,7 @@
 <template>
   <div class="propose-form">
     <h3>4. Propose Tx</h3>
-    <label>Recipient </label><input type="text" v-model="recipient.publicKey"> (randomly
+    <label>Recipient </label><input type="text" v-model="recipientKey"> (randomly
     generated)
     <label>Propose amount </label><input type="text" v-model="proposedAmount"> Aettos
     <br>
@@ -12,7 +12,7 @@
 <script>
 export default {
   name: 'ProposeForm',
-  props: ['recipient', 'proposedAmount'],
+  props: ['recipientKey', 'proposedAmount'],
 
 }
 </script>
