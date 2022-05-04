@@ -2,6 +2,7 @@
   "name": "aepp-boilerplate",
   "version": "0.1.0",
   "scripts": {
+    "db:serve": "json-server --watch db.json --port=3001",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
@@ -11,6 +12,7 @@
   },
   "dependencies": {
     "@aeternity/aepp-sdk": "^11.0.1",
+    "axios": "^0.27.2",
     "buffer": "^6.0.3",
     "core-js": "^3.6.5",
     "raw-loader": "^4.0.2",
@@ -26,6 +28,7 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/test-utils": "^2.0.0-0",
+    "json-server": "^0.17.0",
     "lint-staged": "^9.5.0",
     "vue-jest": "^5.0.0-0"
   },
