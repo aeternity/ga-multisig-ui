@@ -14,9 +14,15 @@
     <h6>Contract Info</h6>
     version: {{ version }}
     <br>
-    confirmations:  {{ confirmations }} / {{ confirmationsRequired }}
+    confirmations: {{ confirmations }} / {{ confirmationsRequired }}
     <br>
     signers: {{ signers }}
+    <br>
+    hasConsensus: {{ hasConsensus }}
+    <br>
+    hasProposal: {{ hasProposal }}
+    <br>
+    isCurrentUserSigner: {{ isCurrentUserSigner }}
   </div>
 </template>
 
@@ -29,10 +35,23 @@ export default defineComponent({
   name: 'WalletInfo',
   setup () {
     const { address, balance, walletStatus, activeWallet } = toRefs(aeWallet)
-    const { version, confirmations,confirmationsRequired, signers } = toRefs(multisig)
+    const {
+      version,
+      confirmations,
+      confirmationsRequired,
+      signers,
+      hasConsensus,
+      hasProposal,
+      isCurrentUserSigner,
+    } = toRefs(multisig)
     // todo remove unused
 // todo setup?
-    return { activeWallet, address, balance, walletStatus, version, confirmations, confirmationsRequired, signers }
+    return {
+      activeWallet, address, balance, walletStatus, version, confirmations, confirmationsRequired, signers,
+      hasConsensus,
+      hasProposal,
+      isCurrentUserSigner,
+    }
   },
 })
 </script>

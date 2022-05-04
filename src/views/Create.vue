@@ -1,16 +1,17 @@
 <template>
-  <div class="home">
+  <div class="create">
     <h1>Create Multisig Account</h1>
+    is current user signer? {{ isCurrentUserSigner }}
     <br>
     <br>
     <br>
     <signers-form
-      v-if="signer1 && signer2"
-      :signer1="signer1"
-      :signer2="signer2"
-      @amount-updated="handleAmountUpdated"
+      v-model:signer1Key="signer1Key"
+      v-model:signer2Key="signer2Key"
+      v-model:requiredSignersAmount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
     <propose-form
+      v-if="!isProposeBlockHidden"
       :recipient-key="recipient.publicKey"
       :proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
@@ -53,9 +54,9 @@ export default {
     // todo pass models
     payerSdk: null,
     connectedAddress: null,
-    signer1: Crypto.generateKeyPair(),
-    signer2: Crypto.generateKeyPair(),
-    signersAmount: 2,
+    signer1Key: '',
+    signer2Key: '',
+    requiredSignersAmount: 2,
     gaKeypair: null,
     isGa: null,
     // todo gaAccount wtf
@@ -77,12 +78,19 @@ export default {
   }),
   computed: {
 // todo conditions as computed properties
+    isCurrentUserSigner () {
+      console.log('aeWallet.address', aeWallet.address)
+      return this.signers ? this.signers.includes(aeWallet.address) : false
+    },
+    isProposeBlockHidden () {
+      return this.isCurrentUserSigner && this.signers
+    },
   },
 
   methods: {
     // todo rename 'handle'  functions
     async handleAmountUpdated (amount) {
-      this.signersAmount = amount
+      this.requiredSignersAmount = amount
     },
 
     async crateGaAccount () {
@@ -104,10 +112,10 @@ export default {
       await contractInstanceInitial.compile()
 
       const multisigArgs = [
-        this.signersAmount,
+        this.requiredSignersAmount,
         [
-          this.signer1.publicKey,
-          this.signer2.publicKey,
+          this.signer1Key,
+          this.signer2Key,
         ],
       ]
 
@@ -153,7 +161,7 @@ export default {
 
     async proposeTx () {
 
-        this.spendTx = await aeWallet.sdk.spendTx({
+      this.spendTx = await aeWallet.sdk.spendTx({
         senderId: this.gaKeypair.publicKey,
         recipientId: this.recipient.publicKey,
         amount: this.proposedAmount,
@@ -170,7 +178,7 @@ export default {
       const calldata = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'propose', [this.spendTxHash, { FixedTTL: [expirationHeight] }])
       console.log('propose2')
       const contractCallTx = await this.signerSdk.contractCallTx({
-        callerId: this.signer1.publicKey,
+        callerId: this.signer1Key,
         contractId: this.contractAccount.contractId,
         amount: 0,
         gas: 1000000,
@@ -181,6 +189,7 @@ export default {
 
       const signedContractCallTx = await this.signerSdk.signTransaction(
         contractCallTx, { onAccount: this.signer1, innerTx: true },
+        // todo sign from wallet
       )
 
 
@@ -199,7 +208,7 @@ export default {
     async confirmTx () {
       const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'confirm', [this.spendTxHash])
       const contractCallTx2 = await this.signerSdk.contractCallTx({
-        callerId: this.signer2.publicKey,
+        callerId: this.signer2Key,
         contractId: this.contractAccount.contractId,
         amount: 0,
         gas: 1000000,
@@ -209,6 +218,7 @@ export default {
 
       const signedContractCallTx2 = await this.signerSdk.signTransaction(
         contractCallTx2, { onAccount: this.signer2, innerTx: true },
+        //todo sign from wallet
       )
 
       await aeWallet.sdk.payForTransaction(signedContractCallTx2)
@@ -261,7 +271,7 @@ export default {
 
       const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'revoke', [this.spendTxHash])
       const contractCallTx2 = await this.signerSdk.contractCallTx({
-        callerId: this.signer1.publicKey,
+        callerId: this.signer1Key,
         contractId: this.contractAccount.contractId,
         amount: 0,
         gas: 1000000,

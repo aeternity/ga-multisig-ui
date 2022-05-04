@@ -12,18 +12,20 @@
       <h3>Detail:</h3>
       <div>
         {{ contractDetail }}
-        <multisig-detail-list/>
+<!--        <multisig-detail-list/>-->
 <!--        get status and resume action-->
       </div>
     </div>
 </template>
 
 <script>
-import { loadMyContracts, loadContractDetail } from "../store"
-import MultisigDetailList from "../components/MultisigDetailList"
+
+import {  Universal, Node } from '@aeternity/aepp-sdk'
+
+import { loadMyContracts, updateContractInfo } from "../store"
+import { COMPILER_URL } from "../utils/aeternity/configs"
 export default {
   name: 'About',
-  components: { MultisigDetailList },
   data: () => ({
     myContracts: null,
     contractDetail: null,
@@ -33,9 +35,19 @@ export default {
   },
   methods: {
     async loadContractInfo (contract) {
-      this.contractDetail = await loadContractDetail(contract)
-      console.log('contract', contract)
+      const signerSdk = await Universal({
+        nodes: [{
+          name: 'testnet',
+          instance: await Node({ url: 'https://testnet.aeternity.io' }),
+        }],
+        compilerUrl: COMPILER_URL,
+      })
+
+      updateContractInfo(signerSdk, contract)
+      // this.contractDetail = await loadContractDetail(contract)
+      // console.log('contract', contract)
     },
+
   },
 }
 </script>

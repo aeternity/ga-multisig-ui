@@ -12,6 +12,9 @@ export const multisig = reactive({
   confirmations: null,
   signers: null,
   confirmationsRequired: null,
+  hasProposal: null,
+  hasConsensus: null,
+  isCurrentUserSigner: null,
   middleware: [
     {
       signer: 'ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7',
@@ -33,7 +36,8 @@ export const multisig = reactive({
 
 export const updateContractInfo = async (universal, publicKey) => {
   console.log('update')
-  const { version, confirmations, confirmationsRequired, signers } = toRefs(multisig)
+  const { version, confirmations, confirmationsRequired, signers, hasProposal, hasConsensus, isCurrentUserSigner } = toRefs(multisig)
+  const { address } = toRefs(aeWallet)
 
   const contractAccount = await universal.getAccount(publicKey)
   // todo fix je vubec potreba contractaddress ?
@@ -47,18 +51,12 @@ export const updateContractInfo = async (universal, publicKey) => {
   // confirmations.value = (await contractInstance.methods.get_consensus_info()).decodedResult
   signers.value = (await contractInstance.methods.get_signers()).decodedResult
   version.value = (await contractInstance.methods.get_version()).decodedResult
+  hasConsensus.value = (await contractInstance.methods.has_consensus()).decodedResult
   const consensus = (await contractInstance.methods.get_consensus_info()).decodedResult
-  console.log('consensus', consensus)
-  console.log('consensus.value', consensus.value)
   confirmations.value = consensus.confirmed_by.length
   confirmationsRequired.value = Number(consensus.confirmations_required)
-  // confirmationsRequired.value = Number(await contractInstance.methods.get_consensus_info().confirmations_required).decodedResult
-
-  console.log('version.value', version.value)
-  // console.log('STORE consensusInfo', consensusInfo)
-  // const contract = await aeWallet.contracts.getContract(multisigContract.id)
-  // multisig.version = contract.version
-  // multisig.confirmations = contract.confirmations
+  isCurrentUserSigner.value = signers.value.includes(address.value)
+  hasProposal.value = !!confirmations.value
 }
 
 export const createGA = async (signer1, signer2, signersAmount) => {
@@ -159,7 +157,10 @@ export const loadContractDetail = async (contractId) => {
 }
 
 export const loadMyContracts = async () => {
-  const { address, middleware } = toRefs(aeWallet)
+  const { address } = toRefs(aeWallet)
+  const { middleware } = toRefs(multisig)
+
+
   const myContracts = middleware.value.find(({ signer }) => signer === address.value)
   console.log('myContracts', myContracts)
   return myContracts.multisigContracts
