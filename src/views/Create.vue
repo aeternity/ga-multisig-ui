@@ -11,7 +11,7 @@
       v-model:requiredSignersAmount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
     <propose-form
-      v-if="!isProposeBlockHidden"
+
       :recipient-key="recipient.publicKey"
       :proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>

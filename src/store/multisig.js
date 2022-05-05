@@ -114,7 +114,7 @@ export const loadMyContracts = async () => {
   const { multisigContracts } = toRefs(multisig)
 
 
-  const myContracts = multisigContracts.value.filter(contract => {
+  return multisigContracts.value.filter(contract => {
     console.log('contract.signers', contract.signers)
     console.log('contract.signers.includes(address)', contract.signers.includes(address.value))
   return  contract.signers.includes(address.value)

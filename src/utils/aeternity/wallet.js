@@ -85,6 +85,11 @@ export const aeInitWallet = async () => {
 export const aeScanForWallets = async () => {
   const { sdk, walletStatus, activeWallet } = toRefs(aeWallet)
 
+  let connectedCallback
+  const connectedPromise = new Promise(resolve => {
+    connectedCallback = resolve
+  })
+
   walletStatus.value = 'scanning'
 
   const scannerConnection = await BrowserWindowMessageConnection({
@@ -103,13 +108,14 @@ export const aeScanForWallets = async () => {
     )
     sdk.value.selectNode(connected.networkId) // connected.networkId needs to be defined as node in RpcAepp
     await sdk.value.subscribeAddress('subscribe', 'current')
+    connectedCallback()
 
     await aeFetchWalletInfo(sdk.value)
   }
 
   await detector.scan(handleWallets)
 
-  return Object.values(detector.wallets).length
+  return connectedPromise
 }
 
 export const aeFetchWalletInfo = async (sdk) => {
