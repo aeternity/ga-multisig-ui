@@ -44,6 +44,15 @@
         "ak_2wNCcSUJ8CkcgaGgyc7TtJ9iQ8CKkPDDGDPWPpBrAaVonQ5Lbp"
       ],
       "id": 5
+    },
+    {
+      "contractId": "ct_2Jv5t7bCKSTBLpWqmCywJoaVEvEv8nmLJqG312qnNYVaJt52Ej",
+      "gaAddress": "ak_2aXfDxjQ6Xz8o9unuJsF5ibW2vDQK5GPSczz9XpEW5Y8XvsNPQ",
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2fTk3CknnWe9ujXS9TDzwPSmPwubcua7sif6uMXf29TPfCh6fU"
+      ],
+      "id": 6
     }
   ]
 }

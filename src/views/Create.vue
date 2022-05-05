@@ -42,9 +42,8 @@ import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
-import { updateContractInfo } from '../store'
+import { storeContractToDB, updateContractInfo } from '../store'
 import { COMPILER_URL } from '../utils/aeternity/configs'
-import axios from "axios"
 
 
 // todo store vs page sweetspot
@@ -159,18 +158,12 @@ export default {
       // this.version = (await this.contractInstance.methods.get_version()).decodedResult
       console.log('signers', this.signers)
       // todo save to localstorage
+      storeContractToDB(
+        this.contractAccount.contractId,
+        this.gaKeypair.publicKey,
+        this.signers,
+      )
 
-      const dbURL = "http://localhost:3001/multisigContracts"
-      try {
-       await axios.post(dbURL,
-          {
-            contractId: this.contractAccount.contractId,
-            gaAddress: this.gaKeypair.publicKey,
-            signers: this.signers
-          })
-      } catch (e) {
-        console.error(e);
-      }
     },
 
     async proposeTx () {
@@ -186,7 +179,6 @@ export default {
       const encoded = encode(unpackTx(this.spendTx).rlpEncoded, 'tx')
 
       this.spendTxHash = await buildAuthTxHash(encoded)
-      console.log('this.spendTxHash', this.spendTxHash)
       const expirationHeight = await this.signerSdk.height() + 50
       console.log('propose1')
       const calldata = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'propose', [this.spendTxHash, { FixedTTL: [expirationHeight] }])

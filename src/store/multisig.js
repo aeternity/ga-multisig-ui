@@ -18,21 +18,30 @@ export const multisig = reactive({
   isCurrentUserSigner: null,
   multisigContracts: null,
 })
+const dbURL = "http://localhost:3001/multisigContracts"
 
 
-export const loadContractsFromDB = async () => {
-  const { multisigContracts } = toRefs(multisig)
-  const dbURL = "http://localhost:3001/multisigContracts"
-
+export const storeContractToDB = async (contractId, gaAddress, signers) => {
   try {
-    const res = await axios.get(dbURL)
-
-    multisigContracts.value =res.data
+    await axios.post(dbURL,
+      {
+        contractId,
+        gaAddress,
+        signers,
+      })
   } catch (e) {
     console.error(e)
   }
+}
+export const loadContractsFromDB = async () => {
+  const { multisigContracts } = toRefs(multisig)
 
-  console.log('multisigContracts.value', multisigContracts.value)
+  try {
+    const res = await axios.get(dbURL)
+    multisigContracts.value = res.data
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 export const updateContractInfo = async (universal, publicKey) => {
@@ -94,7 +103,6 @@ export const loadContractDetail = async (gaAddress) => {
     nodes: [{ name: 'net', instance: node }],
     compilerUrl: 'https://compiler.aepps.com',
   })
-  console.log('contractId', gaAddress)
 
   // todo nejde to udelat rovnou s  contractId namisto gaaddress?
 
@@ -117,7 +125,7 @@ export const loadMyContracts = async () => {
   return multisigContracts.value.filter(contract => {
     console.log('contract.signers', contract.signers)
     console.log('contract.signers.includes(address)', contract.signers.includes(address.value))
-  return  contract.signers.includes(address.value)
+    return contract.signers.includes(address.value)
   })
   console.log('myContracts', myContracts)
   return myContracts
