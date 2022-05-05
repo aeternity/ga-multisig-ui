@@ -26,34 +26,21 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, toRefs } from 'vue'
+<script setup>
+import { toRefs } from 'vue'
 import { aeWallet } from '../utils/aeternity'
 import { multisig } from '../store'
 
-export default defineComponent({
-  name: 'WalletInfo',
-  setup () {
-    const { address, balance, walletStatus, activeWallet } = toRefs(aeWallet)
-    const {
-      version,
-      confirmations,
-      confirmationsRequired,
-      signers,
-      hasConsensus,
-      hasProposal,
-      isCurrentUserSigner,
-    } = toRefs(multisig)
-    // todo remove unused
-// todo setup?
-    return {
-      activeWallet, address, balance, walletStatus, version, confirmations, confirmationsRequired, signers,
-      hasConsensus,
-      hasProposal,
-      isCurrentUserSigner,
-    }
-  },
-})
+const { address, walletStatus } = toRefs(aeWallet)
+const {
+  version,
+  confirmations,
+  confirmationsRequired,
+  signers,
+  hasConsensus,
+  hasProposal,
+  isCurrentUserSigner,
+} = toRefs(multisig)
 </script>
 
 <style scoped>
