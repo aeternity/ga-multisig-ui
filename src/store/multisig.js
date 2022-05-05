@@ -35,10 +35,11 @@ export const storeContractToDB = async (contractId, gaAddress, signers) => {
 }
 export const loadContractsFromDB = async () => {
   const { multisigContracts } = toRefs(multisig)
-
+  console.log('loadContractsFromDB')
   try {
     const res = await axios.get(dbURL)
     multisigContracts.value = res.data
+    console.log('multisigContracts.value', multisigContracts.value)
   } catch (e) {
     console.error(e)
   }
@@ -77,33 +78,10 @@ export const updateContractInfo = async (universal, publicKey) => {
   hasProposal.value = !!confirmations.value
 }
 
-export const loadContractInfo = async () => {
-// todo reuse this
-  const signerSdk = await Universal({
-    nodes: [{
-      name: 'net',
-      instance: await Node({ url: 'https://net.aeternity.io' }),
-    }],
-    compilerUrl: 'https://compiler.aepps.com',
-  })
-
-  const contractAccount = await signerSdk.getAccount(this.inputAddress.trim())
-
-  const contractInstanceInitial = await signerSdk.getContractInstance(
-    { source: multisigContract, contractAddress: contractAccount.contractId },
-  )
-
-  this.loadedContractInfo = (await contractInstanceInitial.methods.get_consensus_info()).decodedResult
-}
-
-
 export const loadContractDetail = async (gaAddress) => {
-  const node = await Node({ url: 'https://net.aeternity.io' })
-  const signerSdk = await Universal({
-    nodes: [{ name: 'net', instance: node }],
-    compilerUrl: 'https://compiler.aepps.com',
-  })
+  console.log('loadContractDetail', loadContractDetail)
 
+  const signerSdk = getUniversalInstance()
   // todo nejde to udelat rovnou s  contractId namisto gaaddress?
 
   const contractAccount = await signerSdk.getAccount(gaAddress)
@@ -120,9 +98,10 @@ export const loadContractDetail = async (gaAddress) => {
 export const loadMyContracts = async () => {
   const { address } = toRefs(aeWallet)
   const { multisigContracts } = toRefs(multisig)
+  console.log('loadMyContracts', address)
 
 
-  return multisigContracts.value.filter(contract => {
+  const myContracts = multisigContracts.value.filter(contract => {
     console.log('contract.signers', contract.signers)
     console.log('contract.signers.includes(address)', contract.signers.includes(address.value))
     return contract.signers.includes(address.value)
@@ -141,4 +120,15 @@ export const buildAuthTxHash = async (rlpTransaction) => {
     ),
   )
 }
+
+
+export const getUniversalInstance = async () => {
+  const node = await Node({ url: 'https://net.aeternity.io' })
+  const signerSdk = await Universal({
+    nodes: [{ name: 'net', instance: node }],
+    compilerUrl: 'https://compiler.aepps.com',
+  })
+  return signerSdk
+}
+
 

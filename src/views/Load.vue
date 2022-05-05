@@ -1,11 +1,11 @@
 <template>
   <div class="about">
     <h1>Contracts where I am signer</h1>
-    <!--todo fix load in the first time-->
+    <!--todo fix load in the first time - wait for wallet-->
     <div v-for="contract in myContracts">
       <div>
         {{ contract.contractId }}
-        <button @click="loadContractInfo(contract.gaAddress)">
+        <button @click="loadContract(contract.gaAddress)">
           Load info
         </button>
       </div>
@@ -13,8 +13,7 @@
     <h3>Detail:</h3>
     <div>
       {{ contractDetail }}
-      <!--        <multisig-detail-list/>-->
-      <!--        get status and resume action-->
+      <!--        todo get status and resume action-->
     </div>
   </div>
 </template>
@@ -37,13 +36,14 @@ export default {
     todos: [],
   }),
   async mounted () {
+    console.log('mount')
     await loadContractsFromDB()
     this.myContracts = await loadMyContracts()
   },
 
 
   methods: {
-    async loadContractInfo (contract) {
+    async loadContract (contract) {
       const signerSdk = await Universal({
         nodes: [{
           name: 'testnet',
@@ -53,10 +53,7 @@ export default {
       })
 
       updateContractInfo(signerSdk, contract)
-      // this.contractDetail = await loadContractDetail(contract)
-      // console.log('contract', contract)
     },
-
   },
 }
 </script>
