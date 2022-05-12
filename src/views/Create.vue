@@ -11,7 +11,6 @@
       v-model:requiredSignersAmount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
     <propose-form
-
       :recipient-key="recipient.publicKey"
       :proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
@@ -140,7 +139,7 @@ export default {
       this.isGa = await this.signerSdk.isGA(this.gaKeypair.publicKey)
 
 
-      updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
 
       this.contractAccount = await this.signerSdk.getAccount(this.gaKeypair.publicKey)
       // todo fix je vubec potreba contractaddress ?
@@ -148,7 +147,9 @@ export default {
       // todo a nestaci ta initial?
 
       this.contractInstance = await this.signerSdk.getContractInstance(
-        { source: multisigContract, contractAddress: this.contractAccount.contractId },
+        {
+          source: multisigContract,
+          contractAddress: this.contractAccount.contractId },
       )
       //
       // this.consensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
@@ -158,7 +159,7 @@ export default {
       // this.version = (await this.contractInstance.methods.get_version()).decodedResult
       console.log('signers', this.signers)
       // todo save to localstorage
-      storeContractToDB(
+      await storeContractToDB(
         this.contractAccount.contractId,
         this.gaKeypair.publicKey,
         this.signers,
@@ -167,7 +168,6 @@ export default {
     },
 
     async proposeTx () {
-
       this.spendTx = await aeWallet.sdk.spendTx({
         senderId: this.gaKeypair.publicKey,
         recipientId: this.recipient.publicKey,
@@ -175,61 +175,39 @@ export default {
       })
       console.log('propose')
 
-
       const encoded = encode(unpackTx(this.spendTx).rlpEncoded, 'tx')
 
       this.spendTxHash = await buildAuthTxHash(encoded)
       const expirationHeight = await this.signerSdk.height() + 50
       console.log('propose1')
-      const calldata = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'propose', [this.spendTxHash, { FixedTTL: [expirationHeight] }])
-      console.log('propose2')
-      const contractCallTx = await this.signerSdk.contractCallTx({
-        callerId: this.signer1Key,
-        contractId: this.contractAccount.contractId,
-        amount: 0,
-        gas: 1000000,
-        gasPrice: 1500000000,
-        callData: calldata,
-      })
-      console.log('propose3')
-
-      const signedContractCallTx = await this.signerSdk.signTransaction(
-        contractCallTx, { onAccount: this.signer1, innerTx: true },
-        // todo sign from wallet
+      const gaContractRpc = await aeWallet.sdk.getContractInstance(
+        {
+          source: multisigContract,
+          contractAddress: this.contractAccount.contractId
+        },
       )
 
-
-      await aeWallet.sdk.payForTransaction(
-        signedContractCallTx,
-      )
+      await gaContractRpc.methods.propose.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
 
       // todo signer sdk to store
-      updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
-
+      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
 
       // this.proposedConsensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
       console.log('this.proposedConsensusInfo', this.proposedConsensusInfo)
     },
 
     async confirmTx () {
-      const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'confirm', [this.spendTxHash])
-      const contractCallTx2 = await this.signerSdk.contractCallTx({
-        callerId: this.signer2Key,
-        contractId: this.contractAccount.contractId,
-        amount: 0,
-        gas: 1000000,
-        gasPrice: 1500000000,
-        callData: calldata2,
-      })
-
-      const signedContractCallTx2 = await this.signerSdk.signTransaction(
-        contractCallTx2, { onAccount: this.signer2, innerTx: true },
-        //todo sign from wallet
+      const gaContractRpc = await aeWallet.sdk.getContractInstance(
+        {
+          source: multisigContract,
+          contractAddress: this.contractAccount.contractId
+        },
       )
+      const expirationHeight = await this.signerSdk.height() + 50
 
-      await aeWallet.sdk.payForTransaction(signedContractCallTx2)
-      console.log('uuu')
-      updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      await gaContractRpc.methods.confirm.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
+
+      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
 
       // this.confirmedInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
       console.log('consensusInfo - After Confirm', this.confirmedInfo)
@@ -265,7 +243,7 @@ export default {
       const balanceAfter = await this.signerSdk.getBalance(this.recipient.publicKey)
       console.log('recipient balance After', balanceAfter)
 
-      updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
 
       // const consensusInfoAfterSend = (await this.contractInstance.methods.get_consensus_info()).decodedResult
       // console.log('consensusInfo - After Send', consensusInfoAfterSend)
@@ -294,21 +272,9 @@ export default {
       )
 
       await aeWallet.sdk.payForTransaction(signedContractCallTx2)
-      updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
 
       // this.revokedInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
-    },
-
-    async loadContractInfo () {
-      const contractAccount = await this.signerSdk.getAccount(this.inputAddress.trim())
-
-      const contractInstance = await this.signerSdk.getContractInstance({
-        source: multisigContract,
-        contractAddress: contractAccount.contractId,
-      })
-      // todo reuse contractInstance and contract account
-
-      this.loadedContractInfo = (await contractInstance.methods.get_consensus_info()).decodedResult
     },
   },
 }

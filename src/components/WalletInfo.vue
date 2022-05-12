@@ -1,8 +1,21 @@
 <template>
   <div class="wallet">
     <div v-if="address && !walletStatus" class="wallet-info">
-      <strong>Connected Address </strong> <span class="wallet-address">{{ address }}</span>
+      <strong>Connected Address </strong>
+      <div class="wallet-address">{{ address }}</div>
       <br/>
+      <h6>Contract Info</h6>
+      version: {{ version }}
+      <br>
+      confirmations: {{ confirmations }} / {{ confirmationsRequired }}
+      <br>
+      signers: {{ signers }}
+      <br>
+      hasConsensus: {{ hasConsensus }}
+      <br>
+      hasProposal: {{ hasProposal }}
+      <br>
+      isCurrentUserSigner: {{ isCurrentUserSigner }}
     </div>
 
     <img
@@ -10,19 +23,6 @@
       src="../assets/loading_logo.svg"
       style="width: 50px"
     />
-    <br>
-    <h6>Contract Info</h6>
-    version: {{ version }}
-    <br>
-    confirmations: {{ confirmations }} / {{ confirmationsRequired }}
-    <br>
-    signers: {{ signers }}
-    <br>
-    hasConsensus: {{ hasConsensus }}
-    <br>
-    hasProposal: {{ hasProposal }}
-    <br>
-    isCurrentUserSigner: {{ isCurrentUserSigner }}
   </div>
 </template>
 
@@ -32,6 +32,7 @@ import { aeWallet } from '../utils/aeternity'
 import { multisig } from '../store'
 
 const { address, walletStatus } = toRefs(aeWallet)
+
 const {
   version,
   confirmations,
@@ -53,6 +54,7 @@ const {
   border-radius: 15px;
   padding: 20px;
   background: #000;
+  font-size: 70%;
 }
 
 .wallet-info {

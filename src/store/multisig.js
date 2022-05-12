@@ -2,7 +2,6 @@ import { Crypto, MemoryAccount, Node, TxBuilderHelper, Universal } from '@aetern
 
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
-import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { Buffer } from "buffer"
 import { aeWallet } from "../utils/aeternity/wallet"
 import axios from "axios"
@@ -39,14 +38,12 @@ export const loadContractsFromDB = async () => {
   try {
     const res = await axios.get(dbURL)
     multisigContracts.value = res.data
-    console.log('multisigContracts.value', multisigContracts.value)
   } catch (e) {
     console.error(e)
   }
 }
 
 export const updateContractInfo = async (universal, publicKey) => {
-  console.log('update')
   const {
     version,
     confirmations,
@@ -70,10 +67,10 @@ export const updateContractInfo = async (universal, publicKey) => {
   // confirmations.value = (await contractInstance.methods.get_consensus_info()).decodedResult
   signers.value = (await contractInstance.methods.get_signers()).decodedResult
   version.value = (await contractInstance.methods.get_version()).decodedResult
-  hasConsensus.value = (await contractInstance.methods.has_consensus()).decodedResult
   const consensus = (await contractInstance.methods.get_consensus_info()).decodedResult
   confirmations.value = consensus.confirmed_by.length
   confirmationsRequired.value = Number(consensus.confirmations_required)
+  hasConsensus.value = consensus.has_consensus
   isCurrentUserSigner.value = signers.value.includes(address.value)
   hasProposal.value = !!confirmations.value
 }

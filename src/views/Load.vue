@@ -14,15 +14,17 @@
     <div>
       {{ contractDetail }}
       <!--        todo get status and resume action-->
+      <button>Resume</button>
     </div>
   </div>
 </template>
 
 <script>
+// todo pages as setup
 
 import { Universal, Node } from '@aeternity/aepp-sdk'
-
 import { loadMyContracts, updateContractInfo, loadContractsFromDB } from "../store"
+
 import { COMPILER_URL } from "../utils/aeternity/configs"
 
 
@@ -35,6 +37,7 @@ export default {
     todoName: '',
     todos: [],
   }),
+
   async mounted () {
     console.log('mount')
     await loadContractsFromDB()
