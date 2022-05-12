@@ -13,10 +13,6 @@
 <script>
 export default {
   name: 'SendForm',
-
-  data: () => ({
-    valName: null,
-  }),
 }
 </script>
 

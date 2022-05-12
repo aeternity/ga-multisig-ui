@@ -16,6 +16,7 @@
       hasProposal: {{ hasProposal }}
       <br>
       isCurrentUserSigner: {{ isCurrentUserSigner }}
+      <button >Resume</button>
     </div>
 
     <img

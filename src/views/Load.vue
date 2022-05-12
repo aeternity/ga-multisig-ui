@@ -14,7 +14,7 @@
     <div>
       {{ contractDetail }}
       <!--        todo get status and resume action-->
-      <button>Resume</button>
+
     </div>
   </div>
 </template>
@@ -39,7 +39,6 @@ export default {
   }),
 
   async mounted () {
-    console.log('mount')
     await loadContractsFromDB()
     this.myContracts = await loadMyContracts()
   },

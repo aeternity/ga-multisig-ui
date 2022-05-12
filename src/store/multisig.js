@@ -34,7 +34,6 @@ export const storeContractToDB = async (contractId, gaAddress, signers) => {
 }
 export const loadContractsFromDB = async () => {
   const { multisigContracts } = toRefs(multisig)
-  console.log('loadContractsFromDB')
   try {
     const res = await axios.get(dbURL)
     multisigContracts.value = res.data
@@ -75,35 +74,29 @@ export const updateContractInfo = async (universal, publicKey) => {
   hasProposal.value = !!confirmations.value
 }
 
-export const loadContractDetail = async (gaAddress) => {
-  console.log('loadContractDetail', loadContractDetail)
-
-  const signerSdk = getUniversalInstance()
-  // todo nejde to udelat rovnou s  contractId namisto gaaddress?
-
-  const contractAccount = await signerSdk.getAccount(gaAddress)
-
-  const contractInstanceInitial = await signerSdk.getContractInstance(
-    { source: multisigContract, contractAddress: contractAccount.contractId },
-  )
-
-  const loadedContractInfo = (await contractInstanceInitial.methods.get_consensus_info()).decodedResult
-  console.log('loadedContractInfo', loadedContractInfo)
-  return loadedContractInfo
-}
+// export const loadContractDetail = async (gaAddress) => {
+//   const signerSdk = getUniversalInstance()
+//   // todo nejde to udelat rovnou s  contractId namisto gaaddress?
+//
+//   const contractAccount = await signerSdk.getAccount(gaAddress)
+//
+//   const contractInstanceInitial = await signerSdk.getContractInstance(
+//     {
+//       source: multisigContract,
+//       contractAddress: contractAccount.contractId },
+//   )
+//
+//   return (await contractInstanceInitial.methods.get_consensus_info()).decodedResult
+// }
 
 export const loadMyContracts = async () => {
   const { address } = toRefs(aeWallet)
   const { multisigContracts } = toRefs(multisig)
-  console.log('loadMyContracts', address)
 
 
   const myContracts = multisigContracts.value.filter(contract => {
-    console.log('contract.signers', contract.signers)
-    console.log('contract.signers.includes(address)', contract.signers.includes(address.value))
     return contract.signers.includes(address.value)
   })
-  console.log('myContracts', myContracts)
   return myContracts
 }
 

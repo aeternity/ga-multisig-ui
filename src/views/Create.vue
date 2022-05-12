@@ -78,7 +78,6 @@ export default {
   computed: {
 // todo conditions as computed properties
     isCurrentUserSigner () {
-      console.log('aeWallet.address', aeWallet.address)
       return this.signers ? this.signers.includes(aeWallet.address) : false
     },
     isProposeBlockHidden () {
@@ -87,11 +86,6 @@ export default {
   },
 
   methods: {
-    // todo rename 'handle'  functions
-    async handleAmountUpdated (amount) {
-      this.requiredSignersAmount = amount
-    },
-
     async crateGaAccount () {
       this.gaKeypair = Crypto.generateKeyPair()
 
@@ -149,7 +143,8 @@ export default {
       this.contractInstance = await this.signerSdk.getContractInstance(
         {
           source: multisigContract,
-          contractAddress: this.contractAccount.contractId },
+          contractAddress: this.contractAccount.contractId,
+        },
       )
       //
       // this.consensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
@@ -157,7 +152,6 @@ export default {
       // todo storing to dob to store
       this.signers = (await this.contractInstance.methods.get_signers()).decodedResult
       // this.version = (await this.contractInstance.methods.get_version()).decodedResult
-      console.log('signers', this.signers)
       // todo save to localstorage
       await storeContractToDB(
         this.contractAccount.contractId,
@@ -173,17 +167,15 @@ export default {
         recipientId: this.recipient.publicKey,
         amount: this.proposedAmount,
       })
-      console.log('propose')
 
       const encoded = encode(unpackTx(this.spendTx).rlpEncoded, 'tx')
 
       this.spendTxHash = await buildAuthTxHash(encoded)
       const expirationHeight = await this.signerSdk.height() + 50
-      console.log('propose1')
       const gaContractRpc = await aeWallet.sdk.getContractInstance(
         {
           source: multisigContract,
-          contractAddress: this.contractAccount.contractId
+          contractAddress: this.contractAccount.contractId,
         },
       )
 
@@ -193,14 +185,13 @@ export default {
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
 
       // this.proposedConsensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
-      console.log('this.proposedConsensusInfo', this.proposedConsensusInfo)
     },
 
     async confirmTx () {
       const gaContractRpc = await aeWallet.sdk.getContractInstance(
         {
           source: multisigContract,
-          contractAddress: this.contractAccount.contractId
+          contractAddress: this.contractAccount.contractId,
         },
       )
       const expirationHeight = await this.signerSdk.height() + 50
@@ -210,15 +201,12 @@ export default {
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
 
       // this.confirmedInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
-      console.log('consensusInfo - After Confirm', this.confirmedInfo)
     },
 
     async sendTx () {
       const nonce = (await this.contractInstance.methods.get_nonce()).decodedResult
 
       const balanceBefore = await this.signerSdk.getBalance(this.recipient.publicKey)
-
-      console.log('recipient balanceBefore', balanceBefore)
 
       // pre charge GA account create this.gaAccount on chai
       // todo do button workaround in app
@@ -241,8 +229,6 @@ export default {
         })
 
       const balanceAfter = await this.signerSdk.getBalance(this.recipient.publicKey)
-      console.log('recipient balance After', balanceAfter)
-
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
 
       // const consensusInfoAfterSend = (await this.contractInstance.methods.get_consensus_info()).decodedResult
