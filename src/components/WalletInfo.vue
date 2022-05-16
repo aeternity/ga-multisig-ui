@@ -5,18 +5,27 @@
       <div class="wallet-address">{{ address }}</div>
       <br/>
       <h6>Contract Info</h6>
+      contract address: {{ gaPubKey }}
+      <br>
       version: {{ version }}
       <br>
       confirmations: {{ confirmations }} / {{ confirmationsRequired }}
       <br>
       signers: {{ signers }}
       <br>
-      hasConsensus: {{ hasConsensus }}
+      txHash: {{ txHash }}
       <br>
-      hasProposal: {{ hasProposal }}
+      proposedAmount: {{ proposedAmount }}
+      <br>
+      <hr>
       <br>
       isCurrentUserSigner: {{ isCurrentUserSigner }}
-      <button >Resume</button>
+      <br>
+      hasProposedTx: {{ hasProposedTx }}
+      <br>
+      hasConsensus: {{ hasConsensus }}
+      <br>
+      <router-link to="/resume">Resume</router-link>
     </div>
 
     <img
@@ -40,8 +49,12 @@ const {
   confirmationsRequired,
   signers,
   hasConsensus,
-  hasProposal,
+  hasProposedTx,
   isCurrentUserSigner,
+  cId,
+  txHash,
+  proposedAmount,
+  gaPubKey
 } = toRefs(multisig)
 </script>
 

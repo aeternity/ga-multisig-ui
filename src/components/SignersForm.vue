@@ -2,6 +2,11 @@
   <div class="signers-form">
     <hr>
     <h3>2. Select Signers</h3>
+    <br>
+    my second address
+    <br>
+    ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU
+    <br>
     <label>Signer 1 </label>
 <!--    todo fix propagating-->
     <button @click="fillRandomAddress('recipient1')">Fill random address</button>

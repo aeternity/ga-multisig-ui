@@ -1,7 +1,6 @@
 <template>
   <div class="create">
     <h1>Create Multisig Account</h1>
-    is current user signer? {{ isCurrentUserSigner }}
     <br>
     <br>
     <br>
@@ -11,7 +10,7 @@
       v-model:requiredSignersAmount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
     <propose-form
-      :recipient-key="recipient.publicKey"
+      :recipient-key="recipientKey"
       :proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
     <confirm-form
@@ -64,6 +63,7 @@ export default {
     signers: null,
     version: null,
     recipient: Crypto.generateKeyPair(),
+    recipientKey: 'ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK',
     proposedConsensusInfo: null,
     confirmedInfo: null,
     proposedAmount: 1000,
@@ -77,10 +77,8 @@ export default {
   }),
   computed: {
 // todo conditions as computed properties
-    isCurrentUserSigner () {
-      return this.signers ? this.signers.includes(aeWallet.address) : false
-    },
-    isProposeBlockHidden () {
+     isProposeBlockHidden () {
+       // todo this is probably not needed
       return this.isCurrentUserSigner && this.signers
     },
   },
@@ -88,9 +86,11 @@ export default {
   methods: {
     async crateGaAccount () {
       this.gaKeypair = Crypto.generateKeyPair()
-
+      console.log('this.gaKeypair', this.gaKeypair)
       this.gaAccount = MemoryAccount({ keypair: this.gaKeypair })
       // todo try universal as this in data
+      console.log('this.gaAccount', this.gaAccount)
+
       this.signerSdk = await Universal({
         nodes: [{
           name: 'testnet',
@@ -131,9 +131,10 @@ export default {
       await aeWallet.sdk.payForTransaction(rawTx)
 
       this.isGa = await this.signerSdk.isGA(this.gaKeypair.publicKey)
+      console.log('this.gaAccount', this.gaAccount)
 
 
-      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
 
       this.contractAccount = await this.signerSdk.getAccount(this.gaKeypair.publicKey)
       // todo fix je vubec potreba contractaddress ?
@@ -156,6 +157,7 @@ export default {
       await storeContractToDB(
         this.contractAccount.contractId,
         this.gaKeypair.publicKey,
+        this.gaKeypair.secretKey,
         this.signers,
       )
 
@@ -164,7 +166,7 @@ export default {
     async proposeTx () {
       this.spendTx = await aeWallet.sdk.spendTx({
         senderId: this.gaKeypair.publicKey,
-        recipientId: this.recipient.publicKey,
+        recipientId: this.recipientKey,
         amount: this.proposedAmount,
       })
 
@@ -182,7 +184,7 @@ export default {
       await gaContractRpc.methods.propose.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
 
       // todo signer sdk to store
-      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
 
       // this.proposedConsensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },
@@ -198,7 +200,7 @@ export default {
 
       await gaContractRpc.methods.confirm.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
 
-      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
 
       // this.confirmedInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },
@@ -206,7 +208,7 @@ export default {
     async sendTx () {
       const nonce = (await this.contractInstance.methods.get_nonce()).decodedResult
 
-      const balanceBefore = await this.signerSdk.getBalance(this.recipient.publicKey)
+      const balanceBefore = await this.signerSdk.getBalance(this.recipientKey)
 
       // pre charge GA account create this.gaAccount on chai
       // todo do button workaround in app
@@ -216,10 +218,12 @@ export default {
       //  Maybe this can be solved using PayingForTx, so someone else pay the fee.
       //  If that approach works we can integrate it into the sdk.
 
+
       await aeWallet.sdk.spend(
         776440000000000,
         this.gaKeypair.publicKey,
       )
+
 
       await this.signerSdk.send(
         this.spendTx,
@@ -228,8 +232,8 @@ export default {
           authData: { source: multisigContract, args: [nonce] },
         })
 
-      const balanceAfter = await this.signerSdk.getBalance(this.recipient.publicKey)
-      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      const balanceAfter = await this.signerSdk.getBalance(this.recipientKey)
+      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
 
       // const consensusInfoAfterSend = (await this.contractInstance.methods.get_consensus_info()).decodedResult
       // console.log('consensusInfo - After Send', consensusInfoAfterSend)
@@ -258,7 +262,7 @@ export default {
       )
 
       await aeWallet.sdk.payForTransaction(signedContractCallTx2)
-      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
 
       // this.revokedInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },

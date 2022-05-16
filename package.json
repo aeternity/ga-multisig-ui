@@ -1,5 +1,5 @@
 {
-  "name": "aepp-boilerplate",
+  "name": "multisig-user-demo",
   "version": "0.1.0",
   "scripts": {
     "db": "json-server --watch db.json --port=3001",

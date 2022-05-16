@@ -5,15 +5,10 @@
     <div v-for="contract in myContracts">
       <div>
         {{ contract.contractId }}
-        <button @click="loadContract(contract.gaAddress)">
+        <button @click="loadContract(contract.gaAddress, contract.gaSecret)">
           Load info
         </button>
       </div>
-    </div>
-    <h3>Detail:</h3>
-    <div>
-      {{ contractDetail }}
-      <!--        todo get status and resume action-->
 
     </div>
   </div>
@@ -23,14 +18,12 @@
 // todo pages as setup
 
 import { Universal, Node } from '@aeternity/aepp-sdk'
-import { loadMyContracts, updateContractInfo, loadContractsFromDB } from "../store"
+import { loadMyContracts, updateContractInfo, restoreContractsFromDB } from "../store"
 
 import { COMPILER_URL } from "../utils/aeternity/configs"
 
-
 export default {
-
-  name: 'About',
+  name: 'Load',
   data: () => ({
     myContracts: null,
     contractDetail: null,
@@ -39,13 +32,13 @@ export default {
   }),
 
   async mounted () {
-    await loadContractsFromDB()
+    await restoreContractsFromDB()
     this.myContracts = await loadMyContracts()
   },
 
 
   methods: {
-    async loadContract (contract) {
+    async loadContract (gaAddress, gaSecret) {
       const signerSdk = await Universal({
         nodes: [{
           name: 'testnet',
@@ -53,16 +46,9 @@ export default {
         }],
         compilerUrl: COMPILER_URL,
       })
-
-      updateContractInfo(signerSdk, contract)
+      await updateContractInfo(signerSdk, gaAddress, gaSecret)
     },
   },
 }
 </script>
 
-<style>
-.done {
-  text-decoration: line-through;
-}
-
-</style>

@@ -1,121 +1,44 @@
 {
   "multisigContracts": [
     {
-      "contractId": "ct_fS7FD64xg8FhcGrGS43LWCNQVKuLokKFcXYekUgpQiuWxc32P",
-      "gaAddress": "ak_2grFEgXKrZmWUeJXtUB7nzwfPXcHjkUNYcXD2P91ZaJuLHzCUT",
+      "contractId": "ct_2THAqeyNzQgvFQYHQuzVstPZWTvUC8RuScoyhFKzSi4b9ydEMi",
+      "gaAddress": "ak_ZfbhxhDb9L96xKpxj9FTULxKkPwhYa5k8SfWgiYHXuEoPcbUz",
+      "gaSecret": "6360d7e7a4c8d6422e30e59ab15af689aedde6c5c86a34a879cf09cb716be7dd4a2bc5fa82cecb533dfa706898a956624e238fbb48cdeba2b57a091c31e564b4",
       "signers": [
-        "ak_9RX4eZCuTVEAWaeR9RxWwCqrZRLWV9jpkMqna1XoQWTHCV6nT",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
         "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
       ],
       "id": 1
     },
     {
-      "contractId": "ct_23ammxPfYfazUuRZTw6bE6JvSc1tjyWPAQkf3dNz64uA5DHCxc",
-      "gaAddress": "ak_wfSaxnebpFaEyEHcYJezhq3pVuxurh5wxxCmEXKyXikD74WMh",
+      "contractId": "ct_xXx1AtECSo8qRs2Pw6NbR6WC5eGeMFoQxzvkPkirshraSGEBa",
+      "gaAddress": "ak_21BkGrREUpjUJYCVMfqJC4v1iLE1esLAbtXEnCN92YVrQf1r9r",
+      "gaSecret": "5f7af7cb5e6999707064e1cddf84c95e638f1a191c50f649e16aabe840dc4da8841de5f9f484e83de6d16aa62cc54021b9f2c78b45689db88f2745ad9ed667b9",
       "signers": [
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
-        "ak_2YuTcd7dpgfcaGjH2VyjAteuKMbfzc9PSyujMoHafmktfvnhvo"
+        "ak_MnydvpMtFWU64bUbUAosxniXL7XjnByDeiDJgSKJgPjRReA1H",
+        "ak_2V339GjTGEVFs1c7rEqvbor4Es5o9cxA6USCDD4tAgoSCzVVis"
       ],
       "id": 2
     },
     {
-      "contractId": "ct_2NuhFkTef8ZhYLVEx2ipS7FCT1ZxwiqCq6jWfnjQzzak2f72ne",
-      "gaAddress": "ak_G7wk3YUq9wHKTZAp51Ei8tF64FYBRT9X51RpzJHquouN124CV",
+      "contractId": "ct_cdKv8r9YNrL3KHx1NuU6dB4x6N4p6Av72URoW7mBAhfgoqqcD",
+      "gaAddress": "ak_2bMEVCFEMedXMSLE5CygAGfKDB5KJPBTMvQfYNXp1iPj6bsuzA",
+      "gaSecret": "7fd91a77f2e6d9ed262942ab54009cfdaa7c890f00e6e8dc229318b4a1478c9fd1b077f9766d8acd9da2f41ed2b2a6f1779f808b8eb75b8245e1f85b22587368",
       "signers": [
-        "ak_2dN31bRWuc1rWBhgnRDs7HaMVT7zSQEPMii3MPb9fTqYAKBMrK",
-        "ak_2vjUJ7MCThPGLKFTKq2BCX759XHSyiUHGTXkemjUEyG6vPrWR9"
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
       ],
       "id": 3
     },
     {
-      "contractId": "ct_JyTVtsJ8PLdpvpN7ZhNoPsfKewkS99HtFQ4wGz9wSVHY7Hf37",
-      "gaAddress": "ak_2814uZXQ8JHx1LJ7swG7ZRwJk4o9abU2uvk6G6ZHdiFqRnbtq",
+      "contractId": "ct_QWXJkKyNjaHjKLXnCLA9SmMuBmUgXwaFsJRXHoGW28AcDqz4n",
+      "gaAddress": "ak_2jKECir5kHiw1uwgmEnUWLBXwGoUNNLSdT638TChMp8C9j9k7Z",
+      "gaSecret": "c48b476ca277affb5e730090ac6044f982c9609cc36e80477a7fbebfb925531be3c69c28e8969f23a607938afe6a2ece2dbde4ecd69063493e4dfc56059704d4",
       "signers": [
-        "ak_2FSaA1aELk1NcuEVMCjnFXLcc48FX8gXRPM79B4mPw3UE54tPd",
-        "ak_2hQfAqLbS6moN4zbsjcPVMMsCnAaQmhsF4hsfRnDS26cv5UJ1L"
+        "ak_dnJuLsFxX353EJsNWwwMfTd9J4oFyy6dpCsFHRJsUhPcMSdD4",
+        "ak_m55SxSRR4y2EEHg2WdHEzBZTA8QLxXbzdiBmgtNM7Y3u5XgHf"
       ],
       "id": 4
-    },
-    {
-      "contractId": "ct_dNKsiBFMdK8sTmuwE8MZkKVpMXrZFeDnbZw1ypS13NECet5G3",
-      "gaAddress": "ak_oqt8TqprSfjy1qAfct4esYihJsvRES8NvEN3yi56XoNp1Ufqe",
-      "signers": [
-        "ak_NnVWyta7E3Pd2iRrJzyspj6T1CkXZotZcDqgSQW4sNuGAnssS",
-        "ak_2wNCcSUJ8CkcgaGgyc7TtJ9iQ8CKkPDDGDPWPpBrAaVonQ5Lbp"
-      ],
-      "id": 5
-    },
-    {
-      "contractId": "ct_2Jv5t7bCKSTBLpWqmCywJoaVEvEv8nmLJqG312qnNYVaJt52Ej",
-      "gaAddress": "ak_2aXfDxjQ6Xz8o9unuJsF5ibW2vDQK5GPSczz9XpEW5Y8XvsNPQ",
-      "signers": [
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
-        "ak_2fTk3CknnWe9ujXS9TDzwPSmPwubcua7sif6uMXf29TPfCh6fU"
-      ],
-      "id": 6
-    },
-    {
-      "contractId": "ct_21JkYst6eFqc3CvzrRSzVTamgvunkVqS3JkrbaG7U56zcss7vn",
-      "gaAddress": "ak_Et7kHeEgazhLW2m16TQ9EQCMwsPsrdu8N6n7o3K8BW2xeQqr8",
-      "signers": [
-        "ak_29cRuWypWKsiCjF1jUBQXGk6UPvaV7kLnMHxNJRXm4v2t6QPP9",
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
-      ],
-      "id": 7
-    },
-    {
-      "contractId": "ct_227vkDFxGurVtkxAAgSvK7b8htkUvmpxL53KJtxYM6st4ENL8Z",
-      "gaAddress": "ak_mrfR5pUM1b4eFKAjAgbS7ErnS385ajNKKixFPUBZXyfyrbg42",
-      "signers": [
-        "ak_wbhpFfWYPY416BXKGGQkybF7atikMGn9AXroPVoL6SGmmwqdF",
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
-      ],
-      "id": 8
-    },
-    {
-      "contractId": "ct_2udMFCJ4BT13LLwWFtxahKcA26FKDh9Yb9nY4by7GboPGq1mjN",
-      "gaAddress": "ak_2WEhAWtBTx4HkrzpEzzxHQiU9tRzRGkhw9ujw9yDLqUW8noYBj",
-      "signers": [
-        "ak_AeHwNb71Vfe25MU8FddmaurVCgqmj6U9YbRRtjxFW9zxGydiR",
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
-      ],
-      "id": 9
-    },
-    {
-      "contractId": "ct_CkG4Mq1MeCr5D2Jdi1FuYYBqENVrP3UsViXpMXEi2wyuErk8S",
-      "gaAddress": "ak_b4wuKpewDGmVdhfQJEMegne2q8vtWFjgYApTfJKJY5zTqJyCA",
-      "signers": [
-        "ak_Z4SRaaPsRwxFyxcMr8SmUnzFonXB9y75qU2w2TEwM7rWEoNm3",
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
-      ],
-      "id": 10
-    },
-    {
-      "contractId": "ct_TtNMtbG2CGVqW1vvbp7P3M9pYw5L1dkNpuJkRi4NAfpitcKiG",
-      "gaAddress": "ak_2uU3w67akUUUUPjy3h9P8pZAjBLX299v9PRTBbaj35s4xskKMp",
-      "signers": [
-        "ak_22TRvQTqp2xCVQUs9QMdjRMujC9LzR8HYGeH5qEin6FJrrZG3L",
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
-      ],
-      "id": 11
-    },
-    {
-      "contractId": "ct_bn36VxapEovFrjgry4RsVUJZacGHYpMfLm91nsS2cDhTznYyq",
-      "gaAddress": "ak_2iApmfZALjMcQrB2vXVdU6YRT6nec9oJfqpnELsAbg4Ht1VCv7",
-      "signers": [
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
-        "ak_2r7dEdTW8c2vmXVd3qRRRCBpvaqu9WU2UaKqVg5VqkftVosWyL"
-      ],
-      "id": 12
-    },
-    {
-      "contractId": "ct_2umehwzfR8Nd1Pzz6Q5VW4JGyBRnCTGB8Hfbr77JEw961tqngw",
-      "gaAddress": "ak_G2B94RcqTzHH8h2avFD8BveGJVyopphekvvQ2FgpVsacgaA78",
-      "signers": [
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
-        "ak_2risUZHSdPdmESbkcJXKhET3o9Ww8ZHjzK2hotn4G4DkGzLey8"
-      ],
-      "id": 13
     }
   ]
 }
