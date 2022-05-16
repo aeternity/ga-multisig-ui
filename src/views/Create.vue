@@ -155,7 +155,6 @@ export default {
         this.gaKeypair.secretKey,
         this.signers,
       )
-
     },
 
     async proposeTx () {

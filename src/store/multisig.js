@@ -92,33 +92,3 @@ export const getUniversalInstance = async () => {
 }
 
 
-// todo move to module
-const dbURL = "http://localhost:3001/multisigContracts"
-
-export const storeContractToDB = async (contractId, gaAddress, gaSecret, signers) => {
-  try {
-    await axios.post(dbURL,
-      {
-        contractId,
-        gaAddress,
-        gaSecret,
-        signers,
-      })
-  } catch (e) {
-    console.error(e)
-  }
-}
-
-// todo move to another module
-export const restoreContractsFromDB = async () => {
-  const { multisigContracts } = toRefs(multisig)
-  try {
-    const res = await axios.get(dbURL)
-    multisigContracts.value = res.data
-  } catch (e) {
-    console.error(e)
-  }
-}
-
-
-

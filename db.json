@@ -29,6 +29,16 @@
         "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
       ],
       "id": 3
+    },
+    {
+      "contractId": "ct_q1kmtqBPBymS59Jnqsm7kwhrnE3yWfDAuUqTdg6ukCYgNL9LA",
+      "gaAddress": "ak_2oV2rcbwy7rs9nLC4NJotkE9Qn8kuzhx86SYhyWWTre5RGPcSf",
+      "gaSecret": "50a68c242038d9aff03c837a55359e7741addbb711b639e8ee77cb827d258565ed3dfcb9290d47350b9247fcdf2618d86272034ad58314f8e8db068f3e9706f4",
+      "signers": [
+        "ak_5pUSYGSxgRXVETq7YA4GLSUweCxN9NJQWUevbwWpu5TnpLULH",
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
+      ],
+      "id": 4
     }
   ]
 }
