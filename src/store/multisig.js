@@ -3,6 +3,7 @@ import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet } from "../utils/aeternity"
 import axios from "axios"
+import { getContractByGaAddress } from "./off-chainDB"
 
 export const multisig = reactive({
   version: null,
@@ -66,9 +67,12 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
   hasProposedTx.value = !!confirmations.value
   hasConsensus.value = consensus.has_consensus
 
-  proposedAmount.value = hasProposedTx.value ? 1000 : null//todo connect this
-  recipientKey.value = hasProposedTx.value ? 'ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK' : null//todo connect this
 
+  if (hasProposedTx.value) {
+    const offChainProposeData = getContractByGaAddress(gaAddress)
+    proposedAmount.value = offChainProposeData.proposedAmount
+    recipientKey.value = offChainProposeData.recipientKey
+  }
 }
 
 export const loadMyContracts = async () => {

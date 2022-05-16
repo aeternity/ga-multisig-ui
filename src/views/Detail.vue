@@ -1,12 +1,11 @@
 <template>
   <div class="resume" v-if="isCurrentUserSigner">
     <h2>Resume</h2>
-    <!--    todo merge resume and create-->
+    <!--    todo merge detail and create-->
     <propose-form
-      recipient-key="ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK"
-      :proposed-amount="1000"
+      :recipient-key="recipientKey"
+      :proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
-<!--    todo not connected to variables-->
     <confirm-form
       v-if="hasProposedTx"
       @confirm-clicked="confirmTx"
@@ -51,12 +50,6 @@ export default {
     spendTx: null,
   }),
   computed: {
-    recipientKey () {
-      return multisig.recipientKey //todo not connected to form
-    },
-    proposedAmount () {
-      return multisig.proposedAmount //todo not connected to form
-    },
     isCurrentUserSigner () {
       // todo how to remove boilerplate. Vue3 store + options
       return multisig.isCurrentUserSigner
@@ -78,6 +71,12 @@ export default {
     },
     currentUserAddress () {
       return aeWallet.address
+    },
+    recipientKey () {
+      return multisig.recipientKey
+    },
+    proposedAmount () {
+      return multisig.proposedAmount
     },
   },
   async mounted () {
@@ -101,8 +100,8 @@ export default {
 
       this.spendTx = await aeWallet.sdk.spendTx({
         senderId: this.gaPubKey,
-        recipientId: 'ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK', //todo not connected
-        amount: 1000, //todo not connected
+        recipientId: this.recipientKey, //todo not connected
+        amount: this.proposedAmount, //todo not connected
       })
 
       const encoded = encode(unpackTx(this.spendTx).rlpEncoded, 'tx')

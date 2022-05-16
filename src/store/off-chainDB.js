@@ -32,34 +32,41 @@ export const restoreContractsFromDB = async () => {
 export const patchProposalByContractId = async (contractId,recipientKey, proposedAmount) => {
 // todo mozna predtim restore? anebo rovnou vytahnout z db?
   await restoreContractsFromDB()
-  const { multisigContracts } = toRefs(multisig)
 
-  const contractById = multisigContracts.value.find(contract => {
-    return contract.contractId === contractId //todo can be shortened
-  })
-
-  console.log('contractById', contractById) //todo can be shortened
+  const contractById = getContractByContractId(contractId)
 
   try {
-    await axios.patch(`${baseURL}/${contractById.id}`, {
-      recipientKey,
+    await axios.patch(`${dbURL}/${contractById.id}`, {
+      recipientKey, //todo now we store recipiant key and secret Maybe we can store only recipiant key
       proposedAmount
     });
 
    await restoreContractsFromDB()
-
-    // this.todos = this.todos.map(todo => {
-    //   if (todo.id === id) {
-    //     todo.done = true;
-    //   }
-    //
-    //   return todo;
-    // });
   } catch (e) {
     console.error(e);
   }
 }
 
+
+export const getContractByGaAddress  =(gaAddress) =>{
+  //todo rovnou mozna vytahnout z DB
+  const { multisigContracts } = toRefs(multisig)
+  const contractByGaAddress = multisigContracts.value.find(contract => {
+    return contract.gaAddress === gaAddress //todo can be shortened
+  })
+  return contractByGaAddress
+}
+
+
+export const getContractByContractId  =(contractId) =>{
+  //todo rovnou mozna vytahnout z DB
+
+  const { multisigContracts } = toRefs(multisig)
+  const contractByContractId = multisigContracts.value.find(contract => {
+    return contract.contractId === contractId //todo can be shortened
+  })
+  return contractByContractId
+}
 
 
 

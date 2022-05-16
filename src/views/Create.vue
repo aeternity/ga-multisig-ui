@@ -9,8 +9,8 @@
       v-model:requiredSignersAmount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
     <propose-form
-      :recipient-key="recipientKey"
-      :proposed-amount="proposedAmount"
+      v-model:recipient-key="recipientKey"
+      v-model:proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
     <confirm-form
       @confirm-clicked="confirmTx"
@@ -61,11 +61,10 @@ export default {
     revokedInfo: null,
     signers: null,
     version: null,
-    recipient: Crypto.generateKeyPair(),
-    recipientKey: 'ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK',
+    recipientKey: '',
     proposedConsensusInfo: null,
     confirmedInfo: null,
-    proposedAmount: 1000,
+    proposedAmount: 0,
     spendTx: null,
     spendTxHash: null,
     contractAccount: null,
@@ -177,7 +176,8 @@ export default {
       await gaContractRpc.methods.propose.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
 
       // todo signer sdk to store
-      await patchProposalByContractId(this.contractAccount.contractId, this.recipient, this.proposedAmount)
+      await patchProposalByContractId(this.contractAccount.contractId, this.recipientKey, this.proposedAmount)
+
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
 
       // this.proposedConsensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult

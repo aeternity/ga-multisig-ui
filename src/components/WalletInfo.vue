@@ -17,6 +17,8 @@
       <br>
       proposedAmount: {{ proposedAmount }}
       <br>
+      recipientKey: {{ recipientKey }}
+      <br>
       <hr>
       <br>
       isCurrentUserSigner: {{ isCurrentUserSigner }}
@@ -25,7 +27,7 @@
       <br>
       hasConsensus: {{ hasConsensus }}
       <br>
-      <router-link to="/resume">Resume</router-link>
+      <router-link to="/detail">Contract Detal (resume)</router-link>
     </div>
 
     <img
@@ -54,7 +56,8 @@ const {
   cId,
   txHash,
   proposedAmount,
-  gaPubKey
+  gaPubKey,
+  recipientKey
 } = toRefs(multisig)
 </script>
 

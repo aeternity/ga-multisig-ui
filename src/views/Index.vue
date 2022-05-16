@@ -43,7 +43,6 @@ export default {
   },
   watch: {
    async walletStatus (newValue) {
-      console.log('walletStatus', newValue)
       if (newValue === null) {
         // todo wait for wallet connection but make it better
         await restoreContractsFromDB()

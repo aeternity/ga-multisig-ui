@@ -2,41 +2,39 @@
   <div class="signers-form">
     <hr>
     <h3>1. Select Signers</h3>
+
+    <small>
+    My addres #1 <i>ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7</i>
     <br>
-    my second address
+    My addres #2 <i>ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU</i>
+    </small>
     <br>
-    ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU
     <br>
     <label>Signer 1 </label>
-<!--    todo fix propagating-->
-    <button @click="fillRandomAddress('recipient1')">Fill random address</button>
-    <button @click="fillMyAddress('recipient1')">Fill my address</button>
+
     <br>
     <!--    todo redo to computed-->
     <input
       type="text"
       :value="signer1Key"
-      @input="$emit('update:signer1Key', $event.target.value)"
-      ref="recipient1">
+      @input="$emit('update:signer1Key', $event.target.value)">
     <br>
     <br>
     <label>Signer 2 </label>
-    <button @click="fillRandomAddress('recipient2')">Fill random address</button>
-    <button @click="fillMyAddress('recipient2')">Fill my address</button>
+
     <br>
     <input
       type="text"
       :value="signer2Key"
-      @input="$emit('update:signer2Key', $event.target.value)"
-      ref="recipient2">
+      @input="$emit('update:signer2Key', $event.target.value)">
     <br>
     <br>
     <label>Amount of signers</label>
     <br>
     <input
       type="text"
-      @input="$emit('update:requiredSignersAmount', $event.target.value)"
       :value="requiredSignersAmount"
+      @input="$emit('update:requiredSignersAmount', $event.target.value)"
     >
     <br>
     <br>
@@ -48,25 +46,8 @@
 </template>
 
 <script>
-import { aeWallet } from '../utils/aeternity'
-import { Crypto } from '@aeternity/aepp-sdk'
-
 export default {
   name: 'SignersForm',
   props: ['signer1Key', 'signer2Key', 'requiredSignersAmount'],
-  methods: {
-    fillMyAddress (input) {
-      this.$refs[input].value = aeWallet.address
-    },
-    fillRandomAddress (input) {
-      this.$refs[input].value = Crypto.generateKeyPair().publicKey
-    },
-  }
 }
 </script>
-
-<style scoped>
-.signers-form {
-
-}
-</style>

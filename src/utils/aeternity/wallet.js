@@ -1,16 +1,18 @@
 import {
-  RpcAepp,
-  Node,
-  BrowserWindowMessageConnection,
-  WalletDetector,
   AmountFormatter,
-  Universal,
+  BrowserWindowMessageConnection,
+  Crypto,
   MemoryAccount,
+  Node,
+  RpcAepp,
+  TxBuilderHelper,
+  Universal,
+  WalletDetector,
 } from '@aeternity/aepp-sdk'
 
 import { reactive, toRefs } from 'vue'
 import { COMPILER_URL, NETWORKS } from './configs'
-
+import { Buffer } from "buffer"
 
 
 export const aeWallet = reactive({
@@ -69,7 +71,6 @@ export const aeInitWallet = async () => {
           aeFetchWalletInfo(sdk.value)
         },
       })
-      console.log('walletStatus.value', walletStatus.value)
       walletStatus.value = 'connected'
 
       await aeScanForWallets()
@@ -143,3 +144,20 @@ export const aeFetchWalletInfo = async (sdk) => {
     return false
   }
 }
+
+export const buildAuthTxHash = async (rlpTransaction) => {
+  const { sdk } = toRefs(aeWallet)
+
+  const decoded = TxBuilderHelper.decode(rlpTransaction, 'tx')
+  const networkId = Buffer.from(sdk.value.getNetworkId())
+
+  return new Uint8Array(
+    Crypto.hash(
+      Buffer.concat([
+        networkId,
+        decoded
+      ]),
+    ),
+  )
+}
+
