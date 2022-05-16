@@ -2,9 +2,9 @@
   <div class="propose-form">
     <h3>4. Propose Tx</h3>
     <label>Recipient </label>
-    <input type="text" v-model="recipientKey"> (randomly generated)
+    <input type="text" disabled v-model="recipientKey"> (randomly generated)
     <label>Propose amount </label>
-    <input type="text" v-model="proposedAmount"> Aettos
+    <input type="text" disabled v-model="proposedAmount"> Aettos
     <br>
     <button @click="$emit('propose-clicked')">Propose Tx</button>
   </div>

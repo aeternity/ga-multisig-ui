@@ -86,10 +86,8 @@ export default {
   methods: {
     async crateGaAccount () {
       this.gaKeypair = Crypto.generateKeyPair()
-      console.log('this.gaKeypair', this.gaKeypair)
       this.gaAccount = MemoryAccount({ keypair: this.gaKeypair })
       // todo try universal as this in data
-      console.log('this.gaAccount', this.gaAccount)
 
       this.signerSdk = await Universal({
         nodes: [{
@@ -111,7 +109,6 @@ export default {
           this.signer2Key,
         ],
       ]
-
       const attachTX = await this.signerSdk.gaAttachTx({
         ownerId: this.gaKeypair.publicKey,
         code: contractInstanceInitial.bytecode,
@@ -131,8 +128,6 @@ export default {
       await aeWallet.sdk.payForTransaction(rawTx)
 
       this.isGa = await this.signerSdk.isGA(this.gaKeypair.publicKey)
-      console.log('this.gaAccount', this.gaAccount)
-
 
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
 
@@ -236,7 +231,6 @@ export default {
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
 
       // const consensusInfoAfterSend = (await this.contractInstance.methods.get_consensus_info()).decodedResult
-      // console.log('consensusInfo - After Send', consensusInfoAfterSend)
     },
 
     async revokeTx () {

@@ -59,8 +59,8 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
   confirmations.value = consensus.confirmed_by.length
   confirmationsRequired.value = Number(consensus.confirmations_required)
 
-  console.log('XXX consensus', consensus)
   txHash.value = consensus.tx_hash
+
 
   isCurrentUserSigner.value = signers.value.includes(address.value)
   hasProposedTx.value = !!confirmations.value
@@ -68,6 +68,7 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
 
   proposedAmount.value = hasProposedTx.value ? 1000 : null//todo connect this
   recipientKey.value = hasProposedTx.value ? 'ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK' : null//todo connect this
+
 }
 
 export const loadMyContracts = async () => {

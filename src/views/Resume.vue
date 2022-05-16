@@ -99,8 +99,6 @@ export default {
   methods: {
     async proposeTx () {
 
-      console.log('this.recipientKey', this.recipientKey)
-      console.log('this.proposedAmount', this.proposedAmount)
       this.spendTx = await aeWallet.sdk.spendTx({
         senderId: this.gaPubKey,
         recipientId: 'ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK', //todo not connected
@@ -117,8 +115,6 @@ export default {
           contractAddress: this.contractAccount.contractId,
         },
       )
-      console.log('this.spendTxHash', this.spendTxHash)
-      console.log('expirationHeight', expirationHeight)
       await gaContractRpc.methods.propose.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
 
       // todo signer sdk to store
@@ -128,8 +124,6 @@ export default {
     },
 
     async confirmTx () {
-      console.log('await aeWallet.sdk', await aeWallet.sdk)
-      console.log('this.contractAccount.contractId', this.contractAccount.contractId)
       const gaContractRpc = await aeWallet.sdk.getContractInstance(
         {
           source: multisigContract,
@@ -147,10 +141,8 @@ export default {
 
     async sendTx () {
       const nonce = (await this.contractInstance.methods.get_nonce()).decodedResult
-      console.log('nonce', nonce)
 
       const balanceBefore = await this.signerSdk.getBalance(this.recipientKey)
-      console.log('balanceBefore', balanceBefore)
 
       // pre charge GA account create this.gaAccount on chai
       // todo do button workaround in app
@@ -172,11 +164,6 @@ export default {
         { keypair: aaa }
       )
 
-      console.log('gaAccount', gaAccount)
-
-      console.log('this.spendTx', this.spendTx)
-
-
       const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
         senderId: this.gaPubKey,
         recipientId: this.recipientKey,
@@ -191,11 +178,9 @@ export default {
         })
 
       const balanceAfter = await this.signerSdk.getBalance(this.recipientKey)
-      console.log('balanceAfter', balanceAfter)
       await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
 
       // const consensusInfoAfterSend = (await this.contractInstance.methods.get_consensus_info()).decodedResult
-      // console.log('consensusInfo - After Send', consensusInfoAfterSend)
     },
 
     async revokeTx () {
@@ -210,9 +195,7 @@ export default {
       const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
 
       const spendTxHash = await buildAuthTxHash(encoded)
-      console.log('spendTxHash', spendTxHash)
       // const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'revoke', [spendTxHash])
-      // console.log('calldata2', calldata2)
 
       const gaContractRpc = await aeWallet.sdk.getContractInstance(
         {
@@ -230,7 +213,6 @@ export default {
       //   gasPrice: 1500000000,
       //   callData: calldata2,
       // })
-      // console.log('revokeCall', revokeCall)
       //
       // const revokeCallTx = await this.signerSdk.signTransaction(
       //   revokeCall,
@@ -239,7 +221,6 @@ export default {
       //     innerTx: true,
       //   },
       // )
-      console.log('aaa', aaa)
 
       // await aeWallet.sdk.payForTransaction(revokeCallTx)
       await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params

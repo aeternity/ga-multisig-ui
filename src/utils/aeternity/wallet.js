@@ -141,10 +141,19 @@ export const aeFetchWalletInfo = async (sdk) => {
 
 export const buildAuthTxHash = async (rlpTransaction) => {
   const { sdk } = toRefs(aeWallet)
+
+  console.log('rlpTransaction', rlpTransaction)
+  const decoded = TxBuilderHelper.decode(rlpTransaction, 'tx')
+  console.log('TxBuilderHelper.decode(rlpTransaction', decoded)
+  const networkId = Buffer.from(sdk.value.getNetworkId())
+  console.log('Buffer.from(sdk.value.getNetworkId())', networkId)
+
+
   return new Uint8Array(
-    Crypto.hash(Buffer.concat([
-        Buffer.from(sdk.value.getNetworkId()),
-        TxBuilderHelper.decode(rlpTransaction, 'tx'),
+    Crypto.hash(
+      Buffer.concat([
+        networkId,
+        decoded
       ]),
     ),
   )
