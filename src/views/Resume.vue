@@ -3,9 +3,10 @@
     <h2>Resume</h2>
     <!--    todo merge resume and create-->
     <propose-form
-      :recipient-key="recipientKey"
-      :proposed-amount="proposedAmount"
+      recipient-key="ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK"
+      :proposed-amount="1000"
       @propose-clicked="proposeTx"/>
+<!--    todo not connected to variables-->
     <confirm-form
       v-if="hasProposedTx"
       @confirm-clicked="confirmTx"
@@ -47,15 +48,17 @@ export default {
     signerSdk: null,
     contractAccount: null,
     contractInstance: null,
+    spendTx: null,
   }),
   computed: {
     recipientKey () {
-      return multisig.recipientKey
+      return multisig.recipientKey //todo not connected to form
     },
     proposedAmount () {
-      return multisig.proposedAmount
+      return multisig.proposedAmount //todo not connected to form
     },
     isCurrentUserSigner () {
+      // todo how to remove boilerplate. Vue3 store + options
       return multisig.isCurrentUserSigner
     },
     hasProposedTx () {
@@ -72,6 +75,9 @@ export default {
     },
     gaSecret () {
       return multisig.gaSecret
+    },
+    currentUserAddress () {
+      return aeWallet.address
     },
   },
   async mounted () {
@@ -93,11 +99,12 @@ export default {
   methods: {
     async proposeTx () {
 
-
+      console.log('this.recipientKey', this.recipientKey)
+      console.log('this.proposedAmount', this.proposedAmount)
       this.spendTx = await aeWallet.sdk.spendTx({
         senderId: this.gaPubKey,
-        recipientId: this.recipientKey,
-        amount: this.proposedAmount,
+        recipientId: 'ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK', //todo not connected
+        amount: 1000, //todo not connected
       })
 
       const encoded = encode(unpackTx(this.spendTx).rlpEncoded, 'tx')
@@ -110,10 +117,12 @@ export default {
           contractAddress: this.contractAccount.contractId,
         },
       )
+      console.log('this.spendTxHash', this.spendTxHash)
+      console.log('expirationHeight', expirationHeight)
       await gaContractRpc.methods.propose.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
 
       // todo signer sdk to store
-      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
 
       // this.proposedConsensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },
@@ -168,7 +177,7 @@ export default {
       console.log('this.spendTx', this.spendTx)
 
 
-      const spendTx = await aeWallet.sdk.spendTx({ //this is duplicated so try to separate it
+      const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
         senderId: this.gaPubKey,
         recipientId: this.recipientKey,
         amount: this.proposedAmount,
@@ -190,29 +199,50 @@ export default {
     },
 
     async revokeTx () {
-      const signer1Account = MemoryAccount({ keypair: this.signer1 })
       // todo is account necessary?
 
-      const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'revoke', [this.spendTxHash])
-      const contractCallTx2 = await this.signerSdk.contractCallTx({
-        callerId: this.signer1Key,
-        contractId: this.contractAccount.contractId,
-        amount: 0,
-        gas: 1000000,
-        gasPrice: 1500000000,
-        callData: calldata2,
+      const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
+        senderId: this.gaPubKey,
+        recipientId: this.recipientKey,
+        amount: this.proposedAmount,
       })
 
-      const signedContractCallTx2 = await this.signerSdk.signTransaction(
-        contractCallTx2,
+      const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
+
+      const spendTxHash = await buildAuthTxHash(encoded)
+      console.log('spendTxHash', spendTxHash)
+      // const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'revoke', [spendTxHash])
+      // console.log('calldata2', calldata2)
+
+      const gaContractRpc = await aeWallet.sdk.getContractInstance(
         {
-          onAccount: signer1Account,
-          innerTx: true,
+          source: multisigContract,
+          contractAddress: this.contractAccount.contractId,
         },
       )
+     const aaa =  await gaContractRpc.methods.revoke.send(spendTxHash)
 
-      await aeWallet.sdk.payForTransaction(signedContractCallTx2)
-      await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey) // todo improve/reduce params
+      // const revokeCall = await this.signerSdk.contractCallTx({
+      //   callerId: this.currentUserAddress,
+      //   contractId: this.contractAccount.contractId,
+      //   amount: 0,
+      //   gas: 1000000,
+      //   gasPrice: 1500000000,
+      //   callData: calldata2,
+      // })
+      // console.log('revokeCall', revokeCall)
+      //
+      // const revokeCallTx = await this.signerSdk.signTransaction(
+      //   revokeCall,
+      //   {
+      //     onAccount: this.currentUserAddress,
+      //     innerTx: true,
+      //   },
+      // )
+      console.log('aaa', aaa)
+
+      // await aeWallet.sdk.payForTransaction(revokeCallTx)
+      await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
 
       // this.revokedInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },

@@ -1,44 +1,14 @@
 {
   "multisigContracts": [
     {
-      "contractId": "ct_2THAqeyNzQgvFQYHQuzVstPZWTvUC8RuScoyhFKzSi4b9ydEMi",
-      "gaAddress": "ak_ZfbhxhDb9L96xKpxj9FTULxKkPwhYa5k8SfWgiYHXuEoPcbUz",
-      "gaSecret": "6360d7e7a4c8d6422e30e59ab15af689aedde6c5c86a34a879cf09cb716be7dd4a2bc5fa82cecb533dfa706898a956624e238fbb48cdeba2b57a091c31e564b4",
+      "contractId": "ct_22LnHuNCb7qKw83fTva6nnbrqohAkr6qGzVZvkzB7JpzmuFgH9",
+      "gaAddress": "ak_kcUZDB8jo41GoupGUeZUj9FYvFTQfBtU6wtcxayfUUTmmnqAU",
+      "gaSecret": "541299b9bf7b5af93d8484f7e90fb5ff1786990dfc5e5c15983f434aaf6e64be63068b467d66d2ce21accf2de0ef4d7016211429dee4c80d8f0c618cc1d0bee4",
       "signers": [
         "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
         "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
       ],
       "id": 1
-    },
-    {
-      "contractId": "ct_xXx1AtECSo8qRs2Pw6NbR6WC5eGeMFoQxzvkPkirshraSGEBa",
-      "gaAddress": "ak_21BkGrREUpjUJYCVMfqJC4v1iLE1esLAbtXEnCN92YVrQf1r9r",
-      "gaSecret": "5f7af7cb5e6999707064e1cddf84c95e638f1a191c50f649e16aabe840dc4da8841de5f9f484e83de6d16aa62cc54021b9f2c78b45689db88f2745ad9ed667b9",
-      "signers": [
-        "ak_MnydvpMtFWU64bUbUAosxniXL7XjnByDeiDJgSKJgPjRReA1H",
-        "ak_2V339GjTGEVFs1c7rEqvbor4Es5o9cxA6USCDD4tAgoSCzVVis"
-      ],
-      "id": 2
-    },
-    {
-      "contractId": "ct_cdKv8r9YNrL3KHx1NuU6dB4x6N4p6Av72URoW7mBAhfgoqqcD",
-      "gaAddress": "ak_2bMEVCFEMedXMSLE5CygAGfKDB5KJPBTMvQfYNXp1iPj6bsuzA",
-      "gaSecret": "7fd91a77f2e6d9ed262942ab54009cfdaa7c890f00e6e8dc229318b4a1478c9fd1b077f9766d8acd9da2f41ed2b2a6f1779f808b8eb75b8245e1f85b22587368",
-      "signers": [
-        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
-      ],
-      "id": 3
-    },
-    {
-      "contractId": "ct_QWXJkKyNjaHjKLXnCLA9SmMuBmUgXwaFsJRXHoGW28AcDqz4n",
-      "gaAddress": "ak_2jKECir5kHiw1uwgmEnUWLBXwGoUNNLSdT638TChMp8C9j9k7Z",
-      "gaSecret": "c48b476ca277affb5e730090ac6044f982c9609cc36e80477a7fbebfb925531be3c69c28e8969f23a607938afe6a2ece2dbde4ecd69063493e4dfc56059704d4",
-      "signers": [
-        "ak_dnJuLsFxX353EJsNWwwMfTd9J4oFyy6dpCsFHRJsUhPcMSdD4",
-        "ak_m55SxSRR4y2EEHg2WdHEzBZTA8QLxXbzdiBmgtNM7Y3u5XgHf"
-      ],
-      "id": 4
     }
   ]
 }
