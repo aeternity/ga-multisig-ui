@@ -1,13 +1,12 @@
 <template>
   <div id="container">
-    <img alt="Aeternity" src="./assets/logo.svg" style="width: 250px"/>
-    <h1>Multisig App</h1>
+
+    <router-link to="/">
+      <h1><img alt="Aeternity" src="./assets/logo.svg" width="80"/> Multisig App</h1>
+    </router-link>
     <WalletInfo class="wallet-info"/>
-<!--todo My Multisig Accounts + Create Button-->
-    <div id="nav">
-      <router-link to="/">Create</router-link>
-      <router-link to="/load">Load</router-link>
-    </div>
+    <!--todo My Multisig Accounts + Create Button-->
+
   </div>
 
   <router-view/>
@@ -30,6 +29,17 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+h1 {
+  color: #de3f6b;
+  text-underline: none;
+
+}
+
+body {
+  display: block;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -48,9 +58,7 @@ export default defineComponent({
   font-weight: bold;
 }
 
-#nav a.router-link-exact-active {
-  color: #de3f6b;
-}
+
 
 .wallet-info {
   position: fixed;

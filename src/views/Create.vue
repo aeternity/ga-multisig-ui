@@ -1,7 +1,6 @@
 <template>
   <div class="create">
-    <h1>Create Multisig Account</h1>
-    <br>
+    <h2>Create Multisig Account</h2>
     <br>
     <br>
     <signers-form
@@ -40,7 +39,7 @@ import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
-import { storeContractToDB, updateContractInfo } from '../store'
+import { storeContractToDB, updateContractInfo, patchProposalByContractId } from '../store'
 import { COMPILER_URL } from '../utils/aeternity/configs'
 
 
@@ -178,6 +177,7 @@ export default {
       await gaContractRpc.methods.propose.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
 
       // todo signer sdk to store
+      await patchProposalByContractId(this.contractAccount.contractId, this.recipient, this.proposedAmount)
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
 
       // this.proposedConsensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult

@@ -23,7 +23,7 @@
 
 <script>
 import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
-import { multisig } from '../store'
+import { multisig, patchProposalByContractId } from '../store'
 import { updateContractInfo } from '../store'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
@@ -118,6 +118,7 @@ export default {
       await gaContractRpc.methods.propose.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
 
       // todo signer sdk to store
+      await patchProposalByContractId(this.contractAccount.contractId, this.recipient, this.proposedAmount)
       await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
 
       // this.proposedConsensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
