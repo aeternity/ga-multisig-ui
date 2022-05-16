@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Create from "../views/Create.vue"
-import Resume from "../views/Resume"
-import Load from "../views/Load"
+import Create from "../views/Create"
+import Detail from "../views/Detail"
+import Index from "../views/Index"
 
 const routes = [
   {
     path: '/',
     name: 'load',
-    component: Load,
+    component: Index,
   },
   {
     path: '/create',
@@ -15,10 +15,10 @@ const routes = [
     component: Create,
   },
   {
-    // todo rename to slug
-    path: '/resume',
-    name: 'resume',
-    component: Resume,
+    // todo make id in url and load detail
+    path: '/detail',
+    name: 'detail',
+    component: Detail,
   },
 ]
 

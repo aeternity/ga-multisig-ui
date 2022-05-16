@@ -29,11 +29,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+a {
+  text-decoration: none;
+}
 h1 {
   color: #de3f6b;
-  text-underline: none;
-
 }
 
 body {
@@ -50,17 +50,8 @@ body {
   padding-top: 30px;
 }
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-}
-
-
-
 .wallet-info {
+  width: 320px;
   position: fixed;
   top: 0;
   right: 0;

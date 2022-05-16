@@ -6,13 +6,12 @@
     <!--todo fix load in the first time - wait for wallet-->
     <div v-if="address && !walletStatus">
       <div v-for="contract in myContracts">
-        <div>
+        <div @click="loadContract(contract.gaAddress, contract.gaSecret)">
           {{ contract.contractId }}
-          <button @click="loadContract(contract.gaAddress, contract.gaSecret)">
+          <button>
             Load info
           </button>
         </div>
-
       </div>
     </div>
   </div>
