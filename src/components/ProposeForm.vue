@@ -1,5 +1,6 @@
 <template>
   <div class="propose-form">
+    <hr>
     <h3>2. Propose Tx</h3>
     <small>
       Recommended recipient <i>ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK</i>

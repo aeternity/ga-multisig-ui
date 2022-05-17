@@ -8,12 +8,14 @@
       v-model:signer2Key="signer2Key"
       v-model:requiredSignersAmount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
+
     <propose-form
+      :class="[{'disabled': !signers}]"
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
 
-    <!--    todo propagate after propose to show confirmation block -->
+    <!--    todo show only confirmation block -->
     <confirm-form
       :class="[{'disabled': !hasProposedTx}]"
       :signers="signers"
@@ -45,6 +47,7 @@ import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { aeWallet } from '../utils/aeternity' // todo import ->const
 import {
   confirmIt,
+  multisig,
   patchProposalByContractId,
   proposeIt,
   revokeIt,
@@ -54,32 +57,37 @@ import {
 } from '../store'
 import { COMPILER_URL } from '../utils/aeternity/configs'
 import WalletInfo from "../components/WalletInfo"
-import { ref } from "vue"
+import { ref, toRefs } from "vue"
+
+const {
+  version,
+  confirmations,
+  confirmationsRequired,
+  signers,
+  hasConsensus,
+  hasProposedTx,
+  isCurrentUserSigner,
+  txHash,
+  proposedAmount,
+  gaPubKey,
+  recipientAddress,
+  confirmedBy,
+} = toRefs(multisig)
 
 
-const payerSdk = ref(null)
 const gaAccount = ref(null)
-const connectedAddress = ref(null)
 const signer1Key = ref('')
 const signer2Key = ref('')
 const requiredSignersAmount = ref(0)
 const gaKeypair = ref(null)
 
-const consensusInfo = ref(null)
-const revokedInfo = ref(null)
-const signers = ref(null)
-const proposedAmount = ref(0)
-const recipientAddress = ref('')
 const spendTx = ref(null)
 const spendTxHash = ref(null)
 const contractAccount = ref(null)
 const contractInstance = ref(null)
-const contractInstanceInitial = ref(null)
 const signerSdk = ref(null) //todo or move to stor;
-const confirmedBy = ref(null)
-const confirmations = ref(null)
-const hasProposedTx = ref(false)
-const hasConsensus = ref(false)
+
+const contractInstanceInitial = ref(null)
 
 
 async function crateGaAccount () {

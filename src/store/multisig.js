@@ -82,10 +82,9 @@ export const loadMyContracts = async () => {
   const { multisigContracts } = toRefs(multisig)
 
 
-  const myContracts = multisigContracts.value.filter(contract => {
-    return contract.signers.includes(address.value)
-  })
-  return myContracts
+  return multisigContracts.value.filter(contract =>
+    contract.signers.includes(address.value),
+  )
 }
 
 export const getUniversalInstance = async () => {

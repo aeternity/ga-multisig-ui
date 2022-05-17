@@ -16,7 +16,6 @@
       :confirmed-by="confirmedBy"
       @confirm-clicked="confirmTx"
       @revoke-clicked="revokeTx"/>
-    <!--    update state after click confirm-->
     <send-form
       :class="[{'disabled': !hasConsensus}]"
       @send-clicked="sendTx"

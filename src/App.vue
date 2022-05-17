@@ -48,7 +48,7 @@ li {
 }
 
 ul {
-  padding:  0;
+  padding: 0;
 }
 
 .disabled {
@@ -56,6 +56,10 @@ ul {
   filter: blur(1px);
   pointer-events: none;
   transition: 0.5s;
+}
+
+small {
+  color: gray;
 }
 
 </style>

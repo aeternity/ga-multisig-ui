@@ -9,7 +9,7 @@
     </small>
     <br>
     <br>
-    <label>Signer 1 </label>
+    <label>Signer 1 address</label>
     <br>
     <input
       type="text"
@@ -17,7 +17,7 @@
       @input="$emit('update:signer1Key', $event.target.value)">
     <br>
     <br>
-    <label>Signer 2 </label>
+    <label>Signer 2 address</label>
     <br>
     <input
       type="text"
@@ -38,7 +38,6 @@
       @click="$emit('create-clicked')">
       Create Account
     </button>
-    <hr>
   </div>
 </template>
 
