@@ -26,8 +26,6 @@
       hasProposedTx: {{ hasProposedTx }}
       <br>
       hasConsensus: {{ hasConsensus }}
-      <br>
-      <router-link to="/detail">Contract Detal (resume)</router-link>
     </div>
 
     <img

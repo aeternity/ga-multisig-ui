@@ -136,7 +136,7 @@ export default {
       // todo fix je vubec potreba contractaddress ?
       // todo inicializovat zvlast?
       // todo a nestaci ta initial?
-
+      console.log('this.contractAccount', this.contractAccount)
       this.contractInstance = await this.signerSdk.getContractInstance(
         {
           source: multisigContract,

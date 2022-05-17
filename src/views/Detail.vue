@@ -1,4 +1,5 @@
 <template>
+  <WalletInfo class="wallet-info"/>
   <div class="detail" v-if="isCurrentUserSigner">
     <h2>Resume</h2>
     <!--    todo merge detail and create-->
@@ -22,15 +23,10 @@
 
 <script>
 import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
-import { multisig, patchProposalByContractId } from '../store'
-import { updateContractInfo } from '../store'
+import { getContractByContractId, multisig, patchProposalByContractId, updateContractInfo } from '../store'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
-import {
-  MemoryAccount,
-  Node,
-  Universal,
-} from '@aeternity/aepp-sdk'
+import { MemoryAccount, Node, Universal } from '@aeternity/aepp-sdk'
 
 
 import ProposeForm from "../components/ProposeForm"
@@ -38,7 +34,6 @@ import ConfirmForm from "../components/ConfirmForm"
 import SendForm from "../components/SendForm"
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { COMPILER_URL } from "../utils/aeternity/configs"
-
 
 export default {
   name: 'Resume',
@@ -80,6 +75,10 @@ export default {
     },
   },
   async mounted () {
+    const contractId = this.$route.params.id
+    const contractDetails = await getContractByContractId(contractId)
+    console.log('contractDetails', contractDetails)
+    await this.loadContract(contractDetails.gaAddress, contractDetails.gaSecret)
     this.signerSdk = await Universal({
       nodes: [{
         name: 'testnet',
@@ -96,6 +95,16 @@ export default {
     )
   },
   methods: {
+    async loadContract (gaAddress, gaSecret) {
+      const signerSdk = await Universal({
+        nodes: [{
+          name: 'testnet',
+          instance: await Node({ url: 'https://testnet.aeternity.io' }),
+        }],
+        compilerUrl: COMPILER_URL,
+      })
+      await updateContractInfo(signerSdk, gaAddress, gaSecret)
+    },
     async proposeTx () {
 
       this.spendTx = await aeWallet.sdk.spendTx({
@@ -158,10 +167,10 @@ export default {
       )
       const aaa = {
         publicKey: this.gaPubKey,
-        secretKey: this.gaSecret
+        secretKey: this.gaSecret,
       }
       const gaAccount = MemoryAccount(
-        { keypair: aaa }
+        { keypair: aaa },
       )
 
       const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
@@ -203,7 +212,7 @@ export default {
           contractAddress: this.contractAccount.contractId,
         },
       )
-     const aaa =  await gaContractRpc.methods.revoke.send(spendTxHash)
+      const aaa = await gaContractRpc.methods.revoke.send(spendTxHash)
 
       // const revokeCall = await this.signerSdk.contractCallTx({
       //   callerId: this.currentUserAddress,

@@ -18,6 +18,7 @@
     </div>
   </div>
 </template>
+todo add loader
 
 <script>
 // todo pages as setup
