@@ -3,6 +3,7 @@
   <div class="detail" v-if="isCurrentUserSigner">
     <h2>Contract Detail</h2>
     <!--    todo merge detail and create-->
+    <!--    todo print basic Multisig GA info block-->
     <propose-form
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
@@ -15,6 +16,7 @@
       :confirmed-by="confirmedBy"
       @confirm-clicked="confirmTx"
       @revoke-clicked="revokeTx"/>
+    <!--    update state after click confirm-->
     <send-form
       v-if="hasConsensus"
       @send-clicked="sendTx"
@@ -26,20 +28,18 @@
   <!--  todo add loader-->
 </template>
 
-<script>
-// todo page as setup
-import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
+<script setup>
+import { aeWallet } from '../utils/aeternity'
 import {
   confirmIt,
   getContractByContractId,
   multisig,
-  patchProposalByContractId, proposeIt,
+  patchProposalByContractId,
+  proposeIt,
   revokeIt,
   sendIt,
   updateContractInfo,
 } from '../store'
-import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
-import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { MemoryAccount, Node, Universal } from '@aeternity/aepp-sdk'
 
 import ProposeForm from "../components/ProposeForm"
@@ -48,155 +48,159 @@ import SendForm from "../components/SendForm"
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { COMPILER_URL } from "../utils/aeternity/configs"
 import WalletInfo from "../components/WalletInfo"
+import { computed, onMounted, ref, watch } from "vue"
+import { useRoute } from "vue-router"
 
-export default {
-  name: 'Detail',
-  components: { WalletInfo, SendForm, ConfirmForm, ProposeForm },
-  data: () => ({
-    signerSdk: null,
-    contractAccount: null,
-    contractInstance: null,
-    spendTx: null,
-    proposedAmount: null,
-    recipientAddress: null,
-    hasProposedTx: null,
-    hasConsensus: null,
-    gaPubKey: null,
-    gaSecret: null,
-    txHash: null,
-    signers: null,
-    confirmations: null,
-    confirmedBy: null,
-    confirmationsRequired: null,
-  }),
-  computed: {
+const route = useRoute()
 
-    isCurrentUserSigner () {
-      // todo how to remove boilerplate. Vue3 store + options
-      return multisig.isCurrentUserSigner
-    },
 
+// onBeforeMount(loadView)
+const signerSdk = ref(null)
+const contractAccount = ref(null)
+const contractInstance = ref(null)
+const spendTx = ref(null)
+const proposedAmount = ref(null)
+const recipientAddress = ref(null)
+const hasProposedTx = ref(null)
+const hasConsensus = ref(null)
+const gaPubKey = ref(null)
+const gaSecret = ref(null)
+const txHash = ref(null)
+const signers = ref(null)
+const confirmations = ref(null)
+const confirmedBy = ref(null)
+const confirmationsRequired = ref(null)
+
+// todo comment watcher
+
+watch(() => route,
+  (value, oldValue) => {
+    if (oldValue.id === route.params.id) {
+      clearValues()
+      // todo fix clearing
+    }
   },
-  watch: {
-    $route (newValue, oldValue) {
-      if (oldValue.id === this.$route.params.id) {
-        this.clearValues()
-        // todo fix clearing
-      }
+)
+
+onMounted(async () => {
+  const contractId = route.params.id
+  const contractDetails = await getContractByContractId(contractId)
+  await loadContract(contractDetails.gaAddress, contractDetails.gaSecret)     // todo  can be this done better?
+
+
+  bindValues()
+
+  signerSdk.value = await Universal({
+    nodes: [{
+      name: 'testnet',
+      instance: await Node({ url: 'https://testnet.aeternity.io' }),
+    }],
+    compilerUrl: COMPILER_URL,
+  })
+  contractAccount.value = await signerSdk.value.getAccount(gaPubKey.value)
+  contractInstance.value = await signerSdk.value.getContractInstance(
+    {
+      source: multisigContract,
+      contractAddress: contractAccount.value.contractId,
     },
-  },
-  async mounted () {
-    const contractId = this.$route.params.id
-    const contractDetails = await getContractByContractId(contractId)
-    await this.loadContract(contractDetails.gaAddress, contractDetails.gaSecret)     // todo  can be this done better?
+  )
+})
+
+function bindValues () {
+  recipientAddress.value = multisig.recipientAddress
+  proposedAmount.value = multisig.proposedAmount
+  hasProposedTx.value = multisig.hasProposedTx
+  hasConsensus.value = multisig.hasConsensus
+  gaPubKey.value = multisig.gaPubKey
+  gaSecret.value = multisig.gaSecret
+  txHash.value = multisig.txHash
+  signers.value = multisig.signers
+  confirmedBy.value = multisig.confirmedBy
+  confirmations.value = multisig.confirmations
+  confirmationsRequired.value = multisig.confirmationsRequired
+}
+
+function clearValues () {
+  // todo move this to store
+  recipientAddress.value = null
+  proposedAmount.value = null
+  hasProposedTx.value = null
+  hasConsensus.value = null
+  gaPubKey.value = null
+  gaSecret.value = null
+  txHash.value = null
+  signers.value = null
+  confirmedBy.value = null
+  confirmations.value = null
+  confirmationsRequired.value = null
+}
+
+const isCurrentUserSigner = computed(() => multisig.isCurrentUserSigner)
 
 
-    this.bindValues()
-    this.signerSdk = await Universal({
-      nodes: [{
-        name: 'testnet',
-        instance: await Node({ url: 'https://testnet.aeternity.io' }),
-      }],
-      compilerUrl: COMPILER_URL,
-    })
-    this.contractAccount = await this.signerSdk.getAccount(this.gaPubKey)
-    this.contractInstance = await this.signerSdk.getContractInstance(
-      {
-        source: multisigContract,
-        contractAddress: this.contractAccount.contractId,
+async function loadContract (gaAddress, gaSecret) {
+  const signerSdk = await Universal({
+    nodes: [{
+      name: 'testnet',
+      instance: await Node({ url: 'https://testnet.aeternity.io' }),
+    }],
+    compilerUrl: COMPILER_URL,
+  })
+  await updateContractInfo(signerSdk, gaAddress, gaSecret)
+}
+
+async function proposeTx () {
+  spendTx.value = await aeWallet.sdk.spendTx({
+    senderId: gaPubKey.value,
+    recipientId: recipientAddress.value, //todo not connected
+    amount: proposedAmount.value, //todo not connected
+  })
+
+  await proposeIt(spendTx.value, signerSdk.value, contractAccount.value.contractId)
+
+  // todo signer sdk to store
+  await patchProposalByContractId(contractAccount.value.contractId, recipientAddress.value, proposedAmount.value)
+  await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
+}
+
+
+async function confirmTx () {
+  await confirmIt(contractAccount.value.contractId, signerSdk.value, txHash.value)
+  await updateContractInfo(signerSdk.value, gaPubKey.value) // todo improve/reduce params
+}
+
+async function sendTx () {
+  const gaAccount = MemoryAccount(
+    {
+      keypair: {
+        publicKey: gaPubKey.value,
+        secretKey: gaSecret.value,
       },
-    )
-  },
-  methods: {
-    bindValues() {
-      this.recipientAddress = multisig.recipientAddress
-      this.proposedAmount = multisig.proposedAmount
-      this.hasProposedTx = multisig.hasProposedTx
-      this.hasConsensus = multisig.hasConsensus
-      this.gaPubKey = multisig.gaPubKey
-      this.gaSecret = multisig.gaSecret
-      this.txHash = multisig.txHash
-      this.signers = multisig.signers
-      this.confirmedBy = multisig.confirmedBy
-      this.confirmations = multisig.confirmations
-      this.confirmationsRequired = multisig.confirmationsRequired
     },
-    clearValues() {
-      // todo move thi to store
-      this.recipientAddress =null
-      this.proposedAmount = null
-      this.hasProposedTx = null
-      this.hasConsensus = null
-      this.gaPubKey = null
-      this.gaSecret = null
-      this.txHash = null
-      this.signers = null
-      this.confirmedBy = null
-      this.confirmations = null
-      this.confirmationsRequired = null
-    },
-    async loadContract (gaAddress, gaSecret) {
-      const signerSdk = await Universal({
-        nodes: [{
-          name: 'testnet',
-          instance: await Node({ url: 'https://testnet.aeternity.io' }),
-        }],
-        compilerUrl: COMPILER_URL,
-      })
-      await updateContractInfo(signerSdk, gaAddress, gaSecret)
-    },
-    async proposeTx () {
-      this.spendTx = await aeWallet.sdk.spendTx({
-        senderId: this.gaPubKey,
-        recipientId: this.recipientAddress, //todo not connected
-        amount: this.proposedAmount, //todo not connected
-      })
+  )
 
-      await proposeIt(this.spendTx, this.signerSdk, this.contractAccount.contractId)
+  const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
+    senderId: gaPubKey.value,
+    recipientId: recipientAddress.value,
+    amount: proposedAmount.value,
+  })
+  console.log('contractInstance', contractInstance)
+  await sendIt(contractInstance.value, gaPubKey.value, gaAccount, spendTx, signerSdk.value)
 
-      // todo signer sdk to store
-      await patchProposalByContractId(this.contractAccount.contractId, this.recipientAddress, this.proposedAmount)
-      await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
-    },
+  await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
+}
 
-    async confirmTx () {
-      await confirmIt(this.contractAccount.contractId, this.signerSdk, this.txHash)
-      await updateContractInfo(this.signerSdk, this.gaPubKey) // todo improve/reduce params
-    },
 
-    async sendTx () {
-      const gaAccount = MemoryAccount(
-        {
-          keypair: {
-            publicKey: this.gaPubKey,
-            secretKey: this.gaSecret,
-          },
-        },
-      )
+async function revokeTx () {
+  const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
+    senderId: gaPubKey.value,
+    recipientId: recipientAddress.value,
+    amount: proposedAmount.value,
+  })
+  // todo is account necessary?
 
-      const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
-        senderId: this.gaPubKey,
-        recipientId: this.recipientAddress,
-        amount: this.proposedAmount,
-      })
+  await revokeIt(spendTx, contractAccount.value.contractId, signerSdk.value, gaPubKey.value, gaSecret.value)
 
-      await sendIt(this.contractInstance, this.gaPubKey, gaAccount, spendTx, this.signerSdk)
-
-      await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
-    },
-
-    async revokeTx () {
-      const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
-        senderId: this.gaPubKey,
-        recipientId: this.recipientAddress,
-        amount: this.proposedAmount,
-      })
-      // todo is account necessary?
-
-      await revokeIt(spendTx, this.contractAccount.contractId, this.signerSdk, this.gaPubKey, this.gaSecret)
-
-      await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
-    },
-  },
+  await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
 }
 </script>

@@ -42,7 +42,6 @@ import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { aeWallet } from '../utils/aeternity' // todo import ->const
 import {
-  // todo rename these actions
   confirmIt,
   patchProposalByContractId,
   proposeIt,
@@ -55,7 +54,7 @@ import { COMPILER_URL } from '../utils/aeternity/configs'
 import WalletInfo from "../components/WalletInfo"
 import { ref } from "vue"
 
-// onBeforeMount(loadView)
+
 const payerSdk = ref(null)
 const gaAccount = ref(null)
 const connectedAddress = ref(null)
@@ -161,6 +160,7 @@ async function confirmTx () {
 }
 
 async function sendTx () {
+  // todo gaaccount is not ref
   await sendIt(contractInstance.value, gaKeypair.value.publicKey, gaAccount.value, spendTx.value, signerSdk.value)
   await updateContractInfo(signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
 }

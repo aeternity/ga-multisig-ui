@@ -1,7 +1,7 @@
 import { Node, Universal } from '@aeternity/aepp-sdk'
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
-import { aeWallet, buildAuthTxHash } from "../utils/aeternity"
+import { aeWallet } from "../utils/aeternity"
 import { getContractByGaAddress } from "./off-chainDB"
 
 

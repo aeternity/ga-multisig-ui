@@ -58,7 +58,7 @@ const {
   proposedAmount,
   gaPubKey,
   recipientAddress,
-  confirmedBy
+  confirmedBy,
 } = toRefs(multisig)
 </script>
 
