@@ -12,7 +12,7 @@
     <div v-if="address && !walletStatus">
       <div v-for="contract in myContracts">
         <router-link :to="`/detail/${contract.contractId}`">
-          Go to detail {{ contract.contractId }}
+          {{ contract.contractId }}
         </router-link>
       </div>
     </div>

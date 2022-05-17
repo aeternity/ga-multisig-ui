@@ -1,10 +1,10 @@
 <template>
   <WalletInfo class="wallet-info"/>
   <div class="detail" v-if="isCurrentUserSigner">
-    <h2>Resume</h2>
+    <h2>Contract Detail</h2>
     <!--    todo merge detail and create-->
     <propose-form
-      :recipient-key="recipientKey"
+      :recipient-address="recipientAddress"
       :proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
     <confirm-form
@@ -19,6 +19,7 @@
   <div v-else>
     Sorry you are not on the signer list
   </div>
+  <!--  todo add loader-->
 </template>
 
 <script>
@@ -34,10 +35,11 @@ import ConfirmForm from "../components/ConfirmForm"
 import SendForm from "../components/SendForm"
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { COMPILER_URL } from "../utils/aeternity/configs"
+import WalletInfo from "../components/WalletInfo"
 
 export default {
-  name: 'Resume',
-  components: { SendForm, ConfirmForm, ProposeForm },
+  name: 'Detail',
+  components: { WalletInfo, SendForm, ConfirmForm, ProposeForm },
   data: () => ({
     signerSdk: null,
     contractAccount: null,
@@ -45,6 +47,9 @@ export default {
     spendTx: null,
   }),
   computed: {
+    currentUserAddress () {
+      return aeWallet.address
+    },
     isCurrentUserSigner () {
       // todo how to remove boilerplate. Vue3 store + options
       return multisig.isCurrentUserSigner
@@ -64,10 +69,7 @@ export default {
     gaSecret () {
       return multisig.gaSecret
     },
-    currentUserAddress () {
-      return aeWallet.address
-    },
-    recipientKey () {
+    recipientAddress () {
       return multisig.recipientKey
     },
     proposedAmount () {
@@ -78,7 +80,8 @@ export default {
     const contractId = this.$route.params.id
     const contractDetails = await getContractByContractId(contractId)
     console.log('contractDetails', contractDetails)
-    await this.loadContract(contractDetails.gaAddress, contractDetails.gaSecret)
+    await this.loadContract(contractDetails.gaAddress, contractDetails.gaSecret)     // todo  can be this done better?
+
     this.signerSdk = await Universal({
       nodes: [{
         name: 'testnet',
@@ -109,7 +112,7 @@ export default {
 
       this.spendTx = await aeWallet.sdk.spendTx({
         senderId: this.gaPubKey,
-        recipientId: this.recipientKey, //todo not connected
+        recipientId: this.recipientAddress, //todo not connected
         amount: this.proposedAmount, //todo not connected
       })
 
@@ -128,8 +131,6 @@ export default {
       // todo signer sdk to store
       await patchProposalByContractId(this.contractAccount.contractId, this.recipient, this.proposedAmount)
       await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
-
-      // this.proposedConsensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },
 
     async confirmTx () {
@@ -144,14 +145,12 @@ export default {
       await gaContractRpc.methods.confirm.send(this.txHash, { FixedTTL: [expirationHeight] })
 
       await updateContractInfo(this.signerSdk, this.gaPubKey) // todo improve/reduce params
-
-      // this.confirmedInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },
 
     async sendTx () {
       const nonce = (await this.contractInstance.methods.get_nonce()).decodedResult
 
-      const balanceBefore = await this.signerSdk.getBalance(this.recipientKey)
+      const balanceBefore = await this.signerSdk.getBalance(this.recipientAddress)
 
       // pre charge GA account create this.gaAccount on chai
       // todo do button workaround in app
@@ -175,7 +174,7 @@ export default {
 
       const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
         senderId: this.gaPubKey,
-        recipientId: this.recipientKey,
+        recipientId: this.recipientAddress,
         amount: this.proposedAmount,
       })
 
@@ -186,10 +185,7 @@ export default {
           authData: { source: multisigContract, args: [nonce] },
         })
 
-      const balanceAfter = await this.signerSdk.getBalance(this.recipientKey)
       await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
-
-      // const consensusInfoAfterSend = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },
 
     async revokeTx () {
@@ -197,14 +193,13 @@ export default {
 
       const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
         senderId: this.gaPubKey,
-        recipientId: this.recipientKey,
+        recipientId: this.recipientAddress,
         amount: this.proposedAmount,
       })
 
       const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
 
       const spendTxHash = await buildAuthTxHash(encoded)
-      // const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'revoke', [spendTxHash])
 
       const gaContractRpc = await aeWallet.sdk.getContractInstance(
         {
@@ -212,36 +207,10 @@ export default {
           contractAddress: this.contractAccount.contractId,
         },
       )
-      const aaa = await gaContractRpc.methods.revoke.send(spendTxHash)
+      await gaContractRpc.methods.revoke.send(spendTxHash)
 
-      // const revokeCall = await this.signerSdk.contractCallTx({
-      //   callerId: this.currentUserAddress,
-      //   contractId: this.contractAccount.contractId,
-      //   amount: 0,
-      //   gas: 1000000,
-      //   gasPrice: 1500000000,
-      //   callData: calldata2,
-      // })
-      //
-      // const revokeCallTx = await this.signerSdk.signTransaction(
-      //   revokeCall,
-      //   {
-      //     onAccount: this.currentUserAddress,
-      //     innerTx: true,
-      //   },
-      // )
-
-      // await aeWallet.sdk.payForTransaction(revokeCallTx)
       await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
-
-      // this.revokedInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },
   },
 }
 </script>
-
-<style scoped>
-.resume {
-
-}
-</style>

@@ -2,7 +2,6 @@
   <div class="signers-form">
     <hr>
     <h3>1. Select Signers</h3>
-
     <small>
     My addres #1 <i>ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7</i>
     <br>
@@ -11,9 +10,7 @@
     <br>
     <br>
     <label>Signer 1 </label>
-
     <br>
-    <!--    todo redo to computed-->
     <input
       type="text"
       :value="signer1Key"

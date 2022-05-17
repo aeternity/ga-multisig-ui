@@ -8,13 +8,10 @@
     <br>
     <label>Recipient </label>
     <br>
-
-
     <input
       type="text"
-      :value="recipientKey"
-      @input="$emit('update:recipientKey', $event.target.value)">
-
+      :value="recipientAddress"
+      @input="$emit('update:recipientAddress', $event.target.value)">
     <br>
     <br>
     <label>Propose amount </label>
@@ -32,13 +29,6 @@
 <script>
 export default {
   name: 'ProposeForm',
-  props: ['recipientKey', 'proposedAmount'],
-  // todo rename to recipient address
+  props: ['recipientAddress', 'proposedAmount'],
 }
 </script>
-
-<style scoped>
-.propose-form {
-
-}
-</style>

@@ -1,14 +1,12 @@
 <template>
-  <div id="container">
-
+  <div class="container">
     <router-link to="/">
-      <h1><img alt="Aeternity" src="./assets/logo.svg" width="80"/> Multisig App</h1>
+      <h1>
+        <img alt="Aeternity" src="./assets/logo.svg" width="80"/>
+        Multisig App
+      </h1>
     </router-link>
-
-
-
   </div>
-
   <router-view/>
 </template>
 
@@ -32,23 +30,19 @@ export default defineComponent({
 a {
   text-decoration: none;
 }
+
 h1 {
   color: #de3f6b;
 }
 
 body {
   display: block;
-}
-
-#app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#container {
+.container {
   padding-top: 30px;
 }
-
-
 </style>

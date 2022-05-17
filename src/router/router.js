@@ -15,7 +15,6 @@ const routes = [
     component: Create,
   },
   {
-    // todo make id in url and load detail
     path: '/detail/:id',
     name: 'detail',
     component: Detail,

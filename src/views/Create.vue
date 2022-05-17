@@ -5,13 +5,14 @@
     <h2>Create Multisig Account</h2>
     <br>
     <br>
+<!--    todo fix casing-->
     <signers-form
       v-model:signer1Key="signer1Key"
       v-model:signer2Key="signer2Key"
       v-model:requiredSignersAmount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
     <propose-form
-      v-model:recipient-key="recipientKey"
+      v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
     <confirm-form
@@ -36,7 +37,7 @@ import ProposeForm from "../components/ProposeForm"
 import ConfirmForm from "../components/ConfirmForm"
 import SendForm from "../components/SendForm"
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
-// todo load from github
+
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
@@ -64,7 +65,7 @@ export default {
     revokedInfo: null,
     signers: null,
     version: null,
-    recipientKey: '',
+    recipientAddress: '',
     proposedConsensusInfo: null,
     confirmedInfo: null,
     proposedAmount: 0,
@@ -78,8 +79,8 @@ export default {
   }),
   computed: {
 // todo conditions as computed properties
-     isProposeBlockHidden () {
-       // todo this is probably not needed
+    isProposeBlockHidden () {
+      // todo this is probably not needed
       return this.isCurrentUserSigner && this.signers
     },
   },
@@ -143,13 +144,9 @@ export default {
           contractAddress: this.contractAccount.contractId,
         },
       )
-      //
-      // this.consensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
-      //
-      // todo storing to dob to store
+
       this.signers = (await this.contractInstance.methods.get_signers()).decodedResult
-      // this.version = (await this.contractInstance.methods.get_version()).decodedResult
-      // todo save to localstorage
+
       await storeContractToDB(
         this.contractAccount.contractId,
         this.gaKeypair.publicKey,
@@ -161,7 +158,7 @@ export default {
     async proposeTx () {
       this.spendTx = await aeWallet.sdk.spendTx({
         senderId: this.gaKeypair.publicKey,
-        recipientId: this.recipientKey,
+        recipientId: this.recipientAddress,
         amount: this.proposedAmount,
       })
 
@@ -179,11 +176,9 @@ export default {
       await gaContractRpc.methods.propose.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
 
       // todo signer sdk to store
-      await patchProposalByContractId(this.contractAccount.contractId, this.recipientKey, this.proposedAmount)
+      await patchProposalByContractId(this.contractAccount.contractId, this.recipientAddress, this.proposedAmount)
 
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
-
-      // this.proposedConsensusInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },
 
     async confirmTx () {
@@ -198,29 +193,23 @@ export default {
       await gaContractRpc.methods.confirm.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
 
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
-
-      // this.confirmedInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },
 
     async sendTx () {
       const nonce = (await this.contractInstance.methods.get_nonce()).decodedResult
 
-      const balanceBefore = await this.signerSdk.getBalance(this.recipientKey)
-
-      // pre charge GA account create this.gaAccount on chai
-      // todo do button workaround in app
+      //
+      // todo do button workaround  pre charge GA account create this.gaAccount on chai
 
       // todo try wrapping it in a PayingForTx?
       //  The issue is the Account the generalized Account is created from (creation is conversion) has to pay for the costs.
       //  Maybe this can be solved using PayingForTx, so someone else pay the fee.
       //  If that approach works we can integrate it into the sdk.
 
-
       await aeWallet.sdk.spend(
         776440000000000,
         this.gaKeypair.publicKey,
       )
-
 
       await this.signerSdk.send(
         this.spendTx,
@@ -229,38 +218,50 @@ export default {
           authData: { source: multisigContract, args: [nonce] },
         })
 
-      const balanceAfter = await this.signerSdk.getBalance(this.recipientKey)
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
-
-      // const consensusInfoAfterSend = (await this.contractInstance.methods.get_consensus_info()).decodedResult
     },
 
     async revokeTx () {
-      const signer1Account = MemoryAccount({ keypair: this.signer1 })
-      // todo is account necessary?
+      const encoded = encode(unpackTx(this.spendTx).rlpEncoded, 'tx')
 
-      const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'revoke', [this.spendTxHash])
-      const contractCallTx2 = await this.signerSdk.contractCallTx({
-        callerId: this.signer1Key,
-        contractId: this.contractAccount.contractId,
-        amount: 0,
-        gas: 1000000,
-        gasPrice: 1500000000,
-        callData: calldata2,
-      })
+      const spendTxHash = await buildAuthTxHash(encoded)
 
-      const signedContractCallTx2 = await this.signerSdk.signTransaction(
-        contractCallTx2,
+      const gaContractRpc = await aeWallet.sdk.getContractInstance(
         {
-          onAccount: signer1Account,
-          innerTx: true,
+          source: multisigContract,
+          contractAddress: this.contractAccount.contractId,
         },
       )
+      await gaContractRpc.methods.revoke.send(spendTxHash)
 
-      await aeWallet.sdk.payForTransaction(signedContractCallTx2)
+
+      // todo is account necessary?
+      // todo use short version as in Detail
+
+      // const signer1Account = MemoryAccount({ keypair: this.signer1 })
+
+      // const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'revoke', [this.spendTxHash])
+      // const contractCallTx2 = await this.signerSdk.contractCallTx({
+      //   callerId: this.signer1Key,
+      //   contractId: this.contractAccount.contractId,
+      //   amount: 0,
+      //   gas: 1000000,
+      //   gasPrice: 1500000000,
+      //   callData: calldata2,
+      // })
+      //
+      // const signedContractCallTx2 = await this.signerSdk.signTransaction(
+      //   contractCallTx2,
+      //   {
+      //     onAccount: signer1Account,
+      //     innerTx: true,
+      //   },
+      // )
+      //
+      // await aeWallet.sdk.payForTransaction(signedContractCallTx2)
+
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
-
-      // this.revokedInfo = (await this.contractInstance.methods.get_consensus_info()).decodedResult
+      // todo show link to successful transaction just for show
     },
   },
 }
