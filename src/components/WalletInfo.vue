@@ -38,6 +38,8 @@
   </div>
 </template>
 
+<!--todo remove this component at the end-->
+
 <script setup>
 import { toRefs } from 'vue'
 import { aeWallet } from '../utils/aeternity'

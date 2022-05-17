@@ -20,43 +20,34 @@
 </template>
 <!--// todo add loader-->
 <!--todo come up with better hydrating-->
-<script>
-// todo page as setup
-
+<script setup>
 import { loadMyContracts, restoreContractsFromDB } from "../store"
 import { aeWallet } from '../utils/aeternity'
+import { computed, onMounted, ref, watch } from "vue"
 
-export default {
-  name: 'Load',
-  data: () => ({
-    myContracts: null,
-    contractDetail: null,
-    todoName: '',
-    todos: [],
-    isLoaded: false,
-  }),
+const myContracts = ref(null)
+const isLoaded = ref(false)
+const walletStatus = computed(() => aeWallet.walletStatus)
+const address = computed(() => aeWallet.address)
+// todo is this computed neccessary ?
+
+watch(walletStatus,
+  async (newStatus) => {
+    if (newStatus === null) {
+      // todo wait for wallet connection but make it better
+      await restoreContractsFromDB()
+      myContracts.value = await loadMyContracts()
+    }
+  },
+)
+
 // todo check this page for unused code
-  async mounted () {
-    await restoreContractsFromDB()
-    this.myContracts = await loadMyContracts()
-  },
-  watch: {
-    async walletStatus (newValue) {
-      if (newValue === null) {
-        // todo wait for wallet connection but make it better
-        await restoreContractsFromDB()
-        this.myContracts = await loadMyContracts()
-      }
-    },
-  },
-  computed: {
-    walletStatus () {
-      return aeWallet.walletStatus
-    },
-    address () {
-      return aeWallet.address
-    },
-  },
-}
+// todo merge watch and onmounted
+
+onMounted(async () => {
+  await restoreContractsFromDB()
+  myContracts.value = await loadMyContracts()
+})
+
 </script>
 

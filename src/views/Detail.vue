@@ -53,8 +53,6 @@ import { useRoute } from "vue-router"
 
 const route = useRoute()
 
-
-// onBeforeMount(loadView)
 const signerSdk = ref(null)
 const contractAccount = ref(null)
 const contractInstance = ref(null)
@@ -81,6 +79,7 @@ watch(() => route,
     }
   },
 )
+// todo maybe onBeforeMount
 
 onMounted(async () => {
   const contractId = route.params.id
