@@ -55,7 +55,6 @@ const {
   hasConsensus,
   hasProposedTx,
   isCurrentUserSigner,
-  cId,
   txHash,
   proposedAmount,
   gaPubKey,

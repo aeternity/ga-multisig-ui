@@ -48,26 +48,31 @@ import SendForm from "../components/SendForm"
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { COMPILER_URL } from "../utils/aeternity/configs"
 import WalletInfo from "../components/WalletInfo"
-import { computed, onMounted, ref, watch } from "vue"
+import { onMounted, ref, toRefs, watch } from "vue"
 import { useRoute } from "vue-router"
 
 const route = useRoute()
+
+const {
+  version,
+  confirmations,
+  confirmationsRequired,
+  signers,
+  hasConsensus,
+  hasProposedTx,
+  isCurrentUserSigner,
+  txHash,
+  proposedAmount,
+  gaPubKey,
+  recipientAddress,
+  confirmedBy,
+  gaSecret,
+} = toRefs(multisig)
 
 const signerSdk = ref(null)
 const contractAccount = ref(null)
 const contractInstance = ref(null)
 const spendTx = ref(null)
-const proposedAmount = ref(null)
-const recipientAddress = ref(null)
-const hasProposedTx = ref(null)
-const hasConsensus = ref(null)
-const gaPubKey = ref(null)
-const gaSecret = ref(null)
-const txHash = ref(null)
-const signers = ref(null)
-const confirmations = ref(null)
-const confirmedBy = ref(null)
-const confirmationsRequired = ref(null)
 
 // todo comment watcher
 
@@ -86,9 +91,6 @@ onMounted(async () => {
   const contractDetails = await getContractByContractId(contractId)
   await loadContract(contractDetails.gaAddress, contractDetails.gaSecret)     // todo  can be this done better?
 
-
-  bindValues()
-
   signerSdk.value = await Universal({
     nodes: [{
       name: 'testnet',
@@ -105,19 +107,6 @@ onMounted(async () => {
   )
 })
 
-function bindValues () {
-  recipientAddress.value = multisig.recipientAddress
-  proposedAmount.value = multisig.proposedAmount
-  hasProposedTx.value = multisig.hasProposedTx
-  hasConsensus.value = multisig.hasConsensus
-  gaPubKey.value = multisig.gaPubKey
-  gaSecret.value = multisig.gaSecret
-  txHash.value = multisig.txHash
-  signers.value = multisig.signers
-  confirmedBy.value = multisig.confirmedBy
-  confirmations.value = multisig.confirmations
-  confirmationsRequired.value = multisig.confirmationsRequired
-}
 
 function clearValues () {
   // todo move this to store
@@ -133,8 +122,6 @@ function clearValues () {
   confirmations.value = null
   confirmationsRequired.value = null
 }
-
-const isCurrentUserSigner = computed(() => multisig.isCurrentUserSigner)
 
 
 async function loadContract (gaAddress, gaSecret) {
@@ -160,14 +147,12 @@ async function proposeTx () {
   // todo signer sdk to store
   await patchProposalByContractId(contractAccount.value.contractId, recipientAddress.value, proposedAmount.value)
   await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
-  bindValues()
 }
 
 
 async function confirmTx () {
   await confirmIt(contractAccount.value.contractId, signerSdk.value, txHash.value)
   await updateContractInfo(signerSdk.value, gaPubKey.value) // todo improve/reduce params
-  bindValues()
 
 }
 
@@ -190,7 +175,6 @@ async function sendTx () {
   await sendIt(contractInstance.value, gaPubKey.value, gaAccount, spendTx, signerSdk.value)
 
   await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
-  bindValues()
 }
 
 
@@ -206,6 +190,5 @@ async function revokeTx () {
   await revokeIt(spendTx, contractAccount.value.contractId, signerSdk.value, gaPubKey.value, gaSecret.value)
 
   await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
-  bindValues()
 }
 </script>
