@@ -1,4 +1,6 @@
 <template>
+
+  <WalletInfo class="wallet-info"/>
   <div class="create">
     <h2>Create Multisig Account</h2>
     <br>
@@ -41,12 +43,13 @@ import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
 import { storeContractToDB, updateContractInfo, patchProposalByContractId } from '../store'
 import { COMPILER_URL } from '../utils/aeternity/configs'
+import WalletInfo from "../components/WalletInfo"
 
 
 // todo store vs page sweetspot
 export default {
   name: 'Home',
-  components: { SendForm, ConfirmForm, ProposeForm, SignersForm },
+  components: { WalletInfo, SendForm, ConfirmForm, ProposeForm, SignersForm },
   data: () => ({
     // todo pass models
     payerSdk: null,

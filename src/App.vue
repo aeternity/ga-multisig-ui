@@ -4,8 +4,8 @@
     <router-link to="/">
       <h1><img alt="Aeternity" src="./assets/logo.svg" width="80"/> Multisig App</h1>
     </router-link>
-    <WalletInfo class="wallet-info"/>
-    <!--todo My Multisig Accounts + Create Button-->
+
+
 
   </div>
 
@@ -50,10 +50,5 @@ body {
   padding-top: 30px;
 }
 
-.wallet-info {
-  width: 320px;
-  position: fixed;
-  top: 0;
-  right: 0;
-}
+
 </style>

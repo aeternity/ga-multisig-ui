@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Create from "../views/Create"
 import Detail from "../views/Detail"
+import DetailId from "../views/DetailId"
 import Index from "../views/Index"
 
 const routes = [
@@ -19,6 +20,12 @@ const routes = [
     path: '/detail',
     name: 'detail',
     component: Detail,
+  },
+  {
+    // todo make id in url and load detail
+    path: '/detail/:id',
+    name: 'detailId',
+    component: DetailId,
   },
 ]
 

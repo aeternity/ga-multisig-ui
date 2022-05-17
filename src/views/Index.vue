@@ -1,17 +1,19 @@
 <template>
   <div class="about">
-    <h2>My Contracts</h2>
-    <router-link to="/create">+ Create Multisig Contract</router-link>
+    <h2>My Contracts
+      <router-link to="/create">
+        <button>
+          + Create Multisig Contract
+        </button>
+      </router-link>
+    </h2>
 
     <!--todo fix load in the first time - wait for wallet-->
     <div v-if="address && !walletStatus">
       <div v-for="contract in myContracts">
-        <div @click="loadContract(contract.gaAddress, contract.gaSecret)">
-          {{ contract.contractId }}
-          <button>
-            Load info
-          </button>
-        </div>
+        <router-link :to="`/detail/${contract.contractId}`">
+          Go to detail {{ contract.contractId }}
+        </router-link>
       </div>
     </div>
   </div>
@@ -20,12 +22,8 @@
 <script>
 // todo pages as setup
 
-import { Universal, Node } from '@aeternity/aepp-sdk'
-import { loadMyContracts, updateContractInfo, restoreContractsFromDB } from "../store"
+import { loadMyContracts, restoreContractsFromDB } from "../store"
 import { aeWallet } from '../utils/aeternity'
-
-
-import { COMPILER_URL } from "../utils/aeternity/configs"
 
 export default {
   name: 'Load',
@@ -36,13 +34,13 @@ export default {
     todos: [],
     isLoaded: false,
   }),
-
+// todo check this page for unused code
   async mounted () {
     await restoreContractsFromDB()
     this.myContracts = await loadMyContracts()
   },
   watch: {
-   async walletStatus (newValue) {
+    async walletStatus (newValue) {
       if (newValue === null) {
         // todo wait for wallet connection but make it better
         await restoreContractsFromDB()
@@ -56,18 +54,6 @@ export default {
     },
     address () {
       return aeWallet.address
-    },
-  },
-  methods: {
-    async loadContract (gaAddress, gaSecret) {
-      const signerSdk = await Universal({
-        nodes: [{
-          name: 'testnet',
-          instance: await Node({ url: 'https://testnet.aeternity.io' }),
-        }],
-        compilerUrl: COMPILER_URL,
-      })
-      await updateContractInfo(signerSdk, gaAddress, gaSecret)
     },
   },
 }

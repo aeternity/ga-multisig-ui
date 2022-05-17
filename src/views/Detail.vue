@@ -1,5 +1,5 @@
 <template>
-  <div class="resume" v-if="isCurrentUserSigner">
+  <div class="detail" v-if="isCurrentUserSigner">
     <h2>Resume</h2>
     <!--    todo merge detail and create-->
     <propose-form

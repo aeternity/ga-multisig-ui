@@ -57,15 +57,19 @@ const {
   txHash,
   proposedAmount,
   gaPubKey,
-  recipientKey
+  recipientKey,
 } = toRefs(multisig)
 </script>
 
 <style scoped>
 .wallet {
 
+  width: 320px;
+  position: fixed;
+  top: 0;
+  right: 0;
+
   margin: 0 auto;
-  max-width: 600px;
 
   border: 2px solid #de3f6b;
   border-radius: 15px;
