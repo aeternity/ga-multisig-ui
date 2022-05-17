@@ -13,6 +13,7 @@ export const storeContractToDB = async (contractId, gaAddress, gaSecret, signers
         gaSecret,
         signers,
       })
+    // todo is it neccessary to store signers?
   } catch (e) {
     console.error(e)
   }
@@ -30,7 +31,7 @@ export const restoreContractsFromDB = async () => {
 }
 
 
-export const patchProposalByContractId = async (contractId,recipientKey, proposedAmount) => {
+export const patchProposalByContractId = async (contractId, recipientAddress, proposedAmount) => {
 // todo mozna predtim restore? anebo rovnou vytahnout z db?
   await restoreContractsFromDB()
 
@@ -38,7 +39,7 @@ export const patchProposalByContractId = async (contractId,recipientKey, propose
 
   try {
     await axios.patch(`${dbURL}/${contractById.id}`, {
-      recipientKey, //todo now we store recipiant key and secret Maybe we can store only recipiant key
+      recipientAddress, //todo now we store recipiant key and secret Maybe we can store only recipiant key
       proposedAmount
     });
 

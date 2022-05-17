@@ -4,8 +4,8 @@
     <h2>Contract Detail</h2>
     <!--    todo merge detail and create-->
     <propose-form
-      :recipient-address="recipientAddress"
-      :proposed-amount="proposedAmount"
+      v-model:recipient-address="recipientAddress"
+      v-model:proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
     <confirm-form
       v-if="hasProposedTx"
@@ -24,11 +24,18 @@
 
 <script>
 import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
-import { getContractByContractId, multisig, patchProposalByContractId, updateContractInfo } from '../store'
+import {
+  confirmIt,
+  getContractByContractId,
+  multisig,
+  patchProposalByContractId, proposeIt,
+  revokeIt,
+  sendIt,
+  updateContractInfo,
+} from '../store'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { MemoryAccount, Node, Universal } from '@aeternity/aepp-sdk'
-
 
 import ProposeForm from "../components/ProposeForm"
 import ConfirmForm from "../components/ConfirmForm"
@@ -45,35 +52,28 @@ export default {
     contractAccount: null,
     contractInstance: null,
     spendTx: null,
+    proposedAmount: null,
+    recipientAddress: null,
+    hasProposedTx: null,
+    hasConsensus: null,
+    gaPubKey: null,
+    gaSecret: null,
+    txHash: null
   }),
   computed: {
-    currentUserAddress () {
-      return aeWallet.address
-    },
+
     isCurrentUserSigner () {
       // todo how to remove boilerplate. Vue3 store + options
       return multisig.isCurrentUserSigner
     },
-    hasProposedTx () {
-      return multisig.hasProposedTx
-    },
-    hasConsensus () {
-      return multisig.hasConsensus
-    },
-    gaPubKey () {
-      return multisig.gaPubKey
-    },
-    txHash () {
-      return multisig.txHash
-    },
-    gaSecret () {
-      return multisig.gaSecret
-    },
-    recipientAddress () {
-      return multisig.recipientKey
-    },
-    proposedAmount () {
-      return multisig.proposedAmount
+
+  },
+  watch: {
+    $route (newValue, oldValue) {
+      if (oldValue.id === this.$route.params.id) {
+        this.clearValues()
+        // todo fix clearing
+      }
     },
   },
   async mounted () {
@@ -82,6 +82,8 @@ export default {
     console.log('contractDetails', contractDetails)
     await this.loadContract(contractDetails.gaAddress, contractDetails.gaSecret)     // todo  can be this done better?
 
+
+    this.bindValues()
     this.signerSdk = await Universal({
       nodes: [{
         name: 'testnet',
@@ -98,6 +100,24 @@ export default {
     )
   },
   methods: {
+    bindValues() {
+      this.recipientAddress = multisig.recipientAddress
+      this.proposedAmount = multisig.proposedAmount
+      this.hasProposedTx = multisig.hasProposedTx
+      this.hasConsensus = multisig.hasConsensus
+      this.gaPubKey = multisig.gaPubKey
+      this.gaSecret = multisig.gaSecret
+      this.txHash = multisig.txHash
+    },
+    clearValues() {
+      this.recipientAddress =null
+      this.proposedAmount = null
+      this.hasProposedTx = null
+      this.hasConsensus = null
+      this.gaPubKey = null
+      this.gaSecret = null
+      this.txHash = null
+    },
     async loadContract (gaAddress, gaSecret) {
       const signerSdk = await Universal({
         nodes: [{
@@ -109,24 +129,13 @@ export default {
       await updateContractInfo(signerSdk, gaAddress, gaSecret)
     },
     async proposeTx () {
-
       this.spendTx = await aeWallet.sdk.spendTx({
         senderId: this.gaPubKey,
         recipientId: this.recipientAddress, //todo not connected
         amount: this.proposedAmount, //todo not connected
       })
 
-      const encoded = encode(unpackTx(this.spendTx).rlpEncoded, 'tx')
-
-      this.spendTxHash = await buildAuthTxHash(encoded)
-      const expirationHeight = await this.signerSdk.height() + 50
-      const gaContractRpc = await aeWallet.sdk.getContractInstance(
-        {
-          source: multisigContract,
-          contractAddress: this.contractAccount.contractId,
-        },
-      )
-      await gaContractRpc.methods.propose.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
+      await proposeIt(this.spendTx, this.signerSdk, this.contractAccount.contractId)
 
       // todo signer sdk to store
       await patchProposalByContractId(this.contractAccount.contractId, this.recipient, this.proposedAmount)
@@ -134,42 +143,18 @@ export default {
     },
 
     async confirmTx () {
-      const gaContractRpc = await aeWallet.sdk.getContractInstance(
-        {
-          source: multisigContract,
-          contractAddress: this.contractAccount.contractId,
-        },
-      )
-      const expirationHeight = await this.signerSdk.height() + 50
-
-      await gaContractRpc.methods.confirm.send(this.txHash, { FixedTTL: [expirationHeight] })
-
+      await confirmIt(this.contractAccount.contractId, this.signerSdk, this.txHash)
       await updateContractInfo(this.signerSdk, this.gaPubKey) // todo improve/reduce params
     },
 
     async sendTx () {
-      const nonce = (await this.contractInstance.methods.get_nonce()).decodedResult
-
-      const balanceBefore = await this.signerSdk.getBalance(this.recipientAddress)
-
-      // pre charge GA account create this.gaAccount on chai
-      // todo do button workaround in app
-
-      // todo try wrapping it in a PayingForTx?
-      //  The issue is the Account the generalized Account is created from (creation is conversion) has to pay for the costs.
-      //  Maybe this can be solved using PayingForTx, so someone else pay the fee.
-      //  If that approach works we can integrate it into the sdk.
-
-      await aeWallet.sdk.spend(
-        776440000000000,
-        this.gaPubKey,
-      )
-      const aaa = {
-        publicKey: this.gaPubKey,
-        secretKey: this.gaSecret,
-      }
       const gaAccount = MemoryAccount(
-        { keypair: aaa },
+        {
+          keypair: {
+            publicKey: this.gaPubKey,
+            secretKey: this.gaSecret,
+          },
+        },
       )
 
       const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
@@ -178,36 +163,20 @@ export default {
         amount: this.proposedAmount,
       })
 
-      await this.signerSdk.send(
-        spendTx,
-        {
-          onAccount: gaAccount,
-          authData: { source: multisigContract, args: [nonce] },
-        })
+      await sendIt(this.contractInstance, this.gaPubKey, gaAccount, spendTx, this.signerSdk)
 
       await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
     },
 
     async revokeTx () {
-      // todo is account necessary?
-
       const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
         senderId: this.gaPubKey,
         recipientId: this.recipientAddress,
         amount: this.proposedAmount,
       })
+      // todo is account necessary?
 
-      const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
-
-      const spendTxHash = await buildAuthTxHash(encoded)
-
-      const gaContractRpc = await aeWallet.sdk.getContractInstance(
-        {
-          source: multisigContract,
-          contractAddress: this.contractAccount.contractId,
-        },
-      )
-      await gaContractRpc.methods.revoke.send(spendTxHash)
+      await revokeIt(spendTx, this.contractAccount.contractId, this.signerSdk, this.gaPubKey, this.gaSecret)
 
       await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
     },

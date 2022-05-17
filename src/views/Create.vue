@@ -5,7 +5,7 @@
     <h2>Create Multisig Account</h2>
     <br>
     <br>
-<!--    todo fix casing-->
+    <!--    todo fix casing-->
     <signers-form
       v-model:signer1Key="signer1Key"
       v-model:signer2Key="signer2Key"
@@ -16,6 +16,7 @@
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
     <confirm-form
+      :signers="signers"
       @confirm-clicked="confirmTx"
       @revoke-clicked="revokeTx"/>
     <send-form
@@ -42,7 +43,15 @@ import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
-import { storeContractToDB, updateContractInfo, patchProposalByContractId } from '../store'
+import {
+  storeContractToDB,
+  updateContractInfo,
+  patchProposalByContractId,
+  revokeIt,
+  sendIt,
+  confirmIt,
+  proposeIt, multisig,
+} from '../store'
 import { COMPILER_URL } from '../utils/aeternity/configs'
 import WalletInfo from "../components/WalletInfo"
 
@@ -57,24 +66,19 @@ export default {
     connectedAddress: null,
     signer1Key: '',
     signer2Key: '',
-    requiredSignersAmount: 2,
+    requiredSignersAmount: 0,
     gaKeypair: null,
-    isGa: null,
     // todo gaAccount wtf
     consensusInfo: null,
     revokedInfo: null,
     signers: null,
-    version: null,
-    recipientAddress: '',
-    proposedConsensusInfo: null,
-    confirmedInfo: null,
-    proposedAmount: 0,
+    proposedAmount: multisig.proposedAmount,
+    recipientAddress: multisig.recipientAddress,
     spendTx: null,
     spendTxHash: null,
     contractAccount: null,
     contractInstance: null,
-    inputAddress: null,
-    loadedContractInfo: null,
+    contractInstanceInitial: null,
     signerSdk: null, //todo or move to store
   }),
   computed: {
@@ -97,19 +101,20 @@ export default {
           instance: await Node({ url: 'https://testnet.aeternity.io' }),
         }],
         compilerUrl: COMPILER_URL,
-        accounts: [this.gaAccount],
       })
       const contractInstanceInitial = await this.signerSdk.getContractInstance(
         { source: multisigContract })
 
       await contractInstanceInitial.compile()
 
+      this.signers = [
+        this.signer1Key,
+        this.signer2Key,
+      ]
+
       const multisigArgs = [
         this.requiredSignersAmount,
-        [
-          this.signer1Key,
-          this.signer2Key,
-        ],
+        this.signers,
       ]
       const attachTX = await this.signerSdk.gaAttachTx({
         ownerId: this.gaKeypair.publicKey,
@@ -129,8 +134,6 @@ export default {
 
       await aeWallet.sdk.payForTransaction(rawTx)
 
-      this.isGa = await this.signerSdk.isGA(this.gaKeypair.publicKey)
-
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
 
       this.contractAccount = await this.signerSdk.getAccount(this.gaKeypair.publicKey)
@@ -142,10 +145,7 @@ export default {
         {
           source: multisigContract,
           contractAddress: this.contractAccount.contractId,
-        },
-      )
-
-      this.signers = (await this.contractInstance.methods.get_signers()).decodedResult
+        })
 
       await storeContractToDB(
         this.contractAccount.contractId,
@@ -161,20 +161,7 @@ export default {
         recipientId: this.recipientAddress,
         amount: this.proposedAmount,
       })
-
-      const encoded = encode(unpackTx(this.spendTx).rlpEncoded, 'tx')
-
-      this.spendTxHash = await buildAuthTxHash(encoded)
-      const expirationHeight = await this.signerSdk.height() + 50
-      const gaContractRpc = await aeWallet.sdk.getContractInstance(
-        {
-          source: multisigContract,
-          contractAddress: this.contractAccount.contractId,
-        },
-      )
-
-      await gaContractRpc.methods.propose.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
-
+      await proposeIt(this.spendTx, this.signerSdk, this.contractAccount.contractId)
       // todo signer sdk to store
       await patchProposalByContractId(this.contractAccount.contractId, this.recipientAddress, this.proposedAmount)
 
@@ -182,86 +169,20 @@ export default {
     },
 
     async confirmTx () {
-      const gaContractRpc = await aeWallet.sdk.getContractInstance(
-        {
-          source: multisigContract,
-          contractAddress: this.contractAccount.contractId,
-        },
-      )
-      const expirationHeight = await this.signerSdk.height() + 50
-
-      await gaContractRpc.methods.confirm.send(this.spendTxHash, { FixedTTL: [expirationHeight] })
-
+      await confirmIt(this.contractAccount.contractId, this.signerSdk, this.spendTxHash)
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
     },
 
     async sendTx () {
-      const nonce = (await this.contractInstance.methods.get_nonce()).decodedResult
-
-      //
-      // todo do button workaround  pre charge GA account create this.gaAccount on chai
-
-      // todo try wrapping it in a PayingForTx?
-      //  The issue is the Account the generalized Account is created from (creation is conversion) has to pay for the costs.
-      //  Maybe this can be solved using PayingForTx, so someone else pay the fee.
-      //  If that approach works we can integrate it into the sdk.
-
-      await aeWallet.sdk.spend(
-        776440000000000,
-        this.gaKeypair.publicKey,
-      )
-
-      await this.signerSdk.send(
-        this.spendTx,
-        {
-          onAccount: this.gaAccount,
-          authData: { source: multisigContract, args: [nonce] },
-        })
-
+      await sendIt(this.contractInstance, this.gaKeypair.publicKey, this.gaAccount, this.spendTx, this.signerSdk)
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
     },
 
+
     async revokeTx () {
-      const encoded = encode(unpackTx(this.spendTx).rlpEncoded, 'tx')
-
-      const spendTxHash = await buildAuthTxHash(encoded)
-
-      const gaContractRpc = await aeWallet.sdk.getContractInstance(
-        {
-          source: multisigContract,
-          contractAddress: this.contractAccount.contractId,
-        },
-      )
-      await gaContractRpc.methods.revoke.send(spendTxHash)
-
-
-      // todo is account necessary?
-      // todo use short version as in Detail
-
-      // const signer1Account = MemoryAccount({ keypair: this.signer1 })
-
-      // const calldata2 = this.contractInstance.calldata.encode('SimpleGAMultiSig', 'revoke', [this.spendTxHash])
-      // const contractCallTx2 = await this.signerSdk.contractCallTx({
-      //   callerId: this.signer1Key,
-      //   contractId: this.contractAccount.contractId,
-      //   amount: 0,
-      //   gas: 1000000,
-      //   gasPrice: 1500000000,
-      //   callData: calldata2,
-      // })
-      //
-      // const signedContractCallTx2 = await this.signerSdk.signTransaction(
-      //   contractCallTx2,
-      //   {
-      //     onAccount: signer1Account,
-      //     innerTx: true,
-      //   },
-      // )
-      //
-      // await aeWallet.sdk.payForTransaction(signedContractCallTx2)
-
+      await revokeIt(this.spendTx, this.contractAccount.contractId, this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey)
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
-      // todo show link to successful transaction just for show
+
     },
   },
 }

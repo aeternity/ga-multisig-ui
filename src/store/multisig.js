@@ -1,9 +1,10 @@
 import { Node, Universal } from '@aeternity/aepp-sdk'
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
-import { aeWallet } from "../utils/aeternity"
-import axios from "axios"
+import { aeWallet, buildAuthTxHash } from "../utils/aeternity"
 import { getContractByGaAddress } from "./off-chainDB"
+import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
+import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 
 export const multisig = reactive({
   version: null,
@@ -16,11 +17,10 @@ export const multisig = reactive({
   multisigContracts: null,
   txHash: null,
   proposedAmount: null,
-  recipientKey: null,
+  recipientAddress: null,
   gaPubKey: null,
   gaSecret: null,
 })
-
 
 export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
   const {
@@ -34,7 +34,7 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
     isCurrentUserSigner,
     txHash,
     proposedAmount,
-    recipientKey,
+    recipientAddress,
     gaPubKey,
     gaSecret, //todo rename
   } = toRefs(multisig)
@@ -71,7 +71,7 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
   if (hasProposedTx.value) {
     const offChainProposeData = getContractByGaAddress(gaAddress)
     proposedAmount.value = offChainProposeData.proposedAmount
-    recipientKey.value = offChainProposeData.recipientKey
+    recipientAddress.value = offChainProposeData.recipientAddress
   }
 }
 
@@ -87,12 +87,82 @@ export const loadMyContracts = async () => {
 }
 
 export const getUniversalInstance = async () => {
+  // todo node from variable
   const node = await Node({ url: 'https://net.aeternity.io' })
+
   const signerSdk = await Universal({
-    nodes: [{ name: 'net', instance: node }],
+    nodes: [{ name: 'testnet', instance: node }],
     compilerUrl: 'https://compiler.aepps.com',
   })
   return signerSdk
+}
+
+export const proposeIt = async (spendTx, signerSdk, contractId) => {
+  const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
+
+  const spendTxHash = await buildAuthTxHash(encoded)
+  const expirationHeight = await signerSdk.height() + 50
+  const gaContractRpc = await aeWallet.sdk.getContractInstance(
+    {
+      source: multisigContract,
+      contractAddress: contractId,
+    },
+  )
+
+  await gaContractRpc.methods.propose.send(spendTxHash, { FixedTTL: [expirationHeight] })
+}
+
+export const confirmIt = async(contractId, signerSdk, spendTxHash) => {
+  const gaContractRpc = await aeWallet.sdk.getContractInstance(
+    {
+      source: multisigContract,
+      contractAddress: contractId,
+    },
+  )
+  const expirationHeight = await signerSdk.height() + 50
+
+  await gaContractRpc.methods.confirm.send(spendTxHash, { FixedTTL: [expirationHeight] })
+
+}
+
+export const sendIt = async (contractInstance, publicKey, gaAccount, spendTx, signerSdk) => {
+  const nonce = (await contractInstance.methods.get_nonce()).decodedResult
+
+
+
+  // todo try wrapping it in a PayingForTx?
+  //  The issue is the Account the generalized Account is created from (creation is conversion) has to pay for the costs.
+  //  Maybe this can be solved using PayingForTx, so someone else pay the fee.
+  //  If that approach works we can integrate it into the sdk.
+
+  await aeWallet.sdk.spend(
+    776440000000000,
+   publicKey,
+    // todo do button workaround  pre charge GA account create this.gaAccount on chai
+  )
+
+  await signerSdk.send(
+    spendTx,
+    {
+      onAccount: gaAccount,
+      authData: { source: multisigContract, args: [nonce] },
+    })
+}
+
+export const revokeIt = async (spendTx, contractId, signerSdk, publicKey, secretKey) => {
+    const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
+    const spendTxHash = await buildAuthTxHash(encoded)
+
+    const gaContractRpc = await aeWallet.sdk.getContractInstance(
+      {
+        source: multisigContract,
+        contractAddress: contractId,
+      },
+    )
+    await gaContractRpc.methods.revoke.send(spendTxHash)
+
+    await updateContractInfo(signerSdk, publicKey, secretKey) // todo improve/reduce params
+    // todo show link to successful transaction just for show
 }
 
 

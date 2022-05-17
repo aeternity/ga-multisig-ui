@@ -18,7 +18,6 @@
     <br>
     <br>
     <label>Signer 2 </label>
-
     <br>
     <input
       type="text"
@@ -29,14 +28,15 @@
     <label>Amount of signers</label>
     <br>
     <input
-      type="text"
+      type="number"
       :value="requiredSignersAmount"
       @input="$emit('update:requiredSignersAmount', $event.target.value)"
     >
     <br>
     <br>
     <button
-      @click="$emit('create-clicked')">Create Account
+      @click="$emit('create-clicked')">
+      Create Account
     </button>
     <hr>
   </div>

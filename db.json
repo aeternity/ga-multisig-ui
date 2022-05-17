@@ -1,37 +1,26 @@
 {
   "multisigContracts": [
     {
-      "contractId": "ct_JfvBcSHxdvG4XYbWoLEvhTF5wej8rWY411cHYkxP1vtzMaKQX",
-      "gaAddress": "ak_HnnWGG8o1ZADvau6xvzpAWUg57TB6RCCmduwpRKJ9BqbSvu17",
-      "gaSecret": "7f77c33bd7e4c1bb713aee503e3efaa437af182c52a7f842de4256ca71b50506261f5316ae320078f80949ec15ba583192bc3f7aaf352561f6d60ca8b7242718",
+      "contractId": "ct_3NupsV4vsDCBo3afaADP5BU6hjZeo88aeyjcbqfNPwzt5ZHxg",
+      "gaAddress": "ak_27rAqQ7SUuzfMDytHJZqR7YGyHBC76gkJB3wDSVjT8qEEzqxvP",
+      "gaSecret": "f49ba72cdf329eb300cfefd2b2ff03567d3fbcc4368d2a09526f371bcba15ed6933ea80ca529b3de1a5463e9982932fed9fb78e23910fc2850a6d258f151eb45",
       "signers": [
-        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
       ],
       "id": 1
     },
     {
-      "contractId": "ct_jCG9jv7GkVDynUQ4u1DaLzdqDv2yiZxB1hvyscoLaqmzgqtjk",
-      "gaAddress": "ak_R7PDe71uJCYfyEydYpsKjxAAE9vSroWXryzSYTgwzYDFaKcMQ",
-      "gaSecret": "9de44c2e8a87be2b2c7fbb4e113030b25ef67c3051d6f3c6fef552b2ffde1af336beacd248d1c7c2fcb29216137435f02c80313535f02cf308a2747e76d692b1",
+      "contractId": "ct_2vrvtv76aND7ZukDttxC5u7EFoniZ2ULb8VnKMH8RmW9P4anpN",
+      "gaAddress": "ak_hhHt8NHGNZKyidBa2en4n9D3ucAu14Kga6t6BTbPLyg8xUQxi",
+      "gaSecret": "22ad52772599370d6fcc8e98e48b3ae9f70d1cb1b261e27e408910b26d2dd7295c66f8d5180ac0f1adea0826d9da288f376131aa11e92d30c94224a3b89a21cf",
       "signers": [
-        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
       ],
       "id": 2,
-      "proposedAmount": "3333"
-    },
-    {
-      "contractId": "ct_2CRcqb2ayjXcWoBMuy2WFvXesZrL6FuDUpo7r1q9GYHQWZQGVx",
-      "gaAddress": "ak_akAp5Wf1pwYxRbZ9RLpeAoGpzhZkPFTpZvSCcxoBrwuUs44Cz",
-      "gaSecret": "0e82df1f3318c99cc76deb87acf597d2552b1c818f7b67312ea88a3195e514d74c9edc8022a736b01af177309701cccd5a865febb39d2ff20e834f06b97679f9",
-      "signers": [
-        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
-      ],
-      "id": 3,
-      "recipientKey": "ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK",
-      "proposedAmount": "4444"
+      "recipientAddress": "ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK",
+      "proposedAmount": "2222"
     }
   ]
 }

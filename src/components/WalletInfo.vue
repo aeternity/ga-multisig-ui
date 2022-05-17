@@ -17,7 +17,7 @@
       <br>
       proposedAmount: {{ proposedAmount }}
       <br>
-      recipientKey: {{ recipientKey }}
+      recipientAddress: {{ recipientAddress }}
       <br>
       <hr>
       <br>
@@ -55,7 +55,7 @@ const {
   txHash,
   proposedAmount,
   gaPubKey,
-  recipientKey,
+  recipientAddress,
 } = toRefs(multisig)
 </script>
 
