@@ -27,6 +27,7 @@
 </template>
 
 <script>
+// todo page as setup
 import { aeWallet, buildAuthTxHash } from '../utils/aeternity'
 import {
   confirmIt,

@@ -18,10 +18,10 @@
     </div>
   </div>
 </template>
-todo add loader
-
+<!--// todo add loader-->
+<!--todo come up with better hydrating-->
 <script>
-// todo pages as setup
+// todo page as setup
 
 import { loadMyContracts, restoreContractsFromDB } from "../store"
 import { aeWallet } from '../utils/aeternity'
