@@ -15,6 +15,7 @@
 
     <!--    todo propagate after propose to show confirmation block -->
     <confirm-form
+      :class="[{'disabled': !hasProposedTx}]"
       :signers="signers"
       :confirmed-by="confirmedBy"
       :confirmations="confirmations"
@@ -25,6 +26,7 @@
 
     <!--    todo this will not be needed for creation-->
     <send-form
+      :class="[{'disabled': !hasConsensus}]"
       @send-clicked="sendTx"
       @revoke-clicked="revokeTx"/>
     <!--    todo add charge button-->
@@ -76,6 +78,9 @@ const contractInstanceInitial = ref(null)
 const signerSdk = ref(null) //todo or move to stor;
 const confirmedBy = ref(null)
 const confirmations = ref(null)
+const hasProposedTx = ref(false)
+const hasConsensus = ref(false)
+
 
 async function crateGaAccount () {
   gaKeypair.value = Crypto.generateKeyPair()

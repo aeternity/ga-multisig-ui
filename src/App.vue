@@ -52,9 +52,10 @@ ul {
 }
 
 .disabled {
-  opacity: 0.3;
+  opacity: 0.2;
+  filter: blur(1px);
   pointer-events: none;
-  cursor: not-allowed;
+  transition: 0.5s;
 }
 
 </style>

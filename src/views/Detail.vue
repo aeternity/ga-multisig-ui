@@ -9,7 +9,7 @@
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
     <confirm-form
-      v-if="hasProposedTx"
+      :class="[{'disabled': !hasProposedTx}]"
       :signers="signers"
       :confirmations="confirmations"
       :confirmations-required="confirmationsRequired"
@@ -18,7 +18,7 @@
       @revoke-clicked="revokeTx"/>
     <!--    update state after click confirm-->
     <send-form
-      v-if="hasConsensus"
+      :class="[{'disabled': !hasConsensus}]"
       @send-clicked="sendTx"
       @revoke-clicked="revokeTx"/>
   </div>
@@ -160,12 +160,15 @@ async function proposeTx () {
   // todo signer sdk to store
   await patchProposalByContractId(contractAccount.value.contractId, recipientAddress.value, proposedAmount.value)
   await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  bindValues()
 }
 
 
 async function confirmTx () {
   await confirmIt(contractAccount.value.contractId, signerSdk.value, txHash.value)
   await updateContractInfo(signerSdk.value, gaPubKey.value) // todo improve/reduce params
+  bindValues()
+
 }
 
 async function sendTx () {
@@ -187,10 +190,12 @@ async function sendTx () {
   await sendIt(contractInstance.value, gaPubKey.value, gaAccount, spendTx, signerSdk.value)
 
   await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  bindValues()
 }
 
 
 async function revokeTx () {
+  // todo detect revoked status
   const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
     senderId: gaPubKey.value,
     recipientId: recipientAddress.value,
@@ -201,5 +206,6 @@ async function revokeTx () {
   await revokeIt(spendTx, contractAccount.value.contractId, signerSdk.value, gaPubKey.value, gaSecret.value)
 
   await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  bindValues()
 }
 </script>
