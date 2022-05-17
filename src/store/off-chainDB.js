@@ -23,7 +23,6 @@ export const restoreContractsFromDB = async () => {
   const { multisigContracts } = toRefs(multisig) // todo this probably do in page
   try {
     const res = await axios.get(dbURL)
-    console.log('res', res)
     multisigContracts.value = res.data
   } catch (e) {
     console.error(e)

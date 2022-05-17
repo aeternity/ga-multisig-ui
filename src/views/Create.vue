@@ -17,6 +17,9 @@
       @propose-clicked="proposeTx"/>
     <confirm-form
       :signers="signers"
+      :confirmed-by="confirmedBy"
+      :confirmations="confirmations"
+      :confirmations-required="confirmationsRequired"
       @confirm-clicked="confirmTx"
       @revoke-clicked="revokeTx"/>
     <send-form
@@ -80,6 +83,8 @@ export default {
     contractInstance: null,
     contractInstanceInitial: null,
     signerSdk: null, //todo or move to store
+    confirmedBy: null,
+    confirmations: null,
   }),
   computed: {
 // todo conditions as computed properties
@@ -140,7 +145,6 @@ export default {
       // todo fix je vubec potreba contractaddress ?
       // todo inicializovat zvlast?
       // todo a nestaci ta initial?
-      console.log('this.contractAccount', this.contractAccount)
       this.contractInstance = await this.signerSdk.getContractInstance(
         {
           source: multisigContract,
@@ -164,7 +168,6 @@ export default {
       await proposeIt(this.spendTx, this.signerSdk, this.contractAccount.contractId)
       // todo signer sdk to store
       await patchProposalByContractId(this.contractAccount.contractId, this.recipientAddress, this.proposedAmount)
-
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
     },
 
@@ -178,11 +181,9 @@ export default {
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
     },
 
-
     async revokeTx () {
       await revokeIt(this.spendTx, this.contractAccount.contractId, this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey)
       await updateContractInfo(this.signerSdk, this.gaKeypair.publicKey, this.gaKeypair.secretKey) // todo improve/reduce params
-
     },
   },
 }

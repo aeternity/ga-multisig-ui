@@ -9,6 +9,10 @@
       @propose-clicked="proposeTx"/>
     <confirm-form
       v-if="hasProposedTx"
+      :signers="signers"
+      :confirmations="confirmations"
+      :confirmations-required="confirmationsRequired"
+      :confirmed-by="confirmedBy"
       @confirm-clicked="confirmTx"
       @revoke-clicked="revokeTx"/>
     <send-form
@@ -58,7 +62,11 @@ export default {
     hasConsensus: null,
     gaPubKey: null,
     gaSecret: null,
-    txHash: null
+    txHash: null,
+    signers: null,
+    confirmations: null,
+    confirmedBy: null,
+    confirmationsRequired: null,
   }),
   computed: {
 
@@ -79,7 +87,6 @@ export default {
   async mounted () {
     const contractId = this.$route.params.id
     const contractDetails = await getContractByContractId(contractId)
-    console.log('contractDetails', contractDetails)
     await this.loadContract(contractDetails.gaAddress, contractDetails.gaSecret)     // todo  can be this done better?
 
 
@@ -108,8 +115,13 @@ export default {
       this.gaPubKey = multisig.gaPubKey
       this.gaSecret = multisig.gaSecret
       this.txHash = multisig.txHash
+      this.signers = multisig.signers
+      this.confirmedBy = multisig.confirmedBy
+      this.confirmations = multisig.confirmations
+      this.confirmationsRequired = multisig.confirmationsRequired
     },
     clearValues() {
+      // todo move thi to store
       this.recipientAddress =null
       this.proposedAmount = null
       this.hasProposedTx = null
@@ -117,6 +129,10 @@ export default {
       this.gaPubKey = null
       this.gaSecret = null
       this.txHash = null
+      this.signers = null
+      this.confirmedBy = null
+      this.confirmations = null
+      this.confirmationsRequired = null
     },
     async loadContract (gaAddress, gaSecret) {
       const signerSdk = await Universal({
@@ -138,7 +154,7 @@ export default {
       await proposeIt(this.spendTx, this.signerSdk, this.contractAccount.contractId)
 
       // todo signer sdk to store
-      await patchProposalByContractId(this.contractAccount.contractId, this.recipient, this.proposedAmount)
+      await patchProposalByContractId(this.contractAccount.contractId, this.recipientAddress, this.proposedAmount)
       await updateContractInfo(this.signerSdk, this.gaPubKey, this.gaSecret) // todo improve/reduce params
     },
 

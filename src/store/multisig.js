@@ -20,6 +20,7 @@ export const multisig = reactive({
   recipientAddress: null,
   gaPubKey: null,
   gaSecret: null,
+  confirmedBy: null
 })
 
 export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
@@ -37,6 +38,7 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
     recipientAddress,
     gaPubKey,
     gaSecret, //todo rename
+    confirmedBy,
   } = toRefs(multisig)
   const { address } = toRefs(aeWallet)
 
@@ -66,6 +68,7 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
   isCurrentUserSigner.value = signers.value.includes(address.value)
   hasProposedTx.value = !!confirmations.value
   hasConsensus.value = consensus.has_consensus
+  confirmedBy.value = consensus.confirmed_by
 
 
   if (hasProposedTx.value) {

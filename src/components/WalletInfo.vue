@@ -13,6 +13,8 @@
       <br>
       signers: {{ signers }}
       <br>
+      confirmedBy: {{ confirmedBy }}
+      <br>
       txHash: {{ txHash }}
       <br>
       proposedAmount: {{ proposedAmount }}
@@ -56,6 +58,7 @@ const {
   proposedAmount,
   gaPubKey,
   recipientAddress,
+  confirmedBy
 } = toRefs(multisig)
 </script>
 
