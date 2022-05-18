@@ -1,5 +1,5 @@
 <template>
-  <!--  <WalletInfo class="wallet-info"/>-->
+  <WalletInfo class="wallet-info"/>
   <div class="create">
     <h2>Create Multisig Account</h2>
     <!--    todo fix casing-->
@@ -50,6 +50,8 @@
       @send-clicked="sendTx"
       @revoke-clicked="revokeTx"/>
     <!--    todo add charge button-->
+    <div v-if="isRevoked">The transaction has been revoked by user ...</div>
+    <div v-if="isSent">The transaction has been sent by user...</div>
   </div>
 </template>
 
@@ -67,6 +69,8 @@ import {
   confirmIt,
   multisig,
   patchProposalByContractId,
+  patchRevokedStatus,
+  patchSentStatus,
   proposeIt,
   revokeIt,
   sendIt,
@@ -78,6 +82,7 @@ import { onMounted, ref, toRefs } from "vue"
 import SendForm from "../components/SendForm"
 import ProposeList from "./ProposeList"
 import SignerList from "./SignerList"
+import WalletInfo from "../components/WalletInfo"
 
 const {
   version,
@@ -94,6 +99,8 @@ const {
   confirmedBy,
   isConfirmedByCurrentUser,
   contractId,
+  isRevoked,
+  isSent,
 } = toRefs(multisig)
 
 
@@ -201,12 +208,14 @@ async function confirmTx () {
 async function sendTx () {
   // todo gaaccount is not ref
   await sendIt(contractInstance.value, gaKeypair.value.publicKey, gaAccount.value, spendTx.value, signerSdk.value)
+  await patchSentStatus(contractAccount.value.contractId)
   await updateContractInfo(signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
 }
 
 async function revokeTx () {
   await revokeIt(spendTx.value, contractAccount.value.contractId, signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey)
   // todo is this updating neccessary?
+  await patchRevokedStatus(contractAccount.value.contractId)
   await updateContractInfo(signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
 }
 

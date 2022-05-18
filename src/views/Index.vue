@@ -24,23 +24,27 @@
 </template>
 <!--todo come up with better hydrating-->
 <script setup>
-import { loadMyContracts, restoreContractsFromDB } from "../store"
+import { app, hydrateApp, loadMyContracts, multisig, restoreContractsFromDB } from "../store"
 import { aeWallet } from '../utils/aeternity'
-import { computed, onMounted, ref, watch } from "vue"
+import { computed, onMounted, ref, toRefs, watch } from "vue"
 import LoaderImage from "../components/LoaderImage"
 
-const myContracts = ref(null)
+const { myContracts } = toRefs(app)
 const isLoaded = ref(false)
 const walletStatus = computed(() => aeWallet.walletStatus)
 const address = computed(() => aeWallet.address)
 // todo is this computed neccessary ?
 
+
+const {
+  isAppHydrated,
+} = toRefs(multisig)
+
 watch(walletStatus,
   async (newStatus) => {
     if (newStatus === null) {
       // todo wait for wallet connection but make it better
-      await restoreContractsFromDB()
-      myContracts.value = await loadMyContracts()
+      await hydrateApp()
     }
   },
 )
@@ -49,6 +53,7 @@ watch(walletStatus,
 // todo merge watch and onmounted
 
 onMounted(async () => {
+  // todo move this to App
   await restoreContractsFromDB()
   myContracts.value = await loadMyContracts()
 })

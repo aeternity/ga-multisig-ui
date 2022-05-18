@@ -1,6 +1,5 @@
 import { aeWallet, buildAuthTxHash } from "../utils/aeternity"
 import multisigContract from "../utils/aeternity/contracts/SimpleGAMultiSig.aes"
-import { updateContractInfo } from "./multisig"
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { MemoryAccount } from '@aeternity/aepp-sdk'
@@ -73,9 +72,11 @@ export const revokeIt = async (spendTx, contractId, signerSdk, publicKey, secret
       contractAddress: contractId,
     },
   )
-  await gaContractRpc.methods.revoke.send(spendTxHash)
+  const revokeTx = await gaContractRpc.methods.revoke.send(spendTxHash)
+  console.log('revokeTx.decodedEvents', revokeTx.decodedEvents[0])
+  console.log('revokeTx.decodedEvents', revokeTx.decodedEvents[0].args[1])
 
-  await updateContractInfo(signerSdk, publicKey, secretKey) // todo improve/reduce params
+  // todo improve/reduce params
   // todo show link to successful transaction just for show
 }
 

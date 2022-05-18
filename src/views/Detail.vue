@@ -1,5 +1,5 @@
 <template>
-  <!--  <WalletInfo class="wallet-info"/>-->
+  <WalletInfo class="wallet-info"/>
   <div class="detail" v-if="gaPubKey">
     <h2>Multisig Detail</h2>
     <!--    todo merge detail and create-->
@@ -32,6 +32,8 @@
       :class="[{'disabled': !hasConsensus}]"
       @send-clicked="sendTx"
       @revoke-clicked="revokeTx"/>
+    <div v-if="isRevoked">The transaction has been revoked by user ...</div>
+    <div v-if="isSent">The transaction has been sent by user...</div>
   </div>
   <loader-image v-else/>
 </template>
@@ -42,8 +44,11 @@ import {
   clearState,
   confirmIt,
   getContractByContractId,
+  hydrateApp,
   multisig,
   patchProposalByContractId,
+  patchRevokedStatus,
+  patchSentStatus,
   proposeIt,
   revokeIt,
   sendIt,
@@ -63,6 +68,7 @@ import { useRoute } from "vue-router"
 import LoaderImage from "../components/LoaderImage"
 import ProposeList from "./ProposeList"
 import SignerList from "./SignerList"
+import WalletInfo from "../components/WalletInfo"
 
 
 const {
@@ -81,6 +87,9 @@ const {
   gaSecret,
   contractId,
   isConfirmedByCurrentUser,
+  isAppHydrated,
+  isRevoked,
+  isSent,
 } = toRefs(multisig)
 
 const signerSdk = ref(null)
@@ -94,8 +103,16 @@ const spendTx = ref(null)
 // todo maybe onBeforeMount
 const route = useRoute()
 
+
 onMounted(async () => {
   clearState()
+
+  console.log('isAppHydrated.value', isAppHydrated.value)
+  if (!isAppHydrated.value) {
+    await hydrateApp()
+  }
+
+
   const contractId = route.params.id
   const contractDetails = await getContractByContractId(contractId)
   await loadContract(contractDetails.gaAddress, contractDetails.gaSecret)     // todo  can be this done better?
@@ -158,6 +175,7 @@ async function sendTx () {
   })
   console.log('contractInstance', contractInstance)
   await sendIt(contractInstance.value, gaPubKey.value, gaSecret.value, spendTx, signerSdk.value)
+  await patchSentStatus(contractAccount.value.contractId)
 
   await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
 }
@@ -173,6 +191,7 @@ async function revokeTx () {
   // todo is account necessary?
 
   await revokeIt(spendTx, contractAccount.value.contractId, signerSdk.value, gaPubKey.value, gaSecret.value)
+  await patchRevokedStatus(contractAccount.value.contractId)
 
   await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
 }

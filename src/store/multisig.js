@@ -2,8 +2,12 @@ import { Node, Universal } from '@aeternity/aepp-sdk'
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet } from "../utils/aeternity"
-import { getContractByGaAddress } from "./off-chainDB"
+import { getContractByGaAddress, restoreContractsFromDB } from "./off-chainDB"
 
+
+export const app = reactive({
+  myContracts: null,
+})
 
 export const multisig = reactive({
   version: null,
@@ -13,7 +17,7 @@ export const multisig = reactive({
   hasProposedTx: null,
   hasConsensus: null,
   isCurrentUserSigner: null,
-  multisigContracts: null,
+  multisigContracts: null, // todo presunout do druhzho modulu k mycontracts??
   txHash: null,
   proposedAmount: null,
   recipientAddress: null,
@@ -22,6 +26,9 @@ export const multisig = reactive({
   confirmedBy: null,
   contractId: null,
   isConfirmedByCurrentUser: null,
+  isAppHydrated: false,
+  isRevoked: false,
+  isSent: false,
 })
 
 export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
@@ -42,6 +49,8 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
     confirmedBy,
     contractId,
     isConfirmedByCurrentUser,
+    isRevoked,
+    isSent,
   } = toRefs(multisig)
 
   const { address } = toRefs(aeWallet)
@@ -72,15 +81,29 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
   confirmedBy.value = consensus.confirmed_by
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
-
+  const offChainProposeData = getContractByGaAddress(gaAddress)
+  console.log('offChainProposeData', offChainProposeData)
   if (hasProposedTx.value) {
-    const offChainProposeData = getContractByGaAddress(gaAddress)
+
     proposedAmount.value = offChainProposeData.proposedAmount
     recipientAddress.value = offChainProposeData.recipientAddress
+
   }
+  isRevoked.value = offChainProposeData?.isRevoked
+  isSent.value = offChainProposeData?.isSent
 }
 
+export const hydrateApp = async () => {
+  const { isAppHydrated } = toRefs(multisig)
+  const { myContracts } = toRefs(app)
+  await restoreContractsFromDB()
+  myContracts.value = await loadMyContracts()
+  isAppHydrated.value = true
+}
+
+
 export const loadMyContracts = async () => {
+  // todo separate to detail a nd list
   const { address } = toRefs(aeWallet)
   const { multisigContracts } = toRefs(multisig)
 
@@ -115,6 +138,8 @@ export const clearState = () => {
     confirmedBy,
     contractId,
     isConfirmedByCurrentUser,
+    isRevoked,
+    isSent,
   } = toRefs(multisig)
 
   version.value = null
@@ -130,7 +155,9 @@ export const clearState = () => {
   gaPubKey.value = null
   gaSecret.value = null
   confirmedBy.value = null
-  contractId.value = null,
-    isConfirmedByCurrentUser.value = null
+  contractId.value = null
+  isConfirmedByCurrentUser.value = null
+  isRevoked.value = null
+  isSent.value = null
 
 }

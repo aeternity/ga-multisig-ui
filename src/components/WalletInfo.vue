@@ -32,6 +32,10 @@
       hasProposedTx: {{ hasProposedTx }}
       <br>
       hasConsensus: {{ hasConsensus }}
+      <br>
+      isRevoked: {{ isRevoked }}
+      <br>
+      isSent: {{ isSent }}
     </div>
 
     <img
@@ -66,6 +70,8 @@ const {
   recipientAddress,
   confirmedBy,
   contractId,
+  isRevoked,
+  isSent,
 } = toRefs(multisig)
 </script>
 
