@@ -30,6 +30,7 @@
 <script setup>
 import { aeWallet } from '../utils/aeternity'
 import {
+  clearState,
   confirmIt,
   getContractByContractId,
   multisig,
@@ -39,7 +40,7 @@ import {
   sendIt,
   updateContractInfo,
 } from '../store'
-import { MemoryAccount, Node, Universal } from '@aeternity/aepp-sdk'
+import { Node, Universal } from '@aeternity/aepp-sdk'
 
 import ProposeForm from "../components/ProposeForm"
 import ConfirmForm from "../components/ConfirmForm"
@@ -47,10 +48,9 @@ import SendForm from "../components/SendForm"
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { COMPILER_URL } from "../utils/aeternity/configs"
 import WalletInfo from "../components/WalletInfo"
-import { onMounted, ref, toRefs, watch } from "vue"
+import { onMounted, ref, toRefs } from "vue"
 import { useRoute } from "vue-router"
 
-const route = useRoute()
 
 const {
   version,
@@ -75,17 +75,12 @@ const spendTx = ref(null)
 
 // todo comment watcher
 
-watch(() => route,
-  (value, oldValue) => {
-    if (oldValue.id === route.params.id) {
-      clearValues()
-      // todo fix clearing
-    }
-  },
-)
+
 // todo maybe onBeforeMount
+const route = useRoute()
 
 onMounted(async () => {
+  clearState()
   const contractId = route.params.id
   const contractDetails = await getContractByContractId(contractId)
   await loadContract(contractDetails.gaAddress, contractDetails.gaSecret)     // todo  can be this done better?
@@ -98,29 +93,15 @@ onMounted(async () => {
     compilerUrl: COMPILER_URL,
   })
   contractAccount.value = await signerSdk.value.getAccount(gaPubKey.value)
+  console.log('contractAccount.value', contractAccount.value)
   contractInstance.value = await signerSdk.value.getContractInstance(
     {
       source: multisigContract,
       contractAddress: contractAccount.value.contractId,
     },
   )
+  console.log('contractInstance.value', contractInstance.value)
 })
-
-
-function clearValues () {
-  // todo move this to store
-  recipientAddress.value = null
-  proposedAmount.value = null
-  hasProposedTx.value = null
-  hasConsensus.value = null
-  gaPubKey.value = null
-  gaSecret.value = null
-  txHash.value = null
-  signers.value = null
-  confirmedBy.value = null
-  confirmations.value = null
-  confirmationsRequired.value = null
-}
 
 
 async function loadContract (gaAddress, gaSecret) {
@@ -156,14 +137,7 @@ async function confirmTx () {
 }
 
 async function sendTx () {
-  const gaAccount = MemoryAccount(
-    {
-      keypair: {
-        publicKey: gaPubKey.value,
-        secretKey: gaSecret.value,
-      },
-    },
-  )
+
 
   const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
     senderId: gaPubKey.value,
@@ -171,7 +145,7 @@ async function sendTx () {
     amount: proposedAmount.value,
   })
   console.log('contractInstance', contractInstance)
-  await sendIt(contractInstance.value, gaPubKey.value, gaAccount, spendTx, signerSdk.value)
+  await sendIt(contractInstance.value, gaPubKey.value, gaSecret.value, spendTx, signerSdk.value)
 
   await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
 }

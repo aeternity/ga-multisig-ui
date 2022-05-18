@@ -39,6 +39,7 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
     gaSecret, //todo rename
     confirmedBy,
   } = toRefs(multisig)
+
   const { address } = toRefs(aeWallet)
 
   const contractAccount = await universal.getAccount(gaAddress)
@@ -97,4 +98,46 @@ export const getUniversalInstance = async () => {
   })
   return signerSdk
 }
+
+export const clearState = () => {
+  const {
+    version,
+    confirmations,
+    confirmationsRequired,
+    signers,
+    hasProposedTx,
+    hasConsensus,
+    isCurrentUserSigner,
+    txHash,
+    proposedAmount,
+    recipientAddress,
+    gaPubKey,
+    gaSecret, //todo rename
+    confirmedBy,
+  } = toRefs(multisig)
+
+  version.value = null
+  confirmations.value = null
+  confirmationsRequired.value = null
+  signers.value = null
+  hasProposedTx.value = null
+  hasConsensus.value = null
+  isCurrentUserSigner.value = null
+  txHash.value = null
+  proposedAmount.value = null
+  recipientAddress.value = null
+  gaPubKey.value = null
+  gaSecret.value = null
+  confirmedBy.value = null
+}
+
+// const route = useRoute()
+//
+// watch(() => route,
+//   (value, oldValue) => {
+//     console.log(oldValue, '=>', value)
+//     clearState()
+//
+//   },
+// )
 

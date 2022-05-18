@@ -46,6 +46,7 @@ import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { aeWallet } from '../utils/aeternity' // todo import ->const
 import {
+  clearState,
   confirmIt,
   multisig,
   patchProposalByContractId,
@@ -57,7 +58,7 @@ import {
 } from '../store'
 import { COMPILER_URL } from '../utils/aeternity/configs'
 import WalletInfo from "../components/WalletInfo"
-import { ref, toRefs } from "vue"
+import { onMounted, ref, toRefs } from "vue"
 
 const {
   version,
@@ -88,6 +89,10 @@ const contractInstance = ref(null)
 const signerSdk = ref(null) //todo or move to stor;
 
 const contractInstanceInitial = ref(null)
+
+onMounted(async () => {
+  clearState()
+})
 
 
 async function crateGaAccount () {

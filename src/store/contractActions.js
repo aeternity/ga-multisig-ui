@@ -3,6 +3,8 @@ import multisigContract from "../utils/aeternity/contracts/SimpleGAMultiSig.aes"
 import { updateContractInfo } from "./multisig"
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
+import { MemoryAccount } from '@aeternity/aepp-sdk'
+
 
 export const proposeIt = async (spendTx, signerSdk, contractId) => {
   const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
@@ -32,7 +34,7 @@ export const confirmIt = async (contractId, signerSdk, spendTxHash) => {
 
 }
 
-export const sendIt = async (contractInstance, publicKey, gaAccount, spendTx, signerSdk) => {
+export const sendIt = async (contractInstance, gaPubkey, gaSecret, spendTx, signerSdk) => {
   const nonce = (await contractInstance.methods.get_nonce()).decodedResult
 
 
@@ -43,10 +45,16 @@ export const sendIt = async (contractInstance, publicKey, gaAccount, spendTx, si
 
   await aeWallet.sdk.spend(
     776440000000000,
-    publicKey,
+    gaPubkey,
     // todo do button workaround  pre charge GA account create this.gaAccount on chai
   )
-
+  const keypair = {
+    publicKey: gaPubkey,
+    secretKey: gaSecret,
+  }
+  console.log('keypair', keypair)
+  const gaAccount = MemoryAccount({ keypair: keypair })
+  console.log('gaAccount', gaAccount)
   await signerSdk.send(
     spendTx,
     {
