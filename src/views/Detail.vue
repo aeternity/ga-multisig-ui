@@ -1,14 +1,24 @@
 <template>
   <WalletInfo class="wallet-info"/>
-
-
   <div class="detail" v-if="gaPubKey">
-
-
     <h2>Multisig Detail</h2>
     <!--    todo merge detail and create-->
-    <!--    todo print basic Multisig GA info block-->
 
+    <div>
+      <strong>Multisig account address: </strong>
+      <br>
+      {{ gaPubKey }}
+      <br>
+      <br>
+      <strong>Contract id: </strong>
+      <br>
+      {{ contractId }}
+      <br>
+      <br>
+      <strong>Contract version: </strong>
+      <br>
+      {{ version }}
+    </div>
 
     <propose-form
       v-model:recipient-address="recipientAddress"
@@ -21,7 +31,9 @@
       :confirmed-by="confirmedBy"
       :signers="signers"/>
     <confirm-form
+      v-if="!hasConsensus"
       :class="[{'disabled': !hasProposedTx}]"
+      :is-confirm-hidden="isConfirmedByCurrentUser"
       @confirm-clicked="confirmTx"
       @revoke-clicked="revokeTx"/>
     <send-form
@@ -74,6 +86,8 @@ const {
   recipientAddress,
   confirmedBy,
   gaSecret,
+  contractId,
+  isConfirmedByCurrentUser,
 } = toRefs(multisig)
 
 const signerSdk = ref(null)
@@ -145,8 +159,6 @@ async function confirmTx () {
 }
 
 async function sendTx () {
-
-
   const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
     senderId: gaPubKey.value,
     recipientId: recipientAddress.value,

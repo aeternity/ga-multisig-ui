@@ -23,17 +23,20 @@
       :signers="signers"/>
 
     <!--    todo show only confirmation block -->
+
+    <!--    todo maybe show send block right away-->
     <!--    <confirm-form-->
     <!--      :class="[{'disabled': !hasProposedTx}]"-->
+    <!--      :is-confirm-hidden="isConfirmedByCurrentUser"-->
     <!--      @confirm-clicked="confirmTx"-->
     <!--      @revoke-clicked="revokeTx"/>-->
-    <!--    todo confirmationsRequired is not defined-->
 
     <!--    todo this will not be needed for creation-->
-    <!--    <send-form-->
-    <!--      :class="[{'disabled': !hasConsensus}]"-->
-    <!--      @send-clicked="sendTx"-->
-    <!--      @revoke-clicked="revokeTx"/>-->
+    <send-form
+      :class="[{'disabled': !hasProposedTx}]"
+      :is-send-hidden="!hasConsensus"
+      @send-clicked="sendTx"
+      @revoke-clicked="revokeTx"/>
     <!--    todo add charge button-->
   </div>
 </template>
@@ -61,6 +64,7 @@ import {
 import { COMPILER_URL } from '../utils/aeternity/configs'
 import WalletInfo from "../components/WalletInfo"
 import { onMounted, ref, toRefs } from "vue"
+import SendForm from "../components/SendForm"
 
 const {
   version,
@@ -75,6 +79,7 @@ const {
   gaPubKey,
   recipientAddress,
   confirmedBy,
+  isConfirmedByCurrentUser,
 } = toRefs(multisig)
 
 
@@ -187,6 +192,7 @@ async function sendTx () {
 
 async function revokeTx () {
   await revokeIt(spendTx.value, contractAccount.value.contractId, signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey)
+  // todo is this updating neccessary?
   await updateContractInfo(signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
 }
 

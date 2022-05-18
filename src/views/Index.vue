@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <h2>My Contracts
-      <router-link to="/create">
+      <router-link to="/create" style="position: relative; bottom: 10px;">
         <button>
           + Create Multisig Contract
         </button>
@@ -15,11 +15,13 @@
           {{ contract.contractId }}
         </router-link>
       </div>
+      <div v-if="myContracts.length ===0">
+        No contracts created
+      </div>
     </div>
     <loader-image v-else/>
   </div>
 </template>
-<!--// todo add loader-->
 <!--todo come up with better hydrating-->
 <script setup>
 import { loadMyContracts, restoreContractsFromDB } from "../store"

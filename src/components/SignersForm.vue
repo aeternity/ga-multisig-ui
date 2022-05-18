@@ -3,9 +3,9 @@
     <hr>
     <h3>Select Signers</h3>
     <small>
-    My addres #1 <i>ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7</i>
-    <br>
-    My addres #2 <i>ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU</i>
+      My addres #1 <i>ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7</i>
+      <br>
+      My addres #2 <i>ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU</i>
     </small>
     <br>
     <br>
@@ -28,10 +28,10 @@
     <label>Amount of signers</label>
     <br>
     <input
+      min="2"
       type="number"
       :value="requiredSignersAmount"
-      @input="$emit('update:requiredSignersAmount', $event.target.value)"
-    >
+      @input="$emit('update:requiredSignersAmount', $event.target.value)">
     <br>
     <br>
     <button

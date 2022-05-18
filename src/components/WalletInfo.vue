@@ -5,7 +5,9 @@
       <div class="wallet-address">{{ address }}</div>
       <br/>
       <h6>Contract Info</h6>
-      contract address: {{ gaPubKey }}
+      Multisig account address: {{ gaPubKey }}
+      <br>
+      contract Id: {{ contractId }}
       <br>
       version: {{ version }}
       <br>
@@ -24,6 +26,8 @@
       <hr>
       <br>
       isCurrentUserSigner: {{ isCurrentUserSigner }}
+      <br>
+      isConfirmedByCurrentUser: {{ isConfirmedByCurrentUser }}
       <br>
       hasProposedTx: {{ hasProposedTx }}
       <br>
@@ -55,11 +59,13 @@ const {
   hasConsensus,
   hasProposedTx,
   isCurrentUserSigner,
+  isConfirmedByCurrentUser,
   txHash,
   proposedAmount,
   gaPubKey,
   recipientAddress,
   confirmedBy,
+  contractId,
 } = toRefs(multisig)
 </script>
 

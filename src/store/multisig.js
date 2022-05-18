@@ -19,7 +19,9 @@ export const multisig = reactive({
   recipientAddress: null,
   gaPubKey: null,
   gaSecret: null,
-  confirmedBy: null
+  confirmedBy: null,
+  contractId: null,
+  isConfirmedByCurrentUser: null,
 })
 
 export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
@@ -38,6 +40,8 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
     gaPubKey,
     gaSecret, //todo rename
     confirmedBy,
+    contractId,
+    isConfirmedByCurrentUser,
   } = toRefs(multisig)
 
   const { address } = toRefs(aeWallet)
@@ -52,6 +56,7 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
       contractAddress: contractAccount.contractId,
     },
   )
+  contractId.value = contractAccount.contractId
   gaPubKey.value = gaAddress // todo better naming
   gaSecret.value = gaSecretKey // todo better naming
   // confirmations.value = (await contractInstance.methods.get_consensus_info()).decodedResult
@@ -69,6 +74,7 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
   hasProposedTx.value = !!confirmations.value
   hasConsensus.value = consensus.has_consensus
   confirmedBy.value = consensus.confirmed_by
+  isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
 
   if (hasProposedTx.value) {
@@ -114,6 +120,8 @@ export const clearState = () => {
     gaPubKey,
     gaSecret, //todo rename
     confirmedBy,
+    contractId,
+    isConfirmedByCurrentUser,
   } = toRefs(multisig)
 
   version.value = null
@@ -129,15 +137,7 @@ export const clearState = () => {
   gaPubKey.value = null
   gaSecret.value = null
   confirmedBy.value = null
+  contractId.value = null,
+    isConfirmedByCurrentUser.value = null
+
 }
-
-// const route = useRoute()
-//
-// watch(() => route,
-//   (value, oldValue) => {
-//     console.log(oldValue, '=>', value)
-//     clearState()
-//
-//   },
-// )
-
