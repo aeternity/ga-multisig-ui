@@ -10,6 +10,7 @@ import {
   WalletDetector,
 } from '@aeternity/aepp-sdk'
 
+
 import { reactive, toRefs } from 'vue'
 import { COMPILER_URL, NETWORKS } from './configs'
 import { Buffer } from "buffer"

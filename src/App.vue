@@ -10,20 +10,17 @@
   <router-view/>
 </template>
 
-<script>
-import { defineComponent, onMounted } from 'vue'
+<script setup>
+import { onMounted } from 'vue'
 import { aeInitWallet } from './utils/aeternity'
-import WalletInfo from "./components/WalletInfo"
 
-export default defineComponent({
-  name: 'App',
-  components: { WalletInfo },
-  setup () {
-    onMounted(async () => {
-      await aeInitWallet()
-    })
-  },
+
+onMounted(async () => {
+  await aeInitWallet()
+  // await restoreContractsFromDB()
+  // myContracts.value = await loadMyContracts()
 })
+
 </script>
 
 <style>

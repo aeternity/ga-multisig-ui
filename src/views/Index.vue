@@ -15,7 +15,7 @@
           {{ contract.contractId }}
         </router-link>
       </div>
-      <div v-if="myContracts.length ===0">
+      <div v-if="myContracts?.length ===0">
         No contracts created
       </div>
     </div>

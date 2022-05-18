@@ -1,0 +1,23 @@
+<template>
+  <div>
+    <strong>Multisig account address: </strong>
+    <br>
+    {{ gaPubKey }}
+    <br>
+    <br>
+    <strong>Contract id: </strong>
+    <br>
+    {{ contractId }}
+    <br>
+    <br>
+    <strong>Contract version: </strong>
+    <br>
+    {{ version }}
+  </div>
+</template>
+<script>
+export default {
+  name: 'signer-list',
+  props: ['gaPubKey', 'contractId', 'version'],
+}
+</script>

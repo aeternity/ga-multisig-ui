@@ -3,7 +3,7 @@
     <hr>
     <h3>Propose Tx</h3>
     <small>
-      Recommended recipient <i>ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK</i>
+      Recommended recipient <i>{{ recommendedRecipient.publicKey }}</i>
     </small>
     <br>
     <br>
@@ -28,8 +28,13 @@
 </template>
 
 <script>
+import { Crypto } from '@aeternity/aepp-sdk'
+
 export default {
   name: 'ProposeForm',
   props: ['recipientAddress', 'proposedAmount'],
+  data: () => ({
+    recommendedRecipient: Crypto.generateKeyPair(),
+  }),
 }
 </script>

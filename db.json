@@ -1,28 +1,28 @@
 {
   "multisigContracts": [
     {
-      "contractId": "ct_abSgFtQxft15xeJHgEm8YB5TpG9mDA9GyaS581cCrEwWyKtes",
-      "gaAddress": "ak_2KFkKPp77Ud63kcj73pV1Fa44FwqJtsWtwZ2YyJTJeg7CLx9Dt",
-      "gaSecret": "c23ae12bb0180d2b73aa9d0b99966e352bc38db9dce318271808ff6e20e08086ad25059855af81414260491eb237bdca85a8af9542822af04398f6145bfdab06",
+      "contractId": "ct_x8jZhq9e1wSp8HQSpJW68vrQZuVjyLKMhfo1Rrw7Cw1k3XYPf",
+      "gaAddress": "ak_wzeKPn1iA3yP2KiU8hNrS5BnGr942yd9urMnTesXm9dt4hXh8",
+      "gaSecret": "16cb204ccea1a8a1dac221b4de45c5f3eae2a6897f38efa4cf154bad2d11b3677cdec9dfa7f8235f01dc798093c1baad31800a5c08e394c4908b6537f13a74fa",
       "signers": [
         "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
         "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
       ],
       "id": 1,
-      "recipientAddress": "ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK",
-      "proposedAmount": "42342"
+      "recipientAddress": "ak_VFsWcCe5QnB4ZRCg4uCtNBETDBra2GSR6RjuzSWX7wXu47N98",
+      "proposedAmount": "888888"
     },
     {
-      "contractId": "ct_2WBXbKxAYJzeaH7Mq6JjkJBP9FpRMDsw31HTZddSinaTVa8E9u",
-      "gaAddress": "ak_2gNn6Q86dhZC2fDyf19HJ9XLa12gVvcRMp2imx3ZjyYyD8nQbZ",
-      "gaSecret": "9cf3fa063688413ef10f19b8cb40f8f990af024140ed8c72b86452d0c6fe0cfedd1a594a7d62ab7bbfe1ae60cf3255245484177f2f554ce1b9ff7558959305dc",
+      "contractId": "ct_L667soUPAT5fTLRmL4j1a8RhtfDPtjs3J1gvuiZdaKCrvYQX9",
+      "gaAddress": "ak_4oL8jbRCqJS1KzsFWRkpq7XKVcDDM1ct2HbfdDdbVuCYDcQcS",
+      "gaSecret": "9efc7da74fbd235af2204da3485784969d865d8f9db16a285bd90c75d438030808a028a16547da9c79f788b456f7f715cae7ffec3435ebb0a98b141ea9db1bb6",
       "signers": [
         "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
         "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
       ],
       "id": 2,
-      "recipientAddress": "ak_2hz4zNpYjQsZY37wy8T15LLMx363pqzwR7KAD3bND2DvEvkWKK",
-      "proposedAmount": "2324141"
+      "recipientAddress": "ak_zQw6UgCoU12aLW23WvqmiBJftmWrdEuNmjFyM2oYSuFds3jxn",
+      "proposedAmount": "111111111"
     }
   ]
 }

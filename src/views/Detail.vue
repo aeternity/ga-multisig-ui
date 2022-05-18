@@ -1,35 +1,27 @@
 <template>
-  <WalletInfo class="wallet-info"/>
+  <!--  <WalletInfo class="wallet-info"/>-->
   <div class="detail" v-if="gaPubKey">
     <h2>Multisig Detail</h2>
     <!--    todo merge detail and create-->
 
-    <div>
-      <strong>Multisig account address: </strong>
-      <br>
-      {{ gaPubKey }}
-      <br>
-      <br>
-      <strong>Contract id: </strong>
-      <br>
-      {{ contractId }}
-      <br>
-      <br>
-      <strong>Contract version: </strong>
-      <br>
-      {{ version }}
-    </div>
+    <signer-list :contract-id="contractId" :ga-pub-key="gaPubKey" :version="version"/>
 
-    <propose-form
-      v-model:recipient-address="recipientAddress"
-      v-model:proposed-amount="proposedAmount"
-      @propose-clicked="proposeTx"/>
     <confirmation-list
       :class="[{'disabled': signers && !confirmedBy}]"
       :confirmations="confirmations"
       :confirmations-required="confirmationsRequired"
       :confirmed-by="confirmedBy"
       :signers="signers"/>
+
+    <propose-form
+      v-if="!hasProposedTx"
+      v-model:recipient-address="recipientAddress"
+      v-model:proposed-amount="proposedAmount"
+      @propose-clicked="proposeTx"/>
+
+    <propose-list v-else :proposed-amount="proposedAmount" :recipientAddress="recipientAddress"/>
+
+
     <confirm-form
       v-if="!hasConsensus"
       :class="[{'disabled': !hasProposedTx}]"
@@ -66,10 +58,11 @@ import ConfirmationList from "../components/ConfirmationList"
 
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { COMPILER_URL } from "../utils/aeternity/configs"
-import WalletInfo from "../components/WalletInfo"
 import { onMounted, ref, toRefs } from "vue"
 import { useRoute } from "vue-router"
 import LoaderImage from "../components/LoaderImage"
+import ProposeList from "./ProposeList"
+import SignerList from "./SignerList"
 
 
 const {
@@ -154,8 +147,7 @@ async function proposeTx () {
 
 async function confirmTx () {
   await confirmIt(contractAccount.value.contractId, signerSdk.value, txHash.value)
-  await updateContractInfo(signerSdk.value, gaPubKey.value) // todo improve/reduce params
-
+  await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
 }
 
 async function sendTx () {

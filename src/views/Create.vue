@@ -1,26 +1,38 @@
 <template>
-  <WalletInfo class="wallet-info"/>
+  <!--  <WalletInfo class="wallet-info"/>-->
   <div class="create">
     <h2>Create Multisig Account</h2>
     <!--    todo fix casing-->
+
+    <signer-list
+      v-if="signers && confirmedBy"
+      :contract-id="contractId"
+      :ga-pub-key="gaPubKey"
+      :version="version"/>
+
     <signers-form
+      v-if="!signers && !confirmedBy"
       v-model:signer1Key="signer1Key"
       v-model:signer2Key="signer2Key"
       v-model:requiredSignersAmount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
 
-    <propose-form
-      :class="[{'disabled': !signers}]"
-      v-model:recipient-address="recipientAddress"
-      v-model:proposed-amount="proposedAmount"
-      @propose-clicked="proposeTx"/>
-
     <confirmation-list
-      :class="[{'disabled': !signers}]"
+      v-else
       :confirmations="confirmations"
       :confirmations-required="confirmationsRequired"
       :confirmed-by="confirmedBy"
       :signers="signers"/>
+
+    <propose-form
+      v-if="!hasProposedTx"
+      :class="[{'disabled': !signers && !confirmedBy}]"
+      v-model:recipient-address="recipientAddress"
+      v-model:proposed-amount="proposedAmount"
+      @propose-clicked="proposeTx"/>
+
+    <propose-list v-else :proposed-amount="proposedAmount" :recipientAddress="recipientAddress"/>
+
 
     <!--    todo show only confirmation block -->
 
@@ -62,9 +74,10 @@ import {
   updateContractInfo,
 } from '../store'
 import { COMPILER_URL } from '../utils/aeternity/configs'
-import WalletInfo from "../components/WalletInfo"
 import { onMounted, ref, toRefs } from "vue"
 import SendForm from "../components/SendForm"
+import ProposeList from "./ProposeList"
+import SignerList from "./SignerList"
 
 const {
   version,
@@ -80,6 +93,7 @@ const {
   recipientAddress,
   confirmedBy,
   isConfirmedByCurrentUser,
+  contractId,
 } = toRefs(multisig)
 
 

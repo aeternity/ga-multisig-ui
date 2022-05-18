@@ -50,16 +50,12 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
   // todo fix je vubec potreba contractaddress ?
   // todo nejde to udelat rovnou s  contractId namisto gaaddress?
 
-  const contractInstance = await universal.getContractInstance(
-    {
-      source: multisigContract,
-      contractAddress: contractAccount.contractId,
-    },
-  )
+  const contractInstance = await universal.getContractInstance({
+    source: multisigContract, contractAddress: contractAccount.contractId,
+  })
   contractId.value = contractAccount.contractId
   gaPubKey.value = gaAddress // todo better naming
   gaSecret.value = gaSecretKey // todo better naming
-  // confirmations.value = (await contractInstance.methods.get_consensus_info()).decodedResult
   signers.value = (await contractInstance.methods.get_signers()).decodedResult
   version.value = (await contractInstance.methods.get_version()).decodedResult
 
@@ -89,9 +85,7 @@ export const loadMyContracts = async () => {
   const { multisigContracts } = toRefs(multisig)
 
 
-  return multisigContracts.value.filter(contract =>
-    contract.signers.includes(address.value),
-  )
+  return multisigContracts.value.filter(contract => contract.signers.includes(address.value))
 }
 
 export const getUniversalInstance = async () => {
@@ -99,8 +93,7 @@ export const getUniversalInstance = async () => {
   const node = await Node({ url: 'https://net.aeternity.io' })
 
   const signerSdk = await Universal({
-    nodes: [{ name: 'testnet', instance: node }],
-    compilerUrl: 'https://compiler.aepps.com',
+    nodes: [{ name: 'testnet', instance: node }], compilerUrl: 'https://compiler.aepps.com',
   })
   return signerSdk
 }
