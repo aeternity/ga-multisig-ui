@@ -1,7 +1,7 @@
 <template>
   <div class="signers-form">
     <hr>
-    <h3>1. Select Signers</h3>
+    <h3>Select Signers</h3>
     <small>
     My addres #1 <i>ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7</i>
     <br>

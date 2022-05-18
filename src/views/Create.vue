@@ -15,22 +15,25 @@
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
 
-    <!--    todo show only confirmation block -->
-    <confirm-form
-      :class="[{'disabled': !hasProposedTx}]"
-      :signers="signers"
-      :confirmed-by="confirmedBy"
+    <confirmation-list
+      :class="[{'disabled': !signers}]"
       :confirmations="confirmations"
       :confirmations-required="confirmationsRequired"
-      @confirm-clicked="confirmTx"
-      @revoke-clicked="revokeTx"/>
+      :confirmed-by="confirmedBy"
+      :signers="signers"/>
+
+    <!--    todo show only confirmation block -->
+    <!--    <confirm-form-->
+    <!--      :class="[{'disabled': !hasProposedTx}]"-->
+    <!--      @confirm-clicked="confirmTx"-->
+    <!--      @revoke-clicked="revokeTx"/>-->
     <!--    todo confirmationsRequired is not defined-->
 
     <!--    todo this will not be needed for creation-->
-    <send-form
-      :class="[{'disabled': !hasConsensus}]"
-      @send-clicked="sendTx"
-      @revoke-clicked="revokeTx"/>
+    <!--    <send-form-->
+    <!--      :class="[{'disabled': !hasConsensus}]"-->
+    <!--      @send-clicked="sendTx"-->
+    <!--      @revoke-clicked="revokeTx"/>-->
     <!--    todo add charge button-->
   </div>
 </template>
@@ -39,8 +42,7 @@
 import { Crypto, MemoryAccount, Node, Universal } from '@aeternity/aepp-sdk'
 import SignersForm from "../components/SignersForm"
 import ProposeForm from "../components/ProposeForm"
-import ConfirmForm from "../components/ConfirmForm"
-import SendForm from "../components/SendForm"
+import ConfirmationList from "../components/ConfirmationList"
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'

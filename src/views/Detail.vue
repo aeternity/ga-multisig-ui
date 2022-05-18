@@ -1,19 +1,27 @@
 <template>
   <WalletInfo class="wallet-info"/>
-  <div class="detail" v-if="isCurrentUserSigner">
-    <h2>Contract Detail</h2>
+
+
+  <div class="detail" v-if="gaPubKey">
+
+
+    <h2>Multisig Detail</h2>
     <!--    todo merge detail and create-->
     <!--    todo print basic Multisig GA info block-->
+
+
     <propose-form
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
-    <confirm-form
-      :class="[{'disabled': !hasProposedTx}]"
-      :signers="signers"
+    <confirmation-list
+      :class="[{'disabled': signers && !confirmedBy}]"
       :confirmations="confirmations"
       :confirmations-required="confirmationsRequired"
       :confirmed-by="confirmedBy"
+      :signers="signers"/>
+    <confirm-form
+      :class="[{'disabled': !hasProposedTx}]"
       @confirm-clicked="confirmTx"
       @revoke-clicked="revokeTx"/>
     <send-form
@@ -21,10 +29,7 @@
       @send-clicked="sendTx"
       @revoke-clicked="revokeTx"/>
   </div>
-  <div v-else>
-    Sorry you are not on the signer list
-  </div>
-  <!--  todo add loader-->
+  <loader-image v-else/>
 </template>
 
 <script setup>
@@ -45,11 +50,14 @@ import { Node, Universal } from '@aeternity/aepp-sdk'
 import ProposeForm from "../components/ProposeForm"
 import ConfirmForm from "../components/ConfirmForm"
 import SendForm from "../components/SendForm"
+import ConfirmationList from "../components/ConfirmationList"
+
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { COMPILER_URL } from "../utils/aeternity/configs"
 import WalletInfo from "../components/WalletInfo"
 import { onMounted, ref, toRefs } from "vue"
 import { useRoute } from "vue-router"
+import LoaderImage from "../components/LoaderImage"
 
 
 const {

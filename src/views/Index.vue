@@ -16,6 +16,7 @@
         </router-link>
       </div>
     </div>
+    <loader-image v-else/>
   </div>
 </template>
 <!--// todo add loader-->
@@ -24,6 +25,7 @@
 import { loadMyContracts, restoreContractsFromDB } from "../store"
 import { aeWallet } from '../utils/aeternity'
 import { computed, onMounted, ref, watch } from "vue"
+import LoaderImage from "../components/LoaderImage"
 
 const myContracts = ref(null)
 const isLoaded = ref(false)
