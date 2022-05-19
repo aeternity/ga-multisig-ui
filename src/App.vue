@@ -19,7 +19,7 @@ onMounted(async () => {
   await aeInitWallet()
   //todo hydrate here?
   // await restoreContractsFromDB()
-  // myContracts.value = await loadMyContracts()
+  // myContracts.value = await getMyContracts()
 })
 
 </script>

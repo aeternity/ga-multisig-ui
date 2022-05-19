@@ -165,7 +165,6 @@ async function revokeTx () {
   await updateContractInfo()
 }
 
-
 // todo conditions as computed properties
 
 </script>

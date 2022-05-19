@@ -13,11 +13,11 @@ export const app = reactive({
 export const hydrateApp = async () => {
   const { isAppHydrated, myContracts } = toRefs(app)
   await restoreContractsFromDB()
-  myContracts.value = await loadMyContracts()
+  myContracts.value = await getMyContracts()
   isAppHydrated.value = true
 }
 
-export const loadMyContracts = async () => {
+export const getMyContracts = async () => {
 // todo try computed here
 //   todo load je divny aspon prejmenovat
   const { address } = toRefs(aeWallet)

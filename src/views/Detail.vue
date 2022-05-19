@@ -1,6 +1,6 @@
 <template>
   <WalletInfo class="wallet-info"/>
-  <div class="detail" v-if="gaPubKey">
+  <div class="detail" v-if="gaPubKey && signers">
     <h2>Multisig Detail</h2>
     <!--    todo merge detail and create-->
 
@@ -41,6 +41,7 @@
 <script setup>
 import { aeWallet } from '../utils/aeternity'
 import {
+  app,
   clearState,
   confirmIt,
   contractDetail,
@@ -67,7 +68,6 @@ import ProposeList from "./ProposeList"
 import SignerList from "./SignerList"
 import WalletInfo from "../components/WalletInfo"
 
-
 const {
   version,
   confirmations,
@@ -84,24 +84,25 @@ const {
   gaSecret,
   contractId,
   isConfirmedByCurrentUser,
-  isAppHydrated,
   isRevoked,
   isSent,
   contractAccount,
   contractInstance,
 } = toRefs(contractDetail)
 
-const signerSdk = ref(null)
+const { isAppHydrated } = toRefs(app)
+
+
 const spendTx = ref(null)
 
-// todo comment watcher
-// todo maybe onBeforeMount
 const route = useRoute()
 
 onMounted(async () => {
+  // todo maybe onBeforeMount
   clearState()
 
   if (!isAppHydrated.value) {
+    //when going directly to detail page
     await hydrateApp()
   }
 
@@ -145,9 +146,8 @@ async function sendTx () {
   await updateContractInfo()
 }
 
-
 async function revokeTx () {
-  // todo detect revoked status
+
   const spendTx = await aeWallet.sdk.spendTx({
     //todo this is duplicated so try to separate it
     senderId: gaPubKey.value,

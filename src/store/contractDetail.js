@@ -29,71 +29,6 @@ export const contractDetail = reactive({
   version: null,
 })
 
-export const updateContractInfo = async () => {
-  const {
-    version,
-    confirmations,
-    confirmationsRequired,
-    signers,
-    hasProposedTx,
-    hasConsensus,
-    isCurrentUserSigner,
-    txHash,
-    proposedAmount,
-    recipientAddress,
-    gaPubKey,//todo rename
-    gaSecret,
-    confirmedBy,
-    contractId,
-    isConfirmedByCurrentUser,
-    isRevoked,
-    isSent,
-    contractAccount,
-    contractInstance,
-  } = toRefs(contractDetail)
-  const { address } = toRefs(aeWallet)
-  const signerSdk = await getUniversalStamp()
-
-  contractAccount.value = await signerSdk.getAccount(gaPubKey.value)
-  // todo isolate to function to contract actions
-  // todo fix je vubec potreba contractaddress ?
-  // todo nejde to udelat rovnou s  contractId namisto gaPubKey?
-  console.log('contractAccount.value', contractAccount.value)
-  contractId.value = contractAccount.value.contractId
-
-  contractInstance.value = await signerSdk.getContractInstance({
-    source: multisigContract,
-    contractAddress: contractId.value,
-  })
-  console.log('contractInstance.value', contractInstance.value)
-
-
-  signers.value = (await contractInstance.value.methods.get_signers()).decodedResult
-  version.value = (await contractInstance.value.methods.get_version()).decodedResult
-
-  const consensus = (await contractInstance.value.methods.get_consensus_info()).decodedResult
-  confirmations.value = consensus.confirmed_by.length
-  confirmationsRequired.value = Number(consensus.confirmations_required)
-
-  txHash.value = consensus.tx_hash
-
-  isCurrentUserSigner.value = signers.value.includes(address.value)
-  hasProposedTx.value = !!confirmations.value
-  hasConsensus.value = consensus.has_consensus
-  confirmedBy.value = consensus.confirmed_by
-  isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
-
-  const offChainProposeData = getContractByGaAddress(gaPubKey.value)
-  if (hasProposedTx.value) {
-
-    proposedAmount.value = offChainProposeData.proposedAmount
-    recipientAddress.value = offChainProposeData.recipientAddress
-
-  }
-  isRevoked.value = offChainProposeData?.isRevoked
-  isSent.value = offChainProposeData?.isSent
-}
-
 export const clearState = () => {
   const {
     version,
@@ -138,3 +73,66 @@ export const clearState = () => {
   contractAccount.value = null
   contractInstance.value = null
 }
+
+export const updateContractInfo = async () => {
+  const {
+    version,
+    confirmations,
+    confirmationsRequired,
+    signers,
+    hasProposedTx,
+    hasConsensus,
+    isCurrentUserSigner,
+    txHash,
+    proposedAmount,
+    recipientAddress,
+    gaPubKey,//todo rename
+    gaSecret,
+    confirmedBy,
+    contractId,
+    isConfirmedByCurrentUser,
+    isRevoked,
+    isSent,
+    contractAccount,
+    contractInstance,
+  } = toRefs(contractDetail)
+
+  const { address } = toRefs(aeWallet)
+  const signerSdk = await getUniversalStamp()
+  const offChainProposeData = getContractByGaAddress(gaPubKey.value)
+
+  contractAccount.value = await signerSdk.getAccount(gaPubKey.value)
+  // todo isolate to function to contract actions
+  // todo fix je vubec potreba contractaddress ?
+  // todo nejde to udelat rovnou s  contractId namisto gaPubKey?
+
+  contractId.value = contractAccount.value.contractId
+
+  contractInstance.value = await signerSdk.getContractInstance({
+    source: multisigContract,
+    contractAddress: contractId.value,
+  })
+
+  signers.value = (await contractInstance.value.methods.get_signers()).decodedResult
+  version.value = (await contractInstance.value.methods.get_version()).decodedResult
+  const consensus = (await contractInstance.value.methods.get_consensus_info()).decodedResult
+
+  confirmations.value = consensus.confirmed_by.length
+  confirmationsRequired.value = Number(consensus.confirmations_required)
+  txHash.value = consensus.tx_hash
+  hasConsensus.value = consensus.has_consensus
+  confirmedBy.value = consensus.confirmed_by
+
+  hasProposedTx.value = !!confirmations.value
+  isCurrentUserSigner.value = signers.value.includes(address.value)
+  isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
+
+  // if (hasProposedTx.value) {
+  proposedAmount.value = offChainProposeData?.proposedAmount
+  recipientAddress.value = offChainProposeData?.recipientAddress
+  // }
+  isRevoked.value = offChainProposeData?.isRevoked
+  isSent.value = offChainProposeData?.isSent
+}
+
+

@@ -2,7 +2,6 @@
   <div class="confirmation-list">
     <h3>Confirmations</h3>
     <ul v-if="confirmedBy">
-      <!--      todo get data from store not do logic in component-->
       <h4>{{ confirmations }} / {{ confirmationsRequired }}</h4>
 
       <li v-for="signer in signers">
@@ -25,7 +24,7 @@ export default {
   },
   methods: {
     isConfirmedBy (address) {
-      // todo move higher
+      //       <!--      todo get data from store not do logic in component-->
       return this.confirmedBy.includes(address)
     },
   },
