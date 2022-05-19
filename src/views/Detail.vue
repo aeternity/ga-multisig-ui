@@ -110,14 +110,8 @@ onMounted(async () => {
   gaPubKey.value = contractDetails.gaAddress // todo needed for loadContract -> updatecontractInfo but its kinda hasty
   gaSecret.value = contractDetails.gaSecret //tod is this set in store?
 
-  await loadContract()  // todo can be this done better?
+  await updateContractInfo()  // todo can be this done better?
 })
-
-
-async function loadContract (t) {
-  // todo this is wierd
-  await updateContractInfo()
-}
 
 async function proposeTx () {
   // todo reuse this function

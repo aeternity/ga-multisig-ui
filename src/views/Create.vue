@@ -4,7 +4,6 @@
   <WalletInfo class="wallet-info"/>
   <div class="create">
     <h2>Create Multisig Account</h2>
-    <!--    todo fix casing-->
 
     <signer-list
       v-if="signers && confirmedBy"
@@ -14,9 +13,9 @@
 
     <signers-form
       v-if="!signers && !confirmedBy"
-      v-model:signer1Key="signer1Key"
-      v-model:signer2Key="signer2Key"
-      v-model:requiredSignersAmount="requiredSignersAmount"
+      v-model:signer-1-key="signer1Key"
+      v-model:signer2-key="signer2Key"
+      v-model:required-signers-amount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
 
     <confirmation-list
@@ -47,19 +46,19 @@
 </template>
 
 <script setup>
-import { Crypto, MemoryAccount } from '@aeternity/aepp-sdk'
+import { Crypto } from '@aeternity/aepp-sdk'
 import SignersForm from "../components/SignersForm"
 import ProposeForm from "../components/ProposeForm"
 import ConfirmationList from "../components/ConfirmationList"
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 
-import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { aeWallet } from '../utils/aeternity' // todo import ->const
 import {
   clearState,
   confirmIt,
   contractDetail,
   getUniversalStamp,
+  initMultisigContract,
   patchProposalByContractId,
   patchRevokedStatus,
   patchSentStatus,
@@ -101,8 +100,7 @@ const signer1Key = ref('')
 const signer2Key = ref('')
 const requiredSignersAmount = ref(0)
 
-const gaAccount = ref(null)
-const gaKeypair = ref(null)
+const gaKeypair = ref(null) // todo take this from store?
 const spendTx = ref(null)
 const spendTxHash = ref(null)
 
@@ -112,7 +110,7 @@ async function crateGaAccount () {
   gaKeypair.value = Crypto.generateKeyPair() //todo try to replace pubkey and secret with keypair
   gaPubKey.value = gaKeypair.value.publicKey // todo is this needed to push to store before? can it be reactive?
   gaSecret.value = gaKeypair.value.secretKey
-  const gaAccount = MemoryAccount({ keypair: gaKeypair.value }) //todo how to push this into state - because its not accissible with .value (torefs?)
+//todo how to push this into state - because its not accissible with .value (torefs?)
   // todo try universal as this in data
   const signerSdk = await getUniversalStamp()
 
@@ -125,37 +123,14 @@ async function crateGaAccount () {
     signer1Key.value,
     signer2Key.value,
   ]
+
   const contractArgs = [
     requiredSignersAmount.value,
     signers.value,
   ]
 
-  const attachTX = await signerSdk.gaAttachTx({
-    ownerId: gaKeypair.value.publicKey,
-    code: contractInstanceInitial.bytecode,
-    callData: contractInstanceInitial.calldata.encode(contractInstanceInitial._name, 'init', contractArgs),
-    authFun: hash('authorize'),
-    gas: await contractInstanceInitial._estimateGas('init', contractArgs),
-    options: {
-      innerTx: true,
-    },
-  })
-
-// todo break into functions
-
-  const { rawTx } = await signerSdk.send(attachTX.tx, {
-    innerTx: true,
-    onAccount: gaAccount,
-  })
-
-
-  await aeWallet.sdk.payForTransaction(rawTx)
-
-  await updateContractInfo() // todo is this neccessary? can be doe rectively?
-
-  // todo fix je vubec potreba contractaddress ?
-  // todo a nestaci ta initial?
-
+  await initMultisigContract(contractArgs, contractInstanceInitial, gaKeypair.value)
+  await updateContractInfo() //todo order
   await storeContractToDB(contractId.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey, signers.value)
 }
 
@@ -165,10 +140,10 @@ async function proposeTx () {
     recipientId: recipientAddress.value,
     amount: proposedAmount.value,
   })
-  await proposeIt(spendTx.value, contractId.value)
 
+  await proposeIt(spendTx.value, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
-  await updateContractInfo()
+  await updateContractInfo()// todo is this neccessary? can be doe rectively?
 }
 
 async function confirmTx () {

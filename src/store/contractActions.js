@@ -4,6 +4,30 @@ import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { MemoryAccount } from '@aeternity/aepp-sdk'
 import { getUniversalStamp } from "./app"
+import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
+
+export const initMultisigContract = async (contractArgs, contractInstance, gaKeypair) => {
+  const signerSdk = await getUniversalStamp()
+  const gaAccount = MemoryAccount({ keypair: gaKeypair })
+
+  const attachTX = await signerSdk.gaAttachTx({
+    ownerId: gaKeypair.publicKey,
+    code: contractInstance.bytecode,
+    callData: contractInstance.calldata.encode(contractInstance._name, 'init', contractArgs),
+    authFun: hash('authorize'),
+    gas: await contractInstance._estimateGas('init', contractArgs),
+    options: {
+      innerTx: true,
+    },
+  })
+
+  const { rawTx } = await signerSdk.send(attachTX.tx, {
+    innerTx: true,
+    onAccount: gaAccount,
+  })
+
+  await aeWallet.sdk.payForTransaction(rawTx)
+}
 
 export const proposeIt = async (spendTx, contractId) => {
   const signerSdk = await getUniversalStamp()

@@ -49,6 +49,16 @@
       "id": 4,
       "recipientAddress": "ak_2b9okbPRapX48ffuUQF7NJ6gygARsexN1XG55ks6MGU3gantv2",
       "proposedAmount": "4322"
+    },
+    {
+      "contractId": "ct_7GuA8UVNkse5wQHCvaztsmNWSioDJx4E2j2v9wcYwykvm36BL",
+      "gaAddress": "ak_4MPkWkJsMYm69zXRET86Tc3P7FEQWTYnoQBnUxbwMPoeH9Jmi",
+      "gaSecret": "4c46ee585b47c37169db70f21d37b07fc9fe54a2b0e41c7fc18b626cfb58d3cd079c35cfa3378b46b6c52b3231748cb48306e86ba727eb4965d75a0a2435caf6",
+      "signers": [
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
+      ],
+      "id": 5
     }
   ]
 }
