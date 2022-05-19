@@ -6,7 +6,9 @@ import { MemoryAccount } from '@aeternity/aepp-sdk'
 import { getUniversalStamp } from "./multisig"
 
 
-export const proposeIt = async (spendTx, signerSdk, contractId) => {
+export const proposeIt = async (spendTx, contractId) => {
+  const signerSdk = await getUniversalStamp()
+
   const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
 
   const spendTxHash = await buildAuthTxHash(encoded)
@@ -75,7 +77,6 @@ export const revokeIt = async (spendTx, contractId) => {
     },
   )
   const revokeTx = await gaContractRpc.methods.revoke.send(spendTxHash)
-  console.log('revokeTx.decodedEvents', revokeTx.decodedEvents[0].args[1])
 
   // todo improve/reduce params
   // todo show link to successful transaction just for show

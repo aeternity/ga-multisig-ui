@@ -37,6 +37,18 @@
       "recipientAddress": "ak_5oKSyZizVFRaURyWQw4sDaomB1S8MTae9EpeC3yZABV92G2oT",
       "proposedAmount": "893",
       "isRevoked": true
+    },
+    {
+      "contractId": "ct_sr5hTUwAketjLN4VbuVLUHHSEHBC5q17pqtEgBDfSauJStWAm",
+      "gaAddress": "ak_aMfaVQLTjUJqeE9MGv4Eti87ESHjeskiNL9YduQ3YS7CXV5YD",
+      "gaSecret": "e2ac56cdcaa87b5b2de1956664d5361891eaecdce6e6a6d458108990a05e92814bbd531677cc63cb18188dda88fd70ca3f62b031c1ee5384525e33f9db02666e",
+      "signers": [
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
+      ],
+      "id": 4,
+      "recipientAddress": "ak_2b9okbPRapX48ffuUQF7NJ6gygARsexN1XG55ks6MGU3gantv2",
+      "proposedAmount": "4322"
     }
   ]
 }

@@ -32,7 +32,7 @@ export const multisig = reactive({
   isSent: false,
 })
 
-export const updateContractInfo = async (gaAddress, gaSecretKey) => {
+export const updateContractInfo = async () => {
   const {
     // todo is this boilerplate neccessary?
     version,
@@ -53,20 +53,18 @@ export const updateContractInfo = async (gaAddress, gaSecretKey) => {
     isRevoked,
     isSent,
   } = toRefs(multisig)
-
   const { address } = toRefs(aeWallet)
   const signerSdk = await getUniversalStamp()
 
-  const contractAccount = await signerSdk.getAccount(gaAddress)
+  const contractAccount = await signerSdk.getAccount(gaPubKey.value)
+  // todo isolate to function
   // todo fix je vubec potreba contractaddress ?
-  // todo nejde to udelat rovnou s  contractId namisto gaaddress?
-
+  // todo nejde to udelat rovnou s  contractId namisto gaPubKey?
   const contractInstance = await signerSdk.getContractInstance({
     source: multisigContract, contractAddress: contractAccount.contractId,
   })
   contractId.value = contractAccount.contractId
-  gaPubKey.value = gaAddress // todo better naming
-  gaSecret.value = gaSecretKey // todo better naming
+
   signers.value = (await contractInstance.methods.get_signers()).decodedResult
   version.value = (await contractInstance.methods.get_version()).decodedResult
 
@@ -76,14 +74,13 @@ export const updateContractInfo = async (gaAddress, gaSecretKey) => {
 
   txHash.value = consensus.tx_hash
 
-
   isCurrentUserSigner.value = signers.value.includes(address.value)
   hasProposedTx.value = !!confirmations.value
   hasConsensus.value = consensus.has_consensus
   confirmedBy.value = consensus.confirmed_by
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
-  const offChainProposeData = getContractByGaAddress(gaAddress)
+  const offChainProposeData = getContractByGaAddress(gaPubKey.value)
   if (hasProposedTx.value) {
 
     proposedAmount.value = offChainProposeData.proposedAmount

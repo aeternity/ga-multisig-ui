@@ -113,7 +113,10 @@ onMounted(async () => {
 
   const contractId = route.params.id
   const contractDetails = await getContractByContractId(contractId)
-  await loadContract(contractDetails.gaAddress, contractDetails.gaSecret)     // todo  can be this done better?
+  gaPubKey.value = contractDetails.gaAddress // todo needed for loadContract -> updatecontractInfo but its kinda hasty
+  gaSecret.value = contractDetails.gaSecret
+
+  await loadContract()  // todo  can be this done better?
 
   signerSdk.value = await getUniversalStamp() //todo try to move it to state / store`
 
@@ -127,9 +130,9 @@ onMounted(async () => {
 })
 
 
-async function loadContract (gaAddress, gaSecret) {
+async function loadContract (t) {
   // todo this is wierd
-  await updateContractInfo(gaAddress, gaSecret)
+  await updateContractInfo()
 }
 
 async function proposeTx () {
@@ -139,17 +142,16 @@ async function proposeTx () {
     amount: proposedAmount.value, //todo not connected
   })
 
-  await proposeIt(spendTx.value, signerSdk.value, contractAccount.value.contractId)
+  await proposeIt(spendTx.value, contractAccount.value.contractId)
 
-  // todo signer sdk to store
   await patchProposalByContractId(contractAccount.value.contractId, recipientAddress.value, proposedAmount.value)
-  await updateContractInfo(gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  await updateContractInfo() // todo is ti reaally necceasry?
 }
 
 
 async function confirmTx () {
   await confirmIt(contractAccount.value.contractId, txHash.value)
-  await updateContractInfo(gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  await updateContractInfo() // todo improve/reduce params
 }
 
 async function sendTx () {
@@ -161,7 +163,7 @@ async function sendTx () {
   await sendIt(contractInstance.value, gaPubKey.value, gaSecret.value, spendTx)
   await patchSentStatus(contractAccount.value.contractId)
 
-  await updateContractInfo(gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  await updateContractInfo()
 }
 
 
@@ -177,6 +179,6 @@ async function revokeTx () {
   await revokeIt(spendTx, contractAccount.value.contractId)
   await patchRevokedStatus(contractAccount.value.contractId)
 
-  await updateContractInfo(gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  await updateContractInfo()
 }
 </script>

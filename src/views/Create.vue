@@ -86,6 +86,7 @@ const {
   txHash,
   proposedAmount,
   gaPubKey,
+  gaSecret,
   recipientAddress,
   confirmedBy,
   isConfirmedByCurrentUser,
@@ -115,10 +116,11 @@ onMounted(async () => {
 
 
 async function crateGaAccount () {
-  gaKeypair.value = Crypto.generateKeyPair()
+  gaKeypair.value = Crypto.generateKeyPair() //todo try to replace pubkey and secret with keypair
+  gaPubKey.value = gaKeypair.value.publicKey
+  gaSecret.value = gaKeypair.value.secretKey
   const gaAccount = MemoryAccount({ keypair: gaKeypair.value }) //todo how to push this into state - because its not accissible with .value (torefs?)
   // todo try universal as this in data
-
   signerSdk.value = await getUniversalStamp()
 
   const contractInstanceInitial = await signerSdk.value.getContractInstance(
@@ -145,6 +147,7 @@ async function crateGaAccount () {
       innerTx: true,
     },
   })
+
 // todo break into functions
 
   const { rawTx } = await signerSdk.value.send(attachTX.tx, {
@@ -152,12 +155,10 @@ async function crateGaAccount () {
     onAccount: gaAccount,
   })
 
+
   await aeWallet.sdk.payForTransaction(rawTx)
 
-  await updateContractInfo(
-    gaKeypair.value.publicKey,
-    gaKeypair.value.secretKey,
-  ) // todo improve/reduce params
+  await updateContractInfo() // todo is this neccessary? can be doe rectively?
 
   contractAccount.value = await signerSdk.value.getAccount(gaKeypair.value.publicKey)
   // todo fix je vubec potreba contractaddress ?
@@ -172,36 +173,35 @@ async function crateGaAccount () {
   await storeContractToDB(contractAccount.value.contractId, gaKeypair.value.publicKey, gaKeypair.value.secretKey, signers.value)
 }
 
-
 async function proposeTx () {
   spendTx.value = await aeWallet.sdk.spendTx({
     senderId: gaKeypair.value.publicKey,
     recipientId: recipientAddress.value,
     amount: proposedAmount.value,
   })
-  await proposeIt(spendTx.value, signerSdk.value, contractAccount.value.contractId)
-  // todo signer sdk to store
+  await proposeIt(spendTx.value, contractAccount.value.contractId)
+
   await patchProposalByContractId(contractAccount.value.contractId, recipientAddress.value, proposedAmount.value)
-  await updateContractInfo(gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
+  await updateContractInfo()
 }
 
 async function confirmTx () {
   await confirmIt(contractAccount.value.contractId, spendTxHash.value)
-  await updateContractInfo(gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
+  await updateContractInfo()
 }
 
 async function sendTx () {
   // todo gaaccount is not ref
   await sendIt(contractInstance.value, gaKeypair.value.publicKey, gaAccount.value, spendTx.value)
   await patchSentStatus(contractAccount.value.contractId)
-  await updateContractInfo(gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
+  await updateContractInfo()
 }
 
 async function revokeTx () {
   await revokeIt(spendTx.value, contractAccount.value.contractId)
   // todo is this updating neccessary?
   await patchRevokedStatus(contractAccount.value.contractId)
-  await updateContractInfo(gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
+  await updateContractInfo()
 }
 
 //   computed: {
