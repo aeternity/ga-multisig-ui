@@ -1,4 +1,6 @@
 <template>
+  <!--  todo hydrate on create? -> -->
+  <!--  todo this will happen when directly going to create "find", multisigContracts.value is-->
   <WalletInfo class="wallet-info"/>
   <div class="create">
     <h2>Create Multisig Account</h2>
@@ -33,20 +35,9 @@
 
     <propose-list v-else :proposed-amount="proposedAmount" :recipientAddress="recipientAddress"/>
 
-
-    <!--    todo show only confirmation block -->
-
-    <!--    todo maybe show send block right away-->
-    <!--    <confirm-form-->
-    <!--      :class="[{'disabled': !hasProposedTx}]"-->
-    <!--      :is-confirm-hidden="isConfirmedByCurrentUser"-->
-    <!--      @confirm-clicked="confirmTx"-->
-    <!--      @revoke-clicked="revokeTx"/>-->
-
-    <!--    todo this will not be needed for creation-->
     <send-form
       :class="[{'disabled': !hasProposedTx}]"
-      :is-send-hidden="!hasConsensus"
+      :has-consensus="hasConsensus"
       @send-clicked="sendTx"
       @revoke-clicked="revokeTx"/>
     <!--    todo add charge button-->
@@ -56,7 +47,7 @@
 </template>
 
 <script setup>
-import { Crypto, MemoryAccount, Node, Universal } from '@aeternity/aepp-sdk'
+import { Crypto, MemoryAccount } from '@aeternity/aepp-sdk'
 import SignersForm from "../components/SignersForm"
 import ProposeForm from "../components/ProposeForm"
 import ConfirmationList from "../components/ConfirmationList"
@@ -67,6 +58,7 @@ import { aeWallet } from '../utils/aeternity' // todo import ->const
 import {
   clearState,
   confirmIt,
+  getUniversalStamp,
   multisig,
   patchProposalByContractId,
   patchRevokedStatus,
@@ -77,7 +69,6 @@ import {
   storeContractToDB,
   updateContractInfo,
 } from '../store'
-import { COMPILER_URL } from '../utils/aeternity/configs'
 import { onMounted, ref, toRefs } from "vue"
 import SendForm from "../components/SendForm"
 import ProposeList from "./ProposeList"
@@ -128,13 +119,8 @@ async function crateGaAccount () {
   const gaAccount = MemoryAccount({ keypair: gaKeypair.value }) //todo how to push this into state - because its not accissible with .value (torefs?)
   // todo try universal as this in data
 
-  signerSdk.value = await Universal({
-    nodes: [{
-      name: 'testnet',
-      instance: await Node({ url: 'https://testnet.aeternity.io' }),
-    }],
-    compilerUrl: COMPILER_URL,
-  })
+  signerSdk.value = await getUniversalStamp()
+
   const contractInstanceInitial = await signerSdk.value.getContractInstance(
     { source: multisigContract })
 
@@ -169,7 +155,6 @@ async function crateGaAccount () {
   await aeWallet.sdk.payForTransaction(rawTx)
 
   await updateContractInfo(
-    signerSdk.value,
     gaKeypair.value.publicKey,
     gaKeypair.value.secretKey,
   ) // todo improve/reduce params
@@ -197,26 +182,26 @@ async function proposeTx () {
   await proposeIt(spendTx.value, signerSdk.value, contractAccount.value.contractId)
   // todo signer sdk to store
   await patchProposalByContractId(contractAccount.value.contractId, recipientAddress.value, proposedAmount.value)
-  await updateContractInfo(signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
+  await updateContractInfo(gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
 }
 
 async function confirmTx () {
-  await confirmIt(contractAccount.value.contractId, signerSdk.value, spendTxHash.value)
-  await updateContractInfo(signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
+  await confirmIt(contractAccount.value.contractId, spendTxHash.value)
+  await updateContractInfo(gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
 }
 
 async function sendTx () {
   // todo gaaccount is not ref
-  await sendIt(contractInstance.value, gaKeypair.value.publicKey, gaAccount.value, spendTx.value, signerSdk.value)
+  await sendIt(contractInstance.value, gaKeypair.value.publicKey, gaAccount.value, spendTx.value)
   await patchSentStatus(contractAccount.value.contractId)
-  await updateContractInfo(signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
+  await updateContractInfo(gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
 }
 
 async function revokeTx () {
-  await revokeIt(spendTx.value, contractAccount.value.contractId, signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey)
+  await revokeIt(spendTx.value, contractAccount.value.contractId)
   // todo is this updating neccessary?
   await patchRevokedStatus(contractAccount.value.contractId)
-  await updateContractInfo(signerSdk.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
+  await updateContractInfo(gaKeypair.value.publicKey, gaKeypair.value.secretKey) // todo improve/reduce params
 }
 
 //   computed: {

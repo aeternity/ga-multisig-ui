@@ -30,6 +30,7 @@
       @revoke-clicked="revokeTx"/>
     <send-form
       :class="[{'disabled': !hasConsensus}]"
+      :has-consensus="hasConsensus"
       @send-clicked="sendTx"
       @revoke-clicked="revokeTx"/>
     <div v-if="isRevoked">The transaction has been revoked by user ...</div>
@@ -44,6 +45,7 @@ import {
   clearState,
   confirmIt,
   getContractByContractId,
+  getUniversalStamp,
   hydrateApp,
   multisig,
   patchProposalByContractId,
@@ -54,7 +56,6 @@ import {
   sendIt,
   updateContractInfo,
 } from '../store'
-import { Node, Universal } from '@aeternity/aepp-sdk'
 
 import ProposeForm from "../components/ProposeForm"
 import ConfirmForm from "../components/ConfirmForm"
@@ -62,7 +63,6 @@ import SendForm from "../components/SendForm"
 import ConfirmationList from "../components/ConfirmationList"
 
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
-import { COMPILER_URL } from "../utils/aeternity/configs"
 import { onMounted, ref, toRefs } from "vue"
 import { useRoute } from "vue-router"
 import LoaderImage from "../components/LoaderImage"
@@ -107,44 +107,29 @@ const route = useRoute()
 onMounted(async () => {
   clearState()
 
-  console.log('isAppHydrated.value', isAppHydrated.value)
   if (!isAppHydrated.value) {
     await hydrateApp()
   }
-
 
   const contractId = route.params.id
   const contractDetails = await getContractByContractId(contractId)
   await loadContract(contractDetails.gaAddress, contractDetails.gaSecret)     // todo  can be this done better?
 
-  signerSdk.value = await Universal({
-    nodes: [{
-      name: 'testnet',
-      instance: await Node({ url: 'https://testnet.aeternity.io' }),
-    }],
-    compilerUrl: COMPILER_URL,
-  })
+  signerSdk.value = await getUniversalStamp() //todo try to move it to state / store`
+
   contractAccount.value = await signerSdk.value.getAccount(gaPubKey.value)
-  console.log('contractAccount.value', contractAccount.value)
   contractInstance.value = await signerSdk.value.getContractInstance(
     {
       source: multisigContract,
       contractAddress: contractAccount.value.contractId,
     },
   )
-  console.log('contractInstance.value', contractInstance.value)
 })
 
 
 async function loadContract (gaAddress, gaSecret) {
-  const signerSdk = await Universal({
-    nodes: [{
-      name: 'testnet',
-      instance: await Node({ url: 'https://testnet.aeternity.io' }),
-    }],
-    compilerUrl: COMPILER_URL,
-  })
-  await updateContractInfo(signerSdk, gaAddress, gaSecret)
+  // todo this is wierd
+  await updateContractInfo(gaAddress, gaSecret)
 }
 
 async function proposeTx () {
@@ -158,13 +143,13 @@ async function proposeTx () {
 
   // todo signer sdk to store
   await patchProposalByContractId(contractAccount.value.contractId, recipientAddress.value, proposedAmount.value)
-  await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  await updateContractInfo(gaPubKey.value, gaSecret.value) // todo improve/reduce params
 }
 
 
 async function confirmTx () {
-  await confirmIt(contractAccount.value.contractId, signerSdk.value, txHash.value)
-  await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  await confirmIt(contractAccount.value.contractId, txHash.value)
+  await updateContractInfo(gaPubKey.value, gaSecret.value) // todo improve/reduce params
 }
 
 async function sendTx () {
@@ -173,11 +158,10 @@ async function sendTx () {
     recipientId: recipientAddress.value,
     amount: proposedAmount.value,
   })
-  console.log('contractInstance', contractInstance)
-  await sendIt(contractInstance.value, gaPubKey.value, gaSecret.value, spendTx, signerSdk.value)
+  await sendIt(contractInstance.value, gaPubKey.value, gaSecret.value, spendTx)
   await patchSentStatus(contractAccount.value.contractId)
 
-  await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  await updateContractInfo(gaPubKey.value, gaSecret.value) // todo improve/reduce params
 }
 
 
@@ -190,9 +174,9 @@ async function revokeTx () {
   })
   // todo is account necessary?
 
-  await revokeIt(spendTx, contractAccount.value.contractId, signerSdk.value, gaPubKey.value, gaSecret.value)
+  await revokeIt(spendTx, contractAccount.value.contractId)
   await patchRevokedStatus(contractAccount.value.contractId)
 
-  await updateContractInfo(signerSdk.value, gaPubKey.value, gaSecret.value) // todo improve/reduce params
+  await updateContractInfo(gaPubKey.value, gaSecret.value) // todo improve/reduce params
 }
 </script>

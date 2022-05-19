@@ -3,6 +3,7 @@ import multisigContract from "../utils/aeternity/contracts/SimpleGAMultiSig.aes"
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { MemoryAccount } from '@aeternity/aepp-sdk'
+import { getUniversalStamp } from "./multisig"
 
 
 export const proposeIt = async (spendTx, signerSdk, contractId) => {
@@ -20,7 +21,8 @@ export const proposeIt = async (spendTx, signerSdk, contractId) => {
   await gaContractRpc.methods.propose.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
-export const confirmIt = async (contractId, signerSdk, spendTxHash) => {
+export const confirmIt = async (contractId, spendTxHash) => {
+  const signerSdk = await getUniversalStamp()
   const gaContractRpc = await aeWallet.sdk.getContractInstance(
     {
       source: multisigContract,
@@ -33,7 +35,9 @@ export const confirmIt = async (contractId, signerSdk, spendTxHash) => {
 
 }
 
-export const sendIt = async (contractInstance, gaPubkey, gaSecret, spendTx, signerSdk) => {
+export const sendIt = async (contractInstance, gaPubkey, gaSecret, spendTx) => {
+  const signerSdk = await getUniversalStamp()
+
   const nonce = (await contractInstance.methods.get_nonce()).decodedResult
 
 
@@ -51,9 +55,7 @@ export const sendIt = async (contractInstance, gaPubkey, gaSecret, spendTx, sign
     publicKey: gaPubkey,
     secretKey: gaSecret,
   }
-  console.log('keypair', keypair)
   const gaAccount = MemoryAccount({ keypair: keypair })
-  console.log('gaAccount', gaAccount)
   await signerSdk.send(
     spendTx,
     {
@@ -62,7 +64,7 @@ export const sendIt = async (contractInstance, gaPubkey, gaSecret, spendTx, sign
     })
 }
 
-export const revokeIt = async (spendTx, contractId, signerSdk, publicKey, secretKey) => {
+export const revokeIt = async (spendTx, contractId) => {
   const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
   const spendTxHash = await buildAuthTxHash(encoded)
 
@@ -73,7 +75,6 @@ export const revokeIt = async (spendTx, contractId, signerSdk, publicKey, secret
     },
   )
   const revokeTx = await gaContractRpc.methods.revoke.send(spendTxHash)
-  console.log('revokeTx.decodedEvents', revokeTx.decodedEvents[0])
   console.log('revokeTx.decodedEvents', revokeTx.decodedEvents[0].args[1])
 
   // todo improve/reduce params

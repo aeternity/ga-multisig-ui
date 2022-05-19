@@ -33,6 +33,7 @@ export const aeInitClient = async () => {
     })
   }
 
+  // todo this vs getUniversalStamp
   sdk.value = await Universal({
     nodes: nodes,
     compilerUrl: COMPILER_URL

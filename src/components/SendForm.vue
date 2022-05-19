@@ -4,14 +4,13 @@
     <h3>Send TX</h3>
     <div>
       {{
-        isSendHidden ?
-          'Waiting for confirmations from other users' :
-          'Send proposed and confirmed tx to recipient account'
+        hasConsensus ?
+          'Send proposed and confirmed tx to recipient account' :
+          'Waiting for confirmations from other users'
       }}
     </div>
     <br>
-    <template v-if="!isSendHidden">
-      <!--      todo better propo name-->
+    <template v-if="hasConsensus">
       <button @click="$emit('send-clicked')">Send Tx</button>
       or
     </template>
@@ -22,7 +21,7 @@
 <script>
 export default {
   name: 'SendForm',
-  props: ['isSendHidden'],
+  props: ['hasConsensus'],
 }
 </script>
 

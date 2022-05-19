@@ -3,6 +3,7 @@ import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet } from "../utils/aeternity"
 import { getContractByGaAddress, restoreContractsFromDB } from "./off-chainDB"
+import { COMPILER_URL } from "../utils/aeternity/configs"
 
 
 export const app = reactive({
@@ -31,7 +32,7 @@ export const multisig = reactive({
   isSent: false,
 })
 
-export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
+export const updateContractInfo = async (gaAddress, gaSecretKey) => {
   const {
     // todo is this boilerplate neccessary?
     version,
@@ -54,12 +55,13 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
   } = toRefs(multisig)
 
   const { address } = toRefs(aeWallet)
+  const signerSdk = await getUniversalStamp()
 
-  const contractAccount = await universal.getAccount(gaAddress)
+  const contractAccount = await signerSdk.getAccount(gaAddress)
   // todo fix je vubec potreba contractaddress ?
   // todo nejde to udelat rovnou s  contractId namisto gaaddress?
 
-  const contractInstance = await universal.getContractInstance({
+  const contractInstance = await signerSdk.getContractInstance({
     source: multisigContract, contractAddress: contractAccount.contractId,
   })
   contractId.value = contractAccount.contractId
@@ -82,7 +84,6 @@ export const updateContractInfo = async (universal, gaAddress, gaSecretKey) => {
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
   const offChainProposeData = getContractByGaAddress(gaAddress)
-  console.log('offChainProposeData', offChainProposeData)
   if (hasProposedTx.value) {
 
     proposedAmount.value = offChainProposeData.proposedAmount
@@ -111,14 +112,17 @@ export const loadMyContracts = async () => {
   return multisigContracts.value.filter(contract => contract.signers.includes(address.value))
 }
 
-export const getUniversalInstance = async () => {
+export const getUniversalStamp = async () => {
   // todo node from variable
-  const node = await Node({ url: 'https://net.aeternity.io' })
+  const node = await Node({ url: 'https://testnet.aeternity.io' })
 
-  const signerSdk = await Universal({
-    nodes: [{ name: 'testnet', instance: node }], compilerUrl: 'https://compiler.aepps.com',
+  return await Universal({
+    nodes: [{
+      name: 'testnet',
+      instance: node,
+    }],
+    compilerUrl: COMPILER_URL,
   })
-  return signerSdk
 }
 
 export const clearState = () => {
@@ -159,5 +163,4 @@ export const clearState = () => {
   isConfirmedByCurrentUser.value = null
   isRevoked.value = null
   isSent.value = null
-
 }

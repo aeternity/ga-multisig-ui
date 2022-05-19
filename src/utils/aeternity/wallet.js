@@ -23,7 +23,6 @@ export const aeWallet = reactive({
   balance: null,
   walletStatus: null,
   isStatic: false,
-  isGa: false,
 })
 
 export const aeInitWallet = async () => {
@@ -116,7 +115,7 @@ export const aeScanForWallets = async () => {
 
 
 export const aeFetchWalletInfo = async (sdk) => {
-  const { address, balance, walletStatus, isGa } = toRefs(aeWallet)
+  const { address, balance, walletStatus } = toRefs(aeWallet)
 
   walletStatus.value = 'fetching_info'
 
@@ -126,16 +125,6 @@ export const aeFetchWalletInfo = async (sdk) => {
     balance.value = await sdk.getBalance(address.value, {
       format: AmountFormatter.AE_AMOUNT_FORMATS.AE,
     })
-
-    const node = await Node({ url: 'https://testnet.aeternity.io' })
-
-    const universal = await Universal({
-      nodes: [{ name: 'testnet', instance: node }],
-      compilerUrl: 'https://compiler.aepps.com',
-    })
-
-    isGa.value = await universal.isGA(address.value)
-
 
     walletStatus.value = null
     return true
