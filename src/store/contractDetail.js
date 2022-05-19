@@ -6,8 +6,7 @@ import { getUniversalStamp } from "./app"
 
 export const contractDetail = reactive({
   // todo sort on all other places
-  gaPubKey: null,
-  gaSecret: null,
+  gaKeyPair: null,
   contractId: null,
   contractAccount: null,
   contractInstance: null,
@@ -41,8 +40,7 @@ export const clearState = () => {
     txHash,
     proposedAmount,
     recipientAddress,
-    gaPubKey, //todo rename
-    gaSecret,
+    gaKeyPair,
     confirmedBy,
     contractId,
     isConfirmedByCurrentUser,
@@ -63,8 +61,6 @@ export const clearState = () => {
   txHash.value = null
   proposedAmount.value = null
   recipientAddress.value = null
-  gaPubKey.value = null
-  gaSecret.value = null
   confirmedBy.value = null
   contractId.value = null
   isConfirmedByCurrentUser.value = null
@@ -72,6 +68,7 @@ export const clearState = () => {
   isSent.value = false
   contractAccount.value = null
   contractInstance.value = null
+  gaKeyPair.value = null
 }
 
 export const updateContractInfo = async () => {
@@ -86,8 +83,7 @@ export const updateContractInfo = async () => {
     txHash,
     proposedAmount,
     recipientAddress,
-    gaPubKey,//todo rename
-    gaSecret,
+    gaKeyPair,
     confirmedBy,
     contractId,
     isConfirmedByCurrentUser,
@@ -99,9 +95,9 @@ export const updateContractInfo = async () => {
 
   const { address } = toRefs(aeWallet)
   const signerSdk = await getUniversalStamp()
-  const offChainProposeData = getContractByGaAddress(gaPubKey.value)
+  const offChainProposeData = getContractByGaAddress(gaKeyPair.value.publicKey)
 
-  contractAccount.value = await signerSdk.getAccount(gaPubKey.value)
+  contractAccount.value = await signerSdk.getAccount(gaKeyPair.value.publicKey)
   // todo isolate to function to contract actions
   // todo fix je vubec potreba contractaddress ?
   // todo nejde to udelat rovnou s  contractId namisto gaPubKey?

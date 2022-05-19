@@ -1,10 +1,10 @@
 <template>
   <WalletInfo class="wallet-info"/>
-  <div class="detail" v-if="gaPubKey && signers">
+  <div class="detail" v-if="gaKeyPair && signers">
     <h2>Multisig Detail</h2>
     <!--    todo merge detail and create-->
 
-    <signer-list :contract-id="contractId" :ga-pub-key="gaPubKey" :version="version"/>
+    <signer-list :contract-id="contractId" :ga-pub-key="gaKeyPair.publicKey" :version="version"/>
 
     <confirmation-list
       :class="[{'disabled': signers && !confirmedBy}]"
@@ -39,13 +39,13 @@
 </template>
 
 <script setup>
-import { aeWallet } from '../utils/aeternity'
 import {
   app,
   clearState,
   confirmIt,
   contractDetail,
   getContractByContractId,
+  getSpendTx,
   hydrateApp,
   patchProposalByContractId,
   patchRevokedStatus,
@@ -61,13 +61,14 @@ import ConfirmForm from "../components/ConfirmForm"
 import SendForm from "../components/SendForm"
 import ConfirmationList from "../components/ConfirmationList"
 
-import { onMounted, ref, toRefs } from "vue"
+import { onMounted, toRefs } from "vue"
 import { useRoute } from "vue-router"
 import LoaderImage from "../components/LoaderImage"
 import ProposeList from "./ProposeList"
 import SignerList from "./SignerList"
 import WalletInfo from "../components/WalletInfo"
 
+const route = useRoute()
 const {
   version,
   confirmations,
@@ -81,7 +82,7 @@ const {
   gaPubKey,
   recipientAddress,
   confirmedBy,
-  gaSecret,
+  gaKeyPair,
   contractId,
   isConfirmedByCurrentUser,
   isRevoked,
@@ -91,11 +92,6 @@ const {
 } = toRefs(contractDetail)
 
 const { isAppHydrated } = toRefs(app)
-
-
-const spendTx = ref(null)
-
-const route = useRoute()
 
 onMounted(async () => {
   // todo maybe onBeforeMount
@@ -108,22 +104,21 @@ onMounted(async () => {
 
   const contractId = route.params.id
   const contractDetails = await getContractByContractId(contractId)
-  gaPubKey.value = contractDetails.gaAddress // todo needed for loadContract -> updatecontractInfo but its kinda hasty
-  gaSecret.value = contractDetails.gaSecret //tod is this set in store?
+
+  gaKeyPair.value = {
+    publicKey: contractDetails.gaAddress,
+    secretKey: contractDetails.gaSecret, //todo rename
+  }
 
   await updateContractInfo()
   // todo can be this done better?
 })
 
 async function proposeTx () {
-  // todo reuse this function
-  spendTx.value = await aeWallet.sdk.spendTx({
-    senderId: gaPubKey.value,
-    recipientId: recipientAddress.value, //todo not connected
-    amount: proposedAmount.value, //todo not connected
-  })
-
-  await proposeIt(spendTx.value, contractId.value)
+  //todo move this to store or contract action??
+  console.log('gaKeyPair.value.publicKey', gaKeyPair.value.publicKey)
+  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
+  await proposeIt(spendTx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
   await updateContractInfo()
   // todo is ti reaally necceasry?
@@ -135,26 +130,18 @@ async function confirmTx () {
 }
 
 async function sendTx () {
-  const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
-    senderId: gaPubKey.value,
-    recipientId: recipientAddress.value,
-    amount: proposedAmount.value,
-  })
-  await sendIt(contractInstance.value, gaPubKey.value, gaSecret.value, spendTx)
+  //todo move this to store or contract action??
+  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
+
+  await sendIt(contractInstance.value, gaKeyPair.value.publicKey, gaKeyPair.value.secretKey, spendTx)
   //todo is this neccessary to pass?
   await patchSentStatus(contractId.value)
   await updateContractInfo()
 }
 
 async function revokeTx () {
-
-  const spendTx = await aeWallet.sdk.spendTx({
-    //todo this is duplicated so try to separate it
-    senderId: gaPubKey.value,
-    recipientId: recipientAddress.value,
-    amount: proposedAmount.value,
-  })
-
+  //todo move this to store or contract action??
+  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
   await revokeIt(spendTx, contractId.value)
   await patchRevokedStatus(contractId.value)
   await updateContractInfo()

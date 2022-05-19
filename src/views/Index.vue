@@ -46,6 +46,7 @@ watch(walletStatus,
 )
 
 // todo merge watch and onmounted
+// todo rehydrate when going to index
 
 onMounted(async () => {
   // todo move this and hydrate to App

@@ -48,7 +48,8 @@
       ],
       "id": 4,
       "recipientAddress": "ak_2b9okbPRapX48ffuUQF7NJ6gygARsexN1XG55ks6MGU3gantv2",
-      "proposedAmount": "4322"
+      "proposedAmount": "4322",
+      "isRevoked": true
     },
     {
       "contractId": "ct_7GuA8UVNkse5wQHCvaztsmNWSioDJx4E2j2v9wcYwykvm36BL",
@@ -58,7 +59,10 @@
         "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU",
         "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
       ],
-      "id": 5
+      "id": 5,
+      "recipientAddress": "ak_KVz43h24jDoY86h7LD2FQyD6LsjLpDRFx5WQcaAXqqa3eEMJr",
+      "proposedAmount": "1546",
+      "isSent": true
     }
   ]
 }

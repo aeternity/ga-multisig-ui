@@ -5,6 +5,7 @@ import { app } from '../store'
 const dbURL = "http://localhost:3001/multisigContracts"
 
 export const storeContractToDB = async (contractId, gaAddress, gaSecret, signers) => {
+  // todo reduce parameter to keypair
   try {
     await axios.post(dbURL,
       {
