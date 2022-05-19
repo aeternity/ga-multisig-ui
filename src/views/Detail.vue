@@ -21,7 +21,6 @@
 
     <propose-list v-else :proposed-amount="proposedAmount" :recipientAddress="recipientAddress"/>
 
-
     <confirm-form
       v-if="!hasConsensus"
       :class="[{'disabled': !hasProposedTx}]"

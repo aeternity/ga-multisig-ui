@@ -25,20 +25,16 @@ onMounted(async () => {
 </script>
 
 <style>
-.home-link {
-  text-decoration: none;
-}
-
-h1 {
-  color: #de3f6b;
-}
-
 body {
   display: block;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding: 30px;
+}
+
+h1 {
+  color: #de3f6b;
 }
 
 li {
@@ -49,6 +45,10 @@ ul {
   padding: 0;
 }
 
+small {
+  color: gray;
+}
+
 .disabled {
   opacity: 0.2;
   filter: blur(1px);
@@ -56,8 +56,8 @@ ul {
   transition: 0.5s;
 }
 
-small {
-  color: gray;
+.home-link {
+  text-decoration: none;
 }
-
 </style>
+

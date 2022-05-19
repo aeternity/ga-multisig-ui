@@ -5,14 +5,13 @@ import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { MemoryAccount } from '@aeternity/aepp-sdk'
 import { getUniversalStamp } from "./app"
 
-
 export const proposeIt = async (spendTx, contractId) => {
   const signerSdk = await getUniversalStamp()
+  const expirationHeight = await signerSdk.height() + 50
 
   const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
-
   const spendTxHash = await buildAuthTxHash(encoded)
-  const expirationHeight = await signerSdk.height() + 50
+
   const gaContractRpc = await aeWallet.sdk.getContractInstance(
     {
       source: multisigContract,
@@ -25,13 +24,14 @@ export const proposeIt = async (spendTx, contractId) => {
 
 export const confirmIt = async (contractId, spendTxHash) => {
   const signerSdk = await getUniversalStamp()
+  const expirationHeight = await signerSdk.height() + 50
+
   const gaContractRpc = await aeWallet.sdk.getContractInstance(
     {
       source: multisigContract,
       contractAddress: contractId,
     },
   )
-  const expirationHeight = await signerSdk.height() + 50
 
   await gaContractRpc.methods.confirm.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
