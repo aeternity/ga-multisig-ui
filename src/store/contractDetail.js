@@ -5,28 +5,32 @@ import { getContractByGaAddress } from "./offChainDB"
 import { getUniversalStamp } from "./app"
 
 export const contractDetail = reactive({
-  version: null,
-  confirmations: null,
-  signers: null,
-  confirmationsRequired: null,
-  hasProposedTx: null,
-  hasConsensus: null,
-  isCurrentUserSigner: null,
-  txHash: null,
-  proposedAmount: null,
-  recipientAddress: null,
+  // todo sort on all other places
   gaPubKey: null,
   gaSecret: null,
-  confirmedBy: null,
   contractId: null,
-  isConfirmedByCurrentUser: null,
+  contractAccount: null,
+  contractInstance: null,
+
+  hasProposedTx: null,
+  hasConsensus: null,
   isRevoked: false,
   isSent: false,
+  isConfirmedByCurrentUser: null,
+  isCurrentUserSigner: null,
+
+  signers: null,
+  proposedAmount: null,
+  recipientAddress: null,
+  confirmations: null,
+  confirmationsRequired: null,
+  confirmedBy: null,
+  txHash: null,
+  version: null,
 })
 
 export const updateContractInfo = async () => {
   const {
-    // todo is this boilerplate neccessary?
     version,
     confirmations,
     confirmationsRequired,
@@ -37,30 +41,37 @@ export const updateContractInfo = async () => {
     txHash,
     proposedAmount,
     recipientAddress,
-    gaPubKey,
-    gaSecret, //todo rename
+    gaPubKey,//todo rename
+    gaSecret,
     confirmedBy,
     contractId,
     isConfirmedByCurrentUser,
     isRevoked,
     isSent,
+    contractAccount,
+    contractInstance,
   } = toRefs(contractDetail)
   const { address } = toRefs(aeWallet)
   const signerSdk = await getUniversalStamp()
 
-  const contractAccount = await signerSdk.getAccount(gaPubKey.value)
-  // todo isolate to function
+  contractAccount.value = await signerSdk.getAccount(gaPubKey.value)
+  // todo isolate to function to contract actions
   // todo fix je vubec potreba contractaddress ?
   // todo nejde to udelat rovnou s  contractId namisto gaPubKey?
-  const contractInstance = await signerSdk.getContractInstance({
-    source: multisigContract, contractAddress: contractAccount.contractId,
+  console.log('contractAccount.value', contractAccount.value)
+  contractId.value = contractAccount.value.contractId
+
+  contractInstance.value = await signerSdk.getContractInstance({
+    source: multisigContract,
+    contractAddress: contractId.value,
   })
-  contractId.value = contractAccount.contractId
+  console.log('contractInstance.value', contractInstance.value)
 
-  signers.value = (await contractInstance.methods.get_signers()).decodedResult
-  version.value = (await contractInstance.methods.get_version()).decodedResult
 
-  const consensus = (await contractInstance.methods.get_consensus_info()).decodedResult
+  signers.value = (await contractInstance.value.methods.get_signers()).decodedResult
+  version.value = (await contractInstance.value.methods.get_version()).decodedResult
+
+  const consensus = (await contractInstance.value.methods.get_consensus_info()).decodedResult
   confirmations.value = consensus.confirmed_by.length
   confirmationsRequired.value = Number(consensus.confirmations_required)
 
@@ -95,15 +106,18 @@ export const clearState = () => {
     txHash,
     proposedAmount,
     recipientAddress,
-    gaPubKey,
-    gaSecret, //todo rename
+    gaPubKey, //todo rename
+    gaSecret,
     confirmedBy,
     contractId,
     isConfirmedByCurrentUser,
     isRevoked,
     isSent,
+    contractAccount,
+    contractInstance,
   } = toRefs(contractDetail)
 
+  // todo separate default values
   version.value = null
   confirmations.value = null
   confirmationsRequired.value = null
@@ -119,6 +133,8 @@ export const clearState = () => {
   confirmedBy.value = null
   contractId.value = null
   isConfirmedByCurrentUser.value = null
-  isRevoked.value = null
-  isSent.value = null
+  isRevoked.value = false
+  isSent.value = false
+  contractAccount.value = null
+  contractInstance.value = null
 }

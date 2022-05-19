@@ -46,7 +46,6 @@ import {
   confirmIt,
   contractDetail,
   getContractByContractId,
-  getUniversalStamp,
   hydrateApp,
   patchProposalByContractId,
   patchRevokedStatus,
@@ -62,7 +61,6 @@ import ConfirmForm from "../components/ConfirmForm"
 import SendForm from "../components/SendForm"
 import ConfirmationList from "../components/ConfirmationList"
 
-import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { onMounted, ref, toRefs } from "vue"
 import { useRoute } from "vue-router"
 import LoaderImage from "../components/LoaderImage"
@@ -90,11 +88,11 @@ const {
   isAppHydrated,
   isRevoked,
   isSent,
+  contractAccount,
+  contractInstance,
 } = toRefs(contractDetail)
 
 const signerSdk = ref(null)
-const contractAccount = ref(null)
-const contractInstance = ref(null)
 const spendTx = ref(null)
 
 // todo comment watcher
@@ -111,19 +109,9 @@ onMounted(async () => {
   const contractId = route.params.id
   const contractDetails = await getContractByContractId(contractId)
   gaPubKey.value = contractDetails.gaAddress // todo needed for loadContract -> updatecontractInfo but its kinda hasty
-  gaSecret.value = contractDetails.gaSecret
+  gaSecret.value = contractDetails.gaSecret //tod is this set in store?
 
-  await loadContract()  // todo  can be this done better?
-
-  signerSdk.value = await getUniversalStamp() //todo try to move it to state / store`
-
-  contractAccount.value = await signerSdk.value.getAccount(gaPubKey.value)
-  contractInstance.value = await signerSdk.value.getContractInstance(
-    {
-      source: multisigContract,
-      contractAddress: contractAccount.value.contractId,
-    },
-  )
+  await loadContract()  // todo can be this done better?
 })
 
 
@@ -133,22 +121,22 @@ async function loadContract (t) {
 }
 
 async function proposeTx () {
+  // todo reuse this function
   spendTx.value = await aeWallet.sdk.spendTx({
     senderId: gaPubKey.value,
     recipientId: recipientAddress.value, //todo not connected
     amount: proposedAmount.value, //todo not connected
   })
 
-  await proposeIt(spendTx.value, contractAccount.value.contractId)
-
-  await patchProposalByContractId(contractAccount.value.contractId, recipientAddress.value, proposedAmount.value)
+  await proposeIt(spendTx.value, contractId.value)
+  await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
   await updateContractInfo() // todo is ti reaally necceasry?
 }
 
 
 async function confirmTx () {
-  await confirmIt(contractAccount.value.contractId, txHash.value)
-  await updateContractInfo() // todo improve/reduce params
+  await confirmIt(contractId.value, txHash.value)
+  await updateContractInfo()
 }
 
 async function sendTx () {
@@ -157,9 +145,8 @@ async function sendTx () {
     recipientId: recipientAddress.value,
     amount: proposedAmount.value,
   })
-  await sendIt(contractInstance.value, gaPubKey.value, gaSecret.value, spendTx)
-  await patchSentStatus(contractAccount.value.contractId)
-
+  await sendIt(contractInstance.value, gaPubKey.value, gaSecret.value, spendTx) //todo is this neccessary to pass?
+  await patchSentStatus(contractId.value)
   await updateContractInfo()
 }
 
@@ -171,11 +158,11 @@ async function revokeTx () {
     recipientId: recipientAddress.value,
     amount: proposedAmount.value,
   })
+
   // todo is account necessary?
 
-  await revokeIt(spendTx, contractAccount.value.contractId)
-  await patchRevokedStatus(contractAccount.value.contractId)
-
+  await revokeIt(spendTx, contractId.value)
+  await patchRevokedStatus(contractId.value)
   await updateContractInfo()
 }
 </script>

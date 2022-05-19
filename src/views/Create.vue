@@ -93,37 +93,30 @@ const {
   contractId,
   isRevoked,
   isSent,
+  contractAccount,
+  contractInstance,
 } = toRefs(contractDetail)
 
-
-const gaAccount = ref(null)
 const signer1Key = ref('')
 const signer2Key = ref('')
 const requiredSignersAmount = ref(0)
-const gaKeypair = ref(null)
 
+const gaAccount = ref(null)
+const gaKeypair = ref(null)
 const spendTx = ref(null)
 const spendTxHash = ref(null)
-const contractAccount = ref(null)
-const contractInstance = ref(null)
-const signerSdk = ref(null) //todo or move to stor;
 
-const contractInstanceInitial = ref(null)
-
-onMounted(async () => {
-  clearState()
-})
-
+onMounted(() => clearState())
 
 async function crateGaAccount () {
   gaKeypair.value = Crypto.generateKeyPair() //todo try to replace pubkey and secret with keypair
-  gaPubKey.value = gaKeypair.value.publicKey
+  gaPubKey.value = gaKeypair.value.publicKey // todo is this needed to push to store before? can it be reactive?
   gaSecret.value = gaKeypair.value.secretKey
   const gaAccount = MemoryAccount({ keypair: gaKeypair.value }) //todo how to push this into state - because its not accissible with .value (torefs?)
   // todo try universal as this in data
-  signerSdk.value = await getUniversalStamp()
+  const signerSdk = await getUniversalStamp()
 
-  const contractInstanceInitial = await signerSdk.value.getContractInstance(
+  const contractInstanceInitial = await signerSdk.getContractInstance(
     { source: multisigContract })
 
   await contractInstanceInitial.compile()
@@ -137,7 +130,7 @@ async function crateGaAccount () {
     signers.value,
   ]
 
-  const attachTX = await signerSdk.value.gaAttachTx({
+  const attachTX = await signerSdk.gaAttachTx({
     ownerId: gaKeypair.value.publicKey,
     code: contractInstanceInitial.bytecode,
     callData: contractInstanceInitial.calldata.encode(contractInstanceInitial._name, 'init', contractArgs),
@@ -150,7 +143,7 @@ async function crateGaAccount () {
 
 // todo break into functions
 
-  const { rawTx } = await signerSdk.value.send(attachTX.tx, {
+  const { rawTx } = await signerSdk.send(attachTX.tx, {
     innerTx: true,
     onAccount: gaAccount,
   })
@@ -160,17 +153,10 @@ async function crateGaAccount () {
 
   await updateContractInfo() // todo is this neccessary? can be doe rectively?
 
-  contractAccount.value = await signerSdk.value.getAccount(gaKeypair.value.publicKey)
   // todo fix je vubec potreba contractaddress ?
-  // todo inicializovat zvlast?
   // todo a nestaci ta initial?
-  contractInstance.value = await signerSdk.value.getContractInstance(
-    {
-      source: multisigContract,
-      contractAddress: contractAccount.value.contractId,
-    })
 
-  await storeContractToDB(contractAccount.value.contractId, gaKeypair.value.publicKey, gaKeypair.value.secretKey, signers.value)
+  await storeContractToDB(contractId.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey, signers.value)
 }
 
 async function proposeTx () {
@@ -179,28 +165,28 @@ async function proposeTx () {
     recipientId: recipientAddress.value,
     amount: proposedAmount.value,
   })
-  await proposeIt(spendTx.value, contractAccount.value.contractId)
+  await proposeIt(spendTx.value, contractId.value)
 
-  await patchProposalByContractId(contractAccount.value.contractId, recipientAddress.value, proposedAmount.value)
+  await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
   await updateContractInfo()
 }
 
 async function confirmTx () {
-  await confirmIt(contractAccount.value.contractId, spendTxHash.value)
+  await confirmIt(contractId.value, spendTxHash.value) // todo contractAccount is neccessary to pass?
   await updateContractInfo()
 }
 
 async function sendTx () {
   // todo gaaccount is not ref
   await sendIt(contractInstance.value, gaKeypair.value.publicKey, gaAccount.value, spendTx.value)
-  await patchSentStatus(contractAccount.value.contractId)
+  await patchSentStatus(contractId.value)
   await updateContractInfo()
 }
 
 async function revokeTx () {
-  await revokeIt(spendTx.value, contractAccount.value.contractId)
+  await revokeIt(spendTx.value, contractId.value)
   // todo is this updating neccessary?
-  await patchRevokedStatus(contractAccount.value.contractId)
+  await patchRevokedStatus(contractId.value)
   await updateContractInfo()
 }
 

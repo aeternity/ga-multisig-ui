@@ -41,7 +41,6 @@ export const sendIt = async (contractInstance, gaPubkey, gaSecret, spendTx) => {
 
   const nonce = (await contractInstance.methods.get_nonce()).decodedResult
 
-
   // todo try wrapping it in a PayingForTx?
   //  The issue is the Account the generalized Account is created from (creation is conversion) has to pay for the costs.
   //  Maybe this can be solved using PayingForTx, so someone else pay the fee.
