@@ -77,7 +77,7 @@ export const sendIt = async (contractInstance, gaPubkey, gaSecret, spendTx) => {
   )
   const keypair = {
     publicKey: gaPubkey,
-    secretKey: gaSecret,
+    secretKey: gaSecret, //todo shorten
   }
   const gaAccount = MemoryAccount({ keypair: keypair })
   await signerSdk.send(

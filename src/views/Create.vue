@@ -147,7 +147,7 @@ async function proposeTx () {
 }
 
 async function confirmTx () {
-  await confirmIt(contractId.value, spendTxHash.value) // todo contractAccount is neccessary to pass?
+  await confirmIt(contractId.value, spendTxHash.value)
   await updateContractInfo()
 }
 
@@ -165,12 +165,7 @@ async function revokeTx () {
   await updateContractInfo()
 }
 
-//   computed: {
-// // todo conditions as computed properties
-//     isProposeBlockHidden () {
-//       // todo this is probably not needed
-//       return isCurrentUserSigner && signers
-//     },
-//   },
-// }
+
+// todo conditions as computed properties
+
 </script>

@@ -110,7 +110,8 @@ onMounted(async () => {
   gaPubKey.value = contractDetails.gaAddress // todo needed for loadContract -> updatecontractInfo but its kinda hasty
   gaSecret.value = contractDetails.gaSecret //tod is this set in store?
 
-  await updateContractInfo()  // todo can be this done better?
+  await updateContractInfo()
+  // todo can be this done better?
 })
 
 async function proposeTx () {
@@ -123,9 +124,9 @@ async function proposeTx () {
 
   await proposeIt(spendTx.value, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
-  await updateContractInfo() // todo is ti reaally necceasry?
+  await updateContractInfo()
+  // todo is ti reaally necceasry?
 }
-
 
 async function confirmTx () {
   await confirmIt(contractId.value, txHash.value)
@@ -138,7 +139,8 @@ async function sendTx () {
     recipientId: recipientAddress.value,
     amount: proposedAmount.value,
   })
-  await sendIt(contractInstance.value, gaPubKey.value, gaSecret.value, spendTx) //todo is this neccessary to pass?
+  await sendIt(contractInstance.value, gaPubKey.value, gaSecret.value, spendTx)
+  //todo is this neccessary to pass?
   await patchSentStatus(contractId.value)
   await updateContractInfo()
 }
@@ -146,13 +148,12 @@ async function sendTx () {
 
 async function revokeTx () {
   // todo detect revoked status
-  const spendTx = await aeWallet.sdk.spendTx({ //todo this is duplicated so try to separate it
+  const spendTx = await aeWallet.sdk.spendTx({
+    //todo this is duplicated so try to separate it
     senderId: gaPubKey.value,
     recipientId: recipientAddress.value,
     amount: proposedAmount.value,
   })
-
-  // todo is account necessary?
 
   await revokeIt(spendTx, contractId.value)
   await patchRevokedStatus(contractId.value)

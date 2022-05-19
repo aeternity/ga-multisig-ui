@@ -8,17 +8,16 @@
       </router-link>
     </h2>
 
-    <!--todo fix load in the first time - wait for wallet-->
-    <div v-if="address && !walletStatus">
-      <div v-for="contract in myContracts">
-        <router-link :to="`/detail/${contract.contractId}`">
-          {{ contract.contractId }}
-        </router-link>
-      </div>
-      <div v-if="myContracts?.length ===0">
-        No contracts created
-      </div>
-    </div>
+   <div v-if="address && !walletStatus">
+     <div v-for="contract in myContracts">
+       <router-link :to="`/detail/${contract.contractId}`">
+         {{ contract.contractId }}
+       </router-link>
+     </div>
+     <div v-if="myContracts?.length ===0">
+       No contracts created
+     </div>
+   </div>
     <loader-image v-else/>
   </div>
 </template>
@@ -27,30 +26,29 @@
 <script setup>
 import { app, hydrateApp } from "../store"
 import { aeWallet } from '../utils/aeternity'
-import { computed, onMounted, toRefs, watch } from "vue"
+import { onMounted, toRefs, watch } from "vue"
 import LoaderImage from "../components/LoaderImage"
 
-const { myContracts } = toRefs(app)
-const walletStatus = computed(() => aeWallet.walletStatus)
-const address = computed(() => aeWallet.address)
-// todo is this computed neccessary ?
+const { myContracts, isAppHydrated } = toRefs(app)
 
-const { isAppHydrated } = toRefs(app)
+const {
+  walletStatus,
+  address,
+} = toRefs(aeWallet)
 
 watch(walletStatus,
   async (newStatus) => {
     if (newStatus === null) {
-      // todo wait for wallet connection but make it better
+      // todo wait for wallet connection but make hydrate better
       await hydrateApp()
     }
   },
 )
 
-// todo check this page for unused code
 // todo merge watch and onmounted
 
 onMounted(async () => {
-  // todo move this to App
+  // todo move this and hydrate to App
   await hydrateApp()
 })
 
