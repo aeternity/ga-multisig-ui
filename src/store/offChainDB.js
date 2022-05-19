@@ -1,6 +1,6 @@
 import { toRefs } from 'vue'
 import axios from "axios"
-import { multisig } from '../store'
+import { app } from '../store'
 
 const dbURL = "http://localhost:3001/multisigContracts"
 
@@ -20,7 +20,7 @@ export const storeContractToDB = async (contractId, gaAddress, gaSecret, signers
 }
 
 export const restoreContractsFromDB = async () => {
-  const { multisigContracts } = toRefs(multisig) // todo this probably do in page
+  const { multisigContracts } = toRefs(app) // todo this probably do in page
   try {
     const res = await axios.get(dbURL)
     multisigContracts.value = res.data
@@ -84,7 +84,7 @@ export const patchSentStatus = async (contractId) => {
 
 export const getContractByGaAddress = (gaAddress) => {
   //todo rovnou mozna vytahnout z DB
-  const { multisigContracts } = toRefs(multisig)
+  const { multisigContracts } = toRefs(app)
   return multisigContracts.value.find(contract =>
     contract.gaAddress === gaAddress,
   )
@@ -94,7 +94,7 @@ export const getContractByGaAddress = (gaAddress) => {
 export const getContractByContractId = (contractId) => {
   //todo rovnou mozna vytahnout z DB
 
-  const { multisigContracts } = toRefs(multisig)
+  const { multisigContracts } = toRefs(app)
   return multisigContracts.value.find(contract =>
     contract.contractId === contractId,
   )

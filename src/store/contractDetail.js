@@ -1,16 +1,10 @@
-import { Node, Universal } from '@aeternity/aepp-sdk'
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet } from "../utils/aeternity"
-import { getContractByGaAddress, restoreContractsFromDB } from "./off-chainDB"
-import { COMPILER_URL } from "../utils/aeternity/configs"
+import { getContractByGaAddress } from "./offChainDB"
+import { getUniversalStamp } from "./app"
 
-
-export const app = reactive({
-  myContracts: null,
-})
-
-export const multisig = reactive({
+export const contractDetail = reactive({
   version: null,
   confirmations: null,
   signers: null,
@@ -18,7 +12,6 @@ export const multisig = reactive({
   hasProposedTx: null,
   hasConsensus: null,
   isCurrentUserSigner: null,
-  multisigContracts: null, // todo presunout do druhzho modulu k mycontracts??
   txHash: null,
   proposedAmount: null,
   recipientAddress: null,
@@ -27,7 +20,6 @@ export const multisig = reactive({
   confirmedBy: null,
   contractId: null,
   isConfirmedByCurrentUser: null,
-  isAppHydrated: false,
   isRevoked: false,
   isSent: false,
 })
@@ -52,7 +44,7 @@ export const updateContractInfo = async () => {
     isConfirmedByCurrentUser,
     isRevoked,
     isSent,
-  } = toRefs(multisig)
+  } = toRefs(contractDetail)
   const { address } = toRefs(aeWallet)
   const signerSdk = await getUniversalStamp()
 
@@ -91,37 +83,6 @@ export const updateContractInfo = async () => {
   isSent.value = offChainProposeData?.isSent
 }
 
-export const hydrateApp = async () => {
-  const { isAppHydrated } = toRefs(multisig)
-  const { myContracts } = toRefs(app)
-  await restoreContractsFromDB()
-  myContracts.value = await loadMyContracts()
-  isAppHydrated.value = true
-}
-
-
-export const loadMyContracts = async () => {
-  // todo separate to detail a nd list
-  const { address } = toRefs(aeWallet)
-  const { multisigContracts } = toRefs(multisig)
-
-
-  return multisigContracts.value.filter(contract => contract.signers.includes(address.value))
-}
-
-export const getUniversalStamp = async () => {
-  // todo node from variable
-  const node = await Node({ url: 'https://testnet.aeternity.io' })
-
-  return await Universal({
-    nodes: [{
-      name: 'testnet',
-      instance: node,
-    }],
-    compilerUrl: COMPILER_URL,
-  })
-}
-
 export const clearState = () => {
   const {
     version,
@@ -141,7 +102,7 @@ export const clearState = () => {
     isConfirmedByCurrentUser,
     isRevoked,
     isSent,
-  } = toRefs(multisig)
+  } = toRefs(contractDetail)
 
   version.value = null
   confirmations.value = null

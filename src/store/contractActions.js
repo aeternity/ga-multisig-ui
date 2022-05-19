@@ -3,7 +3,7 @@ import multisigContract from "../utils/aeternity/contracts/SimpleGAMultiSig.aes"
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { MemoryAccount } from '@aeternity/aepp-sdk'
-import { getUniversalStamp } from "./multisig"
+import { getUniversalStamp } from "./app"
 
 
 export const proposeIt = async (spendTx, contractId) => {
@@ -34,7 +34,6 @@ export const confirmIt = async (contractId, spendTxHash) => {
   const expirationHeight = await signerSdk.height() + 50
 
   await gaContractRpc.methods.confirm.send(spendTxHash, { FixedTTL: [expirationHeight] })
-
 }
 
 export const sendIt = async (contractInstance, gaPubkey, gaSecret, spendTx) => {

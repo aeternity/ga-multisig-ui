@@ -51,7 +51,7 @@
 <script setup>
 import { toRefs } from 'vue'
 import { aeWallet } from '../utils/aeternity'
-import { multisig } from '../store'
+import { contractDetail } from '../store'
 
 const { address, walletStatus } = toRefs(aeWallet)
 
@@ -72,7 +72,7 @@ const {
   contractId,
   isRevoked,
   isSent,
-} = toRefs(multisig)
+} = toRefs(contractDetail)
 </script>
 
 <style scoped>

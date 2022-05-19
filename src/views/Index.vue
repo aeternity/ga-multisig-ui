@@ -23,22 +23,19 @@
   </div>
 </template>
 <!--todo come up with better hydrating-->
+
 <script setup>
-import { app, hydrateApp, loadMyContracts, multisig, restoreContractsFromDB } from "../store"
+import { app, hydrateApp } from "../store"
 import { aeWallet } from '../utils/aeternity'
-import { computed, onMounted, ref, toRefs, watch } from "vue"
+import { computed, onMounted, toRefs, watch } from "vue"
 import LoaderImage from "../components/LoaderImage"
 
 const { myContracts } = toRefs(app)
-const isLoaded = ref(false)
 const walletStatus = computed(() => aeWallet.walletStatus)
 const address = computed(() => aeWallet.address)
 // todo is this computed neccessary ?
 
-
-const {
-  isAppHydrated,
-} = toRefs(multisig)
+const { isAppHydrated } = toRefs(app)
 
 watch(walletStatus,
   async (newStatus) => {
@@ -54,9 +51,7 @@ watch(walletStatus,
 
 onMounted(async () => {
   // todo move this to App
-  await restoreContractsFromDB()
-  myContracts.value = await loadMyContracts()
+  await hydrateApp()
 })
 
 </script>
-

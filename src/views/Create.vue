@@ -58,8 +58,8 @@ import { aeWallet } from '../utils/aeternity' // todo import ->const
 import {
   clearState,
   confirmIt,
+  contractDetail,
   getUniversalStamp,
-  multisig,
   patchProposalByContractId,
   patchRevokedStatus,
   patchSentStatus,
@@ -93,7 +93,7 @@ const {
   contractId,
   isRevoked,
   isSent,
-} = toRefs(multisig)
+} = toRefs(contractDetail)
 
 
 const gaAccount = ref(null)

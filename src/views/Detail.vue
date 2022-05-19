@@ -44,10 +44,10 @@ import { aeWallet } from '../utils/aeternity'
 import {
   clearState,
   confirmIt,
+  contractDetail,
   getContractByContractId,
   getUniversalStamp,
   hydrateApp,
-  multisig,
   patchProposalByContractId,
   patchRevokedStatus,
   patchSentStatus,
@@ -90,7 +90,7 @@ const {
   isAppHydrated,
   isRevoked,
   isSent,
-} = toRefs(multisig)
+} = toRefs(contractDetail)
 
 const signerSdk = ref(null)
 const contractAccount = ref(null)
@@ -98,11 +98,8 @@ const contractInstance = ref(null)
 const spendTx = ref(null)
 
 // todo comment watcher
-
-
 // todo maybe onBeforeMount
 const route = useRoute()
-
 
 onMounted(async () => {
   clearState()

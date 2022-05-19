@@ -1,4 +1,4 @@
-export * from './multisig'
+export * from './contractDetail'
 export * from './contractActions'
-export * from './off-chainDB'
-
+export * from './offChainDB'
+export * from './app'
