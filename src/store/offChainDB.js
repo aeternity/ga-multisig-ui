@@ -11,6 +11,7 @@ export const storeContractToDB = async (contractId, gaKeyPair, signers) => {
         gaKeyPair,
         signers,
       })
+    await hydrateApp()
   } catch (e) {
     console.error(e)
   }

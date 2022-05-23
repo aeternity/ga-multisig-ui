@@ -5,7 +5,6 @@ import { getContractByAddress } from "./app"
 import { getSpendTx } from "./contractActions"
 
 const getInitialData = () => ({
-  // todo sort on all other places
   gaKeyPair: null,
   contractId: null,
   contractAccount: null,
@@ -23,11 +22,11 @@ const getInitialData = () => ({
   recipientAddress: null,
   confirmations: null,
   confirmationsRequired: null,
+  confirmationsMap: null,
   confirmedBy: null,
   spendTx: null,
   txHash: null,
   version: null,
-  confirmationsMap: null,
 })
 
 export const contractDetail = reactive(getInitialData())
@@ -37,28 +36,27 @@ export const clearState = () => {
 }
 
 export const loadContractDetail = async () => {
-  // todo rename loadContractInfo and separate from reactive
   const {
-    version,
-    confirmations,
-    confirmationsRequired,
-    signers,
-    hasProposedTx,
-    hasConsensus,
-    isCurrentUserSigner,
-    txHash,
-    spendTx,
-    proposedAmount,
-    recipientAddress,
     gaKeyPair,
-    confirmedBy,
     contractId,
-    isConfirmedByCurrentUser,
-    revokedBy,
-    sentBy,
     contractAccount,
     contractInstance,
+    hasProposedTx,
+    hasConsensus,
+    revokedBy,
+    sentBy,
+    isConfirmedByCurrentUser,
+    isCurrentUserSigner,
+    signers,
+    proposedAmount,
+    recipientAddress,
+    confirmations,
+    confirmationsRequired,
     confirmationsMap,
+    confirmedBy,
+    spendTx,
+    txHash,
+    version,
   } = toRefs(contractDetail)
 
   const signerSdk = await getUniversalStamp()

@@ -13,7 +13,6 @@ export const hydrateApp = async () => {
   multisigContracts.value = await restoreContractsFromDB()
   myContracts.value = await getMyContracts()
   isAppHydrated.value = true
-  console.log('hydrated')
 }
 
 export const getMyContracts = async () => {

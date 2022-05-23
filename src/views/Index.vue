@@ -36,6 +36,4 @@ const {
   walletStatus,
   address,
 } = toRefs(aeWallet)
-
-
 </script>

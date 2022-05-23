@@ -1,5 +1,4 @@
 <template>
-  <WalletInfo class="wallet-info"/>
   <div class="create">
     <h2>Create Multisig Account</h2>
 
@@ -50,13 +49,11 @@ import ConfirmationList from "../components/ConfirmationList"
 import SendForm from "../components/SendForm"
 import ProposeList from "./ProposeList"
 import SignerList from "./SignerList"
-import WalletInfo from "../components/WalletInfo"
 import { useRoute } from "vue-router"
 import {
   clearState,
   contractDetail,
   getSpendTx,
-  hydrateApp,
   initMultisigContract,
   loadContractDetail,
   patchProposalByContractId,
@@ -65,64 +62,55 @@ import {
   revokeTx,
   storeContractToDB,
 } from '../store'
-import { onMounted, ref, toRefs, watch } from "vue"
+import { onMounted, ref, toRefs } from "vue"
 
 const route = useRoute()
 
 const {
-  version,
-  confirmations,
-  confirmationsRequired,
-  signers,
-  hasConsensus,
-  hasProposedTx,
-  isCurrentUserSigner,
-  txHash,
-  spendTx,
-  proposedAmount,
   gaKeyPair,
-  recipientAddress,
-  confirmedBy,
-  isConfirmedByCurrentUser,
   contractId,
-  revokedBy,
-  sentBy,
   contractAccount,
   contractInstance,
+  hasProposedTx,
+  hasConsensus,
+  revokedBy,
+  sentBy,
+  isConfirmedByCurrentUser,
+  isCurrentUserSigner,
+  signers,
+  proposedAmount,
+  recipientAddress,
+  confirmations,
+  confirmationsRequired,
   confirmationsMap,
+  confirmedBy,
+  spendTx,
+  txHash,
+  version,
 } = toRefs(contractDetail)
 
 const signer1Key = ref('')
 const signer2Key = ref('')
-const requiredSignersAmount = ref(0)
+const requiredSignersAmount = ref(2)
 
 onMounted(() => clearState())
-
-watch(route,
-  async (newRoute, oldRoute) => {
-    if (oldRoute.name === 'index') {
-      // reload when going back to index, so new contract will appear
-      await hydrateApp()
-    }
-  },
-)
 
 async function crateGaAccount () {
   gaKeyPair.value = Crypto.generateKeyPair()
 
-  const signersss = [ //todo fix this
+  const proposedSigners = [
     signer1Key.value,
     signer2Key.value,
   ]
 
   const contractArgs = [
     requiredSignersAmount.value,
-    signersss,
+    proposedSigners,
   ]
 
   await initMultisigContract(contractArgs, gaKeyPair.value)
   await loadContractDetail() //todo the order is hasty. Probably too much anstraction
-  await storeContractToDB(contractId.value, gaKeyPair.value, signersss)
+  await storeContractToDB(contractId.value, gaKeyPair.value, proposedSigners)
 }
 
 async function propose () {

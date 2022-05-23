@@ -32,7 +32,7 @@ export const initMultisigContract = async (contractArgs, gaKeyPair) => {
 
   const { rawTx } = await signerSdk.send(attachTX.tx, {
     innerTx: true,
-    onAccount: MemoryAccount({ keypair: gaKeyPair }), // todo will this work without MemoryAccount?
+    onAccount: gaKeyPair,
   })
 
   await aeWallet.sdk.payForTransaction(rawTx)
@@ -66,8 +66,6 @@ export const confirmTx = async (contractId, spendTxHash) => {
 }
 
 export const sendTx = async (gaKeypair, spendTx, contractInstance) => {
-  console.log('gaKeypair', gaKeypair)
-
   const signerSdk = await getUniversalStamp()
 
   const nonce = (await contractInstance.methods.get_nonce()).decodedResult
@@ -101,10 +99,6 @@ export const revokeTx = async (spendTx, contractId) => {
   })
 
   const revokeTx = await gaContractRpc.methods.revoke.send(spendTxHash)
-  console.log('revokeTx', revokeTx)
-  console.log('revokeTx', revokeTx.decodedEvents[0].args[1])
   return revokeTx.decodedEvents[0].args[1]
-
-
 }
 

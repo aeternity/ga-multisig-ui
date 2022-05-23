@@ -1,5 +1,4 @@
 <template>
-  <WalletInfo class="wallet-info"/>
   <div class="detail" v-if="gaKeyPair && signers">
     <h2>Multisig Detail</h2>
 
@@ -77,30 +76,29 @@ import { useRoute } from "vue-router"
 import LoaderImage from "../components/LoaderImage"
 import ProposeList from "./ProposeList"
 import SignerList from "./SignerList"
-import WalletInfo from "../components/WalletInfo"
 
 const route = useRoute()
 const {
-  version,
-  confirmations,
-  confirmationsRequired,
-  signers,
-  hasConsensus,
-  hasProposedTx,
-  isCurrentUserSigner,
-  txHash,
-  spendTx,
-  proposedAmount,
-  recipientAddress,
-  confirmedBy,
   gaKeyPair,
   contractId,
-  isConfirmedByCurrentUser,
-  revokedBy,
-  sentBy,
   contractAccount,
   contractInstance,
+  hasProposedTx,
+  hasConsensus,
+  revokedBy,
+  sentBy,
+  isConfirmedByCurrentUser,
+  isCurrentUserSigner,
+  signers,
+  proposedAmount,
+  recipientAddress,
+  confirmations,
+  confirmationsRequired,
   confirmationsMap,
+  confirmedBy,
+  spendTx,
+  txHash,
+  version,
 } = toRefs(contractDetail)
 
 const { isAppHydrated } = toRefs(app)
