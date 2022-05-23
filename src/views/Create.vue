@@ -30,7 +30,7 @@
       :class="[{'disabled': !signers && !confirmedBy}]"
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
-      @propose-clicked="proposeTx"/>
+      @propose-clicked="propose"/>
 
     <propose-list
       v-else
@@ -41,7 +41,7 @@
       :class="[{'disabled': !hasProposedTx}]"
       :has-consensus="hasConsensus"
       @send-clicked="sendTx"
-      @revoke-clicked="revokeTx"/>
+      @revoke-clicked="revoke"/>
     <!--    todo add charge button-->
     <div v-if="isRevoked">The transaction has been revoked by user ...</div>
     <div v-if="isSent">The transaction has been sent by user...</div>
@@ -65,10 +65,8 @@ import {
   initMultisigContract,
   patchProposalByContractId,
   patchRevokedStatus,
-  patchSentStatus,
-  proposeIt,
-  revokeIt,
-  sendIt,
+  proposeTx,
+  revokeTx,
   storeContractToDB,
   updateContractInfo,
 } from '../store'
@@ -109,7 +107,6 @@ async function crateGaAccount () {
   // todo how to push this into state - because its not accissible with .value (torefs?)
   // todo try universal as this in data
 
-
   const signersss = [ //todo fix this
     signer1Key.value,
     signer2Key.value,
@@ -121,26 +118,21 @@ async function crateGaAccount () {
   ]
 
   await initMultisigContract(contractArgs, gaKeyPair.value)
-  await storeContractToDB(contractId.value, gaKeyPair.value.publicKey, gaKeyPair.value.secretKey, signersss)
-  await updateContractInfo()
+  await updateContractInfo() //todo the order is hasty. Probably too much anstraction
+  await storeContractToDB(contractId.value, gaKeyPair.value, signersss)
 }
 
-async function proposeTx () {
+async function propose () {
   const tx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
+// todo this does not serve well. Probably too much abstraction
 
-  await proposeIt(tx, contractId.value)
+  await proposeTx(tx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
   await updateContractInfo()// todo is this neccessary? can be doe rectively?
 }
 
-async function sendTx () {
-  await sendIt(gaKeyPair.value, spendTx.value, contractInstance.value)
-  await patchSentStatus(contractId.value)
-  await updateContractInfo()
-}
-
-async function revokeTx () {
-  await revokeIt(spendTx.value, contractId.value)
+async function revoke () {
+  await revokeTx(spendTx.value, contractId.value)
   await patchRevokedStatus(contractId.value)
   await updateContractInfo()   // todo is this updating neccessary?
 }

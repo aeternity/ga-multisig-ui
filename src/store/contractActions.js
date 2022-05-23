@@ -39,7 +39,7 @@ export const initMultisigContract = async (contractArgs, gaKeyPair) => {
   await aeWallet.sdk.payForTransaction(rawTx)
 }
 
-export const proposeIt = async (spendTx, contractId) => {
+export const proposeTx = async (spendTx, contractId) => {
   const signerSdk = await getUniversalStamp()
   const expirationHeight = await signerSdk.height() + 50
 
@@ -54,7 +54,7 @@ export const proposeIt = async (spendTx, contractId) => {
   await gaContractRpc.methods.propose.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
-export const confirmIt = async (contractId, spendTxHash) => {
+export const confirmTx = async (contractId, spendTxHash) => {
   const signerSdk = await getUniversalStamp()
   const expirationHeight = await signerSdk.height() + 50
 
@@ -66,8 +66,8 @@ export const confirmIt = async (contractId, spendTxHash) => {
   await gaContractRpc.methods.confirm.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
-export const sendIt = async (gaKeypair, spendTx, contractInstance) => {
-  // todoshorten params to Keypair
+export const sendTx = async (gaKeypair, spendTx, contractInstance) => {
+
   const signerSdk = await getUniversalStamp()
 
   const nonce = (await contractInstance.methods.get_nonce()).decodedResult
@@ -79,7 +79,7 @@ export const sendIt = async (gaKeypair, spendTx, contractInstance) => {
 
   await aeWallet.sdk.spend(
     776440000000000,
-    gaKeypair.gaPubkey,
+    gaKeypair.publicKey,
     // todo do button workaround  pre charge GA account create this.gaAccount on chai
   )
 
@@ -91,7 +91,9 @@ export const sendIt = async (gaKeypair, spendTx, contractInstance) => {
     })
 }
 
-export const revokeIt = async (spendTx, contractId) => {
+export const revokeTx = async (spendTx, contractId) => {
+  console.log('spendTx', spendTx)
+  console.log('contractId', contractId)
   const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
   const spendTxHash = await buildAuthTxHash(encoded)
 

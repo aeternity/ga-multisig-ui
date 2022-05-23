@@ -1,8 +1,7 @@
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet } from "../utils/aeternity"
-import { getContractByGaAddress } from "./offChainDB"
-import { getUniversalStamp } from "./app"
+import { getContractByContractId, getUniversalStamp } from "./app"
 import { getSpendTx } from "./contractActions"
 
 const getInitialData = () => ({
@@ -61,7 +60,6 @@ export const updateContractInfo = async () => {
 
   const { address } = toRefs(aeWallet)
   const signerSdk = await getUniversalStamp()
-  const offChainProposeData = getContractByGaAddress(gaKeyPair.value.publicKey)
 
   contractAccount.value = await signerSdk.getAccount(gaKeyPair.value.publicKey)
   // todo isolate to function to contract actions
@@ -74,6 +72,8 @@ export const updateContractInfo = async () => {
     source: multisigContract,
     contractAddress: contractId.value,
   })
+  const offChainProposeData = getContractByContractId(contractId.value)
+
 
   signers.value = (await contractInstance.value.methods.get_signers()).decodedResult
   version.value = (await contractInstance.value.methods.get_version()).decodedResult

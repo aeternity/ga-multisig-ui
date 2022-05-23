@@ -19,7 +19,7 @@
       v-if="!hasProposedTx"
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
-      @propose-clicked="proposeTx"/>
+      @propose-clicked="propose"/>
 
     <propose-list
       v-else
@@ -30,14 +30,14 @@
       v-if="!hasConsensus"
       :class="[{'disabled': !hasProposedTx}]"
       :is-confirm-hidden="isConfirmedByCurrentUser"
-      @confirm-clicked="confirmTx"
-      @revoke-clicked="revokeTx"/>
+      @confirm-clicked="confirm"
+      @revoke-clicked="revoke"/>
 
     <send-form
       :class="[{'disabled': !hasConsensus}]"
       :has-consensus="hasConsensus"
-      @send-clicked="sendTx"
-      @revoke-clicked="revokeTx"/>
+      @send-clicked="send"
+      @revoke-clicked="revoke"/>
     <div v-if="isRevoked">The transaction has been revoked by user ...</div>
     <div v-if="isSent">The transaction has been sent by user...</div>
   </div>
@@ -48,7 +48,7 @@
 import {
   app,
   clearState,
-  confirmIt,
+  confirmTx,
   contractDetail,
   getContractByContractId,
   getSpendTx,
@@ -56,9 +56,9 @@ import {
   patchProposalByContractId,
   patchRevokedStatus,
   patchSentStatus,
-  proposeIt,
-  revokeIt,
-  sendIt,
+  proposeTx,
+  revokeTx,
+  sendTx,
   updateContractInfo,
 } from '../store'
 
@@ -112,38 +112,35 @@ onMounted(async () => {
   const contractId = route.params.id
   const contractDetails = await getContractByContractId(contractId)
 
-  gaKeyPair.value = {
-    publicKey: contractDetails.gaAddress, //todo get whole keypair
-    secretKey: contractDetails.gaSecret, //todo rename
-  }
+  gaKeyPair.value = contractDetails.gaKeyPair
 
   await updateContractInfo()
   // todo can be this done better?
 })
 
-async function proposeTx () {
+async function propose () {
   const tx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
 
-  await proposeIt(tx, contractId.value)
+  await proposeTx(tx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
   await updateContractInfo()
   // todo is ti reaally necceasry?
 }
 
-async function confirmTx () {
-  await confirmIt(contractId.value, txHash.value)
+async function confirm () {
+  await confirmTx(contractId.value, txHash.value)
   await updateContractInfo()
 }
 
-async function sendTx () {
-  await sendIt(gaKeyPair.value, spendTx.value, contractInstance.value)
+async function send () {
+  await sendTx(gaKeyPair.value, spendTx.value, contractInstance.value)
   //todo is this neccessary to pass?
   await patchSentStatus(contractId.value)
   await updateContractInfo()
 }
 
-async function revokeTx () {
-  await revokeIt(spendTx.value, contractId.value)
+async function revoke () {
+  await revokeTx(spendTx.value, contractId.value)
   await patchRevokedStatus(contractId.value)
   await updateContractInfo()
 }

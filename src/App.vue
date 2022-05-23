@@ -18,8 +18,6 @@ import { aeInitWallet } from './utils/aeternity'
 onMounted(async () => {
   await aeInitWallet()
   //todo hydrate here?
-  // await restoreContractsFromDB()
-  // myContracts.value = await getMyContracts()
 })
 
 </script>

@@ -5,26 +5,33 @@ import { restoreContractsFromDB } from "./offChainDB"
 import { Node, Universal } from '@aeternity/aepp-sdk'
 
 export const app = reactive({
+  multisigContracts: null,
   myContracts: null,
-  multisigContracts: null, //todo rename contractsList
   isAppHydrated: false,
 })
 
 export const hydrateApp = async () => {
-  const { isAppHydrated, myContracts } = toRefs(app)
-  await restoreContractsFromDB()
+  const { isAppHydrated, myContracts, multisigContracts } = toRefs(app)
+  multisigContracts.value = await restoreContractsFromDB()
   myContracts.value = await getMyContracts()
   isAppHydrated.value = true
 }
 
 export const getMyContracts = async () => {
-// todo try computed here
-//   todo load je divny aspon prejmenovat
   const { address } = toRefs(aeWallet)
   const { multisigContracts } = toRefs(app)
 
   return multisigContracts.value.filter(contract => contract.signers.includes(address.value))
 }
+
+export const getContractByContractId = (contractId) => {
+  // todo think of better usage
+  const { multisigContracts } = toRefs(app)
+  return multisigContracts.value.find(contract =>
+    contract.contractId === contractId,
+  )
+}
+
 
 export const getUniversalStamp = async () => {
   // todo node from variable
