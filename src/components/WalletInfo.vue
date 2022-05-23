@@ -1,10 +1,9 @@
 <template>
   <div class="wallet">
     <div v-if="address && !walletStatus" class="wallet-info">
-      <strong>Connected Address </strong>
+      <div>Connected Address</div>
       <div class="wallet-address">{{ address }}</div>
-      <br/>
-      <h6>Contract Info</h6>
+      <div>Contract Info</div>
       Multisig account address: {{ gaPubKey }}
       <br>
       contract Id: {{ contractId }}
@@ -77,19 +76,17 @@ const {
 
 <style scoped>
 .wallet {
-
   width: 320px;
   position: fixed;
   top: 0;
   right: 0;
 
   margin: 0 auto;
-
   border: 2px solid #de3f6b;
   border-radius: 15px;
-  padding: 20px;
+  padding: 5px;
   background: #000;
-  font-size: 70%;
+  font-size: 60%;
 }
 
 .wallet-info {

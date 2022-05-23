@@ -13,8 +13,8 @@
 
     <signers-form
       v-if="!signers && !confirmedBy"
-      v-model:signer-1-key="signer1Key"
-      v-model:signer-2-key="signer2Key"
+      v-model:signer1Key="signer1Key"
+      v-model:signer2Key="signer2Key"
       v-model:required-signers-amount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
 
@@ -102,10 +102,11 @@ const requiredSignersAmount = ref(0)
 onMounted(() => clearState())
 
 async function crateGaAccount () {
-  gaKeypair.value = Crypto.generateKeyPair() //todo try to replace pubkey and secret with keypair
+  gaKeyPair.value = Crypto.generateKeyPair() //todo try to replace pubkey and secret with keypair
   // todo is this needed to push to store before? can it be reactive?
 //todo how to push this into state - because its not accissible with .value (torefs?)
   // todo try universal as this in data
+
   const signerSdk = await getUniversalStamp()
 
   const contractInstanceInitial = await signerSdk.getContractInstance(
@@ -123,15 +124,15 @@ async function crateGaAccount () {
     signersss,
   ]
 
-  await initMultisigContract(contractArgs, contractInstanceInitial, gaKeypair.value)
+  await initMultisigContract(contractArgs, contractInstanceInitial, gaKeyPair.value)
   await updateContractInfo() //todo order
-  await storeContractToDB(contractId.value, gaKeypair.value.publicKey, gaKeypair.value.secretKey, signersss)
+  await storeContractToDB(contractId.value, gaKeyPair.value.publicKey, gaKeyPair.value.secretKey, signersss)
 }
 
 async function proposeTx () {
 
   //todo move this to store or contract action??
-  const spendTx = await getSpendTx(gaKeypair.value.publicKey, recipientAddress.value, proposedAmount.value)
+  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
   await proposeIt(spendTx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
   await updateContractInfo()// todo is this neccessary? can be doe rectively?
@@ -145,16 +146,16 @@ async function confirmTx () {
 
 async function sendTx () {
   //todo move this to store or contract action??
-  const spendTx = await getSpendTx(gaKeypair.value.publicKey, recipientAddress.value, proposedAmount.value)
+  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
 
-  await sendIt(contractInstance.value, gaKeypair.value.publicKey, gaAccount.value, spendTx)
+  await sendIt(contractInstance.value, gaKeyPair.value.publicKey, gaAccount.value, spendTx)
   await patchSentStatus(contractId.value)
   await updateContractInfo()
 }
 
 async function revokeTx () {
   //todo move this to store or contract action??
-  const spendTx = await getSpendTx(gaKeypair.value.publicKey, recipientAddress.value, proposedAmount.value)
+  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
 
   await revokeIt(spendTx, contractId.value)
 

@@ -4,7 +4,7 @@ import { aeWallet } from "../utils/aeternity"
 import { getContractByGaAddress } from "./offChainDB"
 import { getUniversalStamp } from "./app"
 
-export const contractDetail = reactive({
+const getInitialData = () => ({
   // todo sort on all other places
   gaKeyPair: null,
   contractId: null,
@@ -26,49 +26,12 @@ export const contractDetail = reactive({
   confirmedBy: null,
   txHash: null,
   version: null,
-})
+});
+
+export const contractDetail = reactive(getInitialData())
 
 export const clearState = () => {
-  const {
-    version,
-    confirmations,
-    confirmationsRequired,
-    signers,
-    hasProposedTx,
-    hasConsensus,
-    isCurrentUserSigner,
-    txHash,
-    proposedAmount,
-    recipientAddress,
-    gaKeyPair,
-    confirmedBy,
-    contractId,
-    isConfirmedByCurrentUser,
-    isRevoked,
-    isSent,
-    contractAccount,
-    contractInstance,
-  } = toRefs(contractDetail)
-
-  // todo separate default values
-  version.value = null
-  confirmations.value = null
-  confirmationsRequired.value = null
-  signers.value = null
-  hasProposedTx.value = null
-  hasConsensus.value = null
-  isCurrentUserSigner.value = null
-  txHash.value = null
-  proposedAmount.value = null
-  recipientAddress.value = null
-  confirmedBy.value = null
-  contractId.value = null
-  isConfirmedByCurrentUser.value = null
-  isRevoked.value = false
-  isSent.value = false
-  contractAccount.value = null
-  contractInstance.value = null
-  gaKeyPair.value = null
+  Object.assign(contractDetail, getInitialData())
 }
 
 export const updateContractInfo = async () => {
@@ -123,12 +86,10 @@ export const updateContractInfo = async () => {
   isCurrentUserSigner.value = signers.value.includes(address.value)
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
-  // if (hasProposedTx.value) {
   proposedAmount.value = offChainProposeData?.proposedAmount
   recipientAddress.value = offChainProposeData?.recipientAddress
-  // }
-  isRevoked.value = offChainProposeData?.isRevoked
-  isSent.value = offChainProposeData?.isSent
+  isRevoked.value = !!offChainProposeData?.isRevoked
+  isSent.value = !!offChainProposeData?.isSent
 }
 
 

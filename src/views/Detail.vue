@@ -116,7 +116,6 @@ onMounted(async () => {
 
 async function proposeTx () {
   //todo move this to store or contract action??
-  console.log('gaKeyPair.value.publicKey', gaKeyPair.value.publicKey)
   const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
   await proposeIt(spendTx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)

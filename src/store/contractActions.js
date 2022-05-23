@@ -7,9 +7,6 @@ import { getUniversalStamp } from "./app"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 
 export const getSpendTx = async (gaPubKey, recipientAddress, proposedAmount) => {
-  console.log('gaPubKey', gaPubKey)
-  console.log('recipientAddress', recipientAddress)
-  console.log('proposedAmount', proposedAmount)
   return await aeWallet.sdk.spendTx({
     //todo this is duplicated so try to separate it
     senderId: gaPubKey,
@@ -18,12 +15,12 @@ export const getSpendTx = async (gaPubKey, recipientAddress, proposedAmount) => 
   })
 }
 
-export const initMultisigContract = async (contractArgs, contractInstance, gaKeypair) => {
+export const initMultisigContract = async (contractArgs, contractInstance, gaKeyPair) => {
   const signerSdk = await getUniversalStamp()
-  const gaAccount = MemoryAccount({ keypair: gaKeypair })
+  const gaAccount = MemoryAccount({ keypair: gaKeyPair })
 
   const attachTX = await signerSdk.gaAttachTx({
-    ownerId: gaKeypair.publicKey,
+    ownerId: gaKeyPair.publicKey,
     code: contractInstance.bytecode,
     callData: contractInstance.calldata.encode(contractInstance._name, 'init', contractArgs),
     authFun: hash('authorize'),
