@@ -12,8 +12,7 @@
       :class="[{'disabled': signers && !confirmedBy}]"
       :confirmations="confirmations"
       :confirmations-required="confirmationsRequired"
-      :confirmed-by="confirmedBy"
-      :signers="signers"/>
+      :confirmations-map="confirmationsMap"/>
 
     <propose-form
       v-if="!hasProposedTx"
@@ -34,6 +33,7 @@
       @revoke-clicked="revoke"/>
 
     <send-form
+      v-if="!isRevoked || !isSent"
       :class="[{'disabled': !hasConsensus}]"
       :has-consensus="hasConsensus"
       @send-clicked="send"
@@ -96,15 +96,16 @@ const {
   isSent,
   contractAccount,
   contractInstance,
+  confirmationsMap,
 } = toRefs(contractDetail)
 
 const { isAppHydrated } = toRefs(app)
 
 onMounted(async () => {
-  // todo maybe onBeforeMount
   clearState()
 
   if (!isAppHydrated.value) {
+    // todo improve this. Mounting in app should be enough
     //when going directly to detail page
     await hydrateApp()
   }

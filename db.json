@@ -128,6 +128,33 @@
       "recipientAddress": "ak_2R8jTtevRqoRQekQGXZtkmbfAVPYczzqZAd4SVyPy2439BKg8E",
       "proposedAmount": "22",
       "isRevoked": true
+    },
+    {
+      "contractId": "ct_2HrfaMcDNdnRJGfxR75tdzFe6x2k9FkHM7yjXUdaaF5wLnXEaK",
+      "gaKeyPair": {
+        "publicKey": "ak_AZwquAYYKzWfBTKrnFXXDDNVsG3nyCDiJbQzAcvyxdHkrvpBX",
+        "secretKey": "77e999ea4f98871c8b0e199af2014131215ae601a8e574c7da66aa8886fcfe5815b9b23d4c6c797a6de7646258273c817ba57cba9216db7f41afd9baddcc3652"
+      },
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+      ],
+      "id": 11
+    },
+    {
+      "contractId": "ct_ji5u4ZWVrePcRaJK8jipXEY74XmbLxTunrF4SUYAubAf5Dw1H",
+      "gaKeyPair": {
+        "publicKey": "ak_2VbqYbTZr7QzTgpTCKiaXTchbJYL2mmY2Smq4eAoVwFYYmXVh5",
+        "secretKey": "3f1d650495cb0b2fc6e373d204238c8246d62af1523a37180b92da7c0f313e64c4a328d30f3765d07e063006ca1f0733a03fb7df89795b0b6a4086338923317c"
+      },
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+      ],
+      "id": 12,
+      "recipientAddress": "ak_HT32gJ7arXYhZPDeD7dg7jz2u99NkQbg77i1eHpSmoSXJvMmi",
+      "proposedAmount": "12",
+      "isRevoked": true
     }
   ]
 }

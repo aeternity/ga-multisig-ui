@@ -24,9 +24,9 @@
 <!--todo come up with better hydrating-->
 
 <script setup>
-import { app, hydrateApp } from "../store"
+import { app } from "../store"
 import { aeWallet } from '../utils/aeternity'
-import { onMounted, toRefs, watch } from "vue"
+import { toRefs } from "vue"
 import LoaderImage from "../components/LoaderImage"
 
 const { myContracts, isAppHydrated } = toRefs(app)
@@ -36,21 +36,6 @@ const {
   address,
 } = toRefs(aeWallet)
 
-watch(walletStatus,
-  async (newStatus) => {
-    if (newStatus === null) {
-      // todo wait for wallet connection but make hydrate better
-      await hydrateApp()
-    }
-  },
-)
-
-// todo merge watch and onmounted
 // todo rehydrate when going to index
-
-onMounted(async () => {
-  // todo move this and hydrate to App
-  await hydrateApp()
-})
 
 </script>

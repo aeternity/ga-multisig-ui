@@ -92,8 +92,6 @@ export const sendTx = async (gaKeypair, spendTx, contractInstance) => {
 }
 
 export const revokeTx = async (spendTx, contractId) => {
-  console.log('spendTx', spendTx)
-  console.log('contractId', contractId)
   const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
   const spendTxHash = await buildAuthTxHash(encoded)
 

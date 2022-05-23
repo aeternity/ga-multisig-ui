@@ -1,14 +1,13 @@
 <template>
   <div class="confirmation-list">
     <h3>Confirmations</h3>
-    <ul v-if="confirmedBy">
+    <ul>
       <h4>{{ confirmations }} / {{ confirmationsRequired }}</h4>
-
-      <li v-for="signer in signers">
+      <li v-for="confirmation in confirmationsMap">
         <strong>
-          {{ isConfirmedBy(signer) ? '&#x2705;' : '&#x274C' }}
+          {{ confirmation.isConfirmed ? '&#x2705;' : '&#x274C' }}
         </strong>
-        {{ signer }}
+        {{ confirmation.signer }}
       </li>
     </ul>
   </div>
@@ -19,14 +18,7 @@ export default {
   props: {
     confirmations: {},
     confirmationsRequired: {},
-    confirmedBy: {},
-    signers: {},
-  },
-  methods: {
-    isConfirmedBy (address) {
-      //       <!--      todo get data from store not do logic in component-->
-      return this.confirmedBy.includes(address)
-    },
+    confirmationsMap: {},
   },
 }
 </script>

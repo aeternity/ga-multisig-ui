@@ -27,7 +27,6 @@ export const restoreContractsFromDB = async () => {
 
 export const getDBIndex = async (contractId) => {
   const contracts = await restoreContractsFromDB()
-  console.log('contracts', contracts)
   return contracts.find(contract =>
     contract.contractId === contractId,
   ).id

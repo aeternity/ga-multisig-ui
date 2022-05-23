@@ -1,6 +1,4 @@
 <template>
-  <!--  todo hydrate on create? -> -->
-  <!--  todo this will happen when directly going to create "find", multisigContracts.value is-->
   <WalletInfo class="wallet-info"/>
   <div class="create">
     <h2>Create Multisig Account</h2>
@@ -17,13 +15,11 @@
       v-model:signer2Key="signer2Key"
       v-model:required-signers-amount="requiredSignersAmount"
       @create-clicked="crateGaAccount"/>
-
     <confirmation-list
       v-else
       :confirmations="confirmations"
       :confirmations-required="confirmationsRequired"
-      :confirmed-by="confirmedBy"
-      :signers="signers"/>
+      :confirmations-map="confirmationsMap"/>
 
     <propose-form
       v-if="!hasProposedTx"
@@ -31,20 +27,19 @@
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="propose"/>
-
     <propose-list
       v-else
       :proposed-amount="proposedAmount"
       :recipientAddress="recipientAddress"/>
 
     <send-form
+      v-if="!isRevoked || !isSent"
       :class="[{'disabled': !hasProposedTx}]"
       :has-consensus="hasConsensus"
-      @send-clicked="sendTx"
       @revoke-clicked="revoke"/>
     <!--    todo add charge button-->
-    <div v-if="isRevoked">The transaction has been revoked by user ...</div>
-    <div v-if="isSent">The transaction has been sent by user...</div>
+    <h3 v-if="isRevoked">The transaction has been revoked by user ...</h3>
+    <h3 v-if="isSent">The transaction has been sent by user...</h3>
   </div>
 </template>
 
@@ -92,6 +87,7 @@ const {
   isSent,
   contractAccount,
   contractInstance,
+  confirmationsMap,
 } = toRefs(contractDetail)
 
 const signer1Key = ref('')
@@ -134,7 +130,7 @@ async function propose () {
 async function revoke () {
   await revokeTx(spendTx.value, contractId.value)
   await patchRevokedStatus(contractId.value)
-  await updateContractInfo()   // todo is this updating neccessary?
+  await updateContractInfo()
 }
 
 // todo conditions as computed properties

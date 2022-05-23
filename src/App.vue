@@ -11,14 +11,27 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { aeInitWallet } from './utils/aeternity'
+import { onMounted, toRefs, watch } from 'vue'
+import { aeInitWallet, aeWallet } from './utils/aeternity'
+import { hydrateApp } from "./store"
 
+const {
+  walletStatus,
+  address,
+} = toRefs(aeWallet)
 
 onMounted(async () => {
   await aeInitWallet()
-  //todo hydrate here?
 })
+
+watch(walletStatus,
+  async (newStatus) => {
+    if (newStatus === null) {
+      // wait for wallet connection but make hydrate better
+      await hydrateApp()
+    }
+  },
+)
 
 </script>
 

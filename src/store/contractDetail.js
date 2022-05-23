@@ -27,7 +27,8 @@ const getInitialData = () => ({
   spendTx: null,
   txHash: null,
   version: null,
-});
+  confirmationsMap: null,
+})
 
 export const contractDetail = reactive(getInitialData())
 
@@ -36,6 +37,7 @@ export const clearState = () => {
 }
 
 export const updateContractInfo = async () => {
+  // todo rename loadContractInfo and separate from reactive
   const {
     version,
     confirmations,
@@ -56,6 +58,7 @@ export const updateContractInfo = async () => {
     isSent,
     contractAccount,
     contractInstance,
+    confirmationsMap,
   } = toRefs(contractDetail)
 
   const { address } = toRefs(aeWallet)
@@ -72,8 +75,8 @@ export const updateContractInfo = async () => {
     source: multisigContract,
     contractAddress: contractId.value,
   })
-  const offChainProposeData = getContractByContractId(contractId.value)
 
+  const offChainProposeData = getContractByContractId(contractId.value)
 
   signers.value = (await contractInstance.value.methods.get_signers()).decodedResult
   version.value = (await contractInstance.value.methods.get_version()).decodedResult
@@ -92,12 +95,26 @@ export const updateContractInfo = async () => {
   proposedAmount.value = offChainProposeData?.proposedAmount
   recipientAddress.value = offChainProposeData?.recipientAddress
 
+  if (confirmedBy.value) {
+    confirmationsMap.value = getConfirmationMap(signers.value, confirmedBy.value)
+  }
   if (recipientAddress.value && proposedAmount.value) {
     spendTx.value = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
   }
 
   isRevoked.value = !!offChainProposeData?.isRevoked
   isSent.value = !!offChainProposeData?.isSent
+}
+
+// todo some values here are just computed
+export const getConfirmationMap = (signers, confirmedBy) => {
+  return signers.map(signer => {
+      return {
+        'isConfirmed': confirmedBy.includes(signer),
+        'signer': signer,
+      }
+    },
+  )
 }
 
 
