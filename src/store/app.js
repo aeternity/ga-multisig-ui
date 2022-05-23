@@ -1,8 +1,6 @@
 import { reactive, toRefs } from "vue"
 import { aeWallet } from "../utils/aeternity"
-import { COMPILER_URL } from "../utils/aeternity/configs"
 import { restoreContractsFromDB } from "./offChainDB"
-import { Node, Universal } from '@aeternity/aepp-sdk'
 
 export const app = reactive({
   multisigContracts: null,
@@ -15,6 +13,7 @@ export const hydrateApp = async () => {
   multisigContracts.value = await restoreContractsFromDB()
   myContracts.value = await getMyContracts()
   isAppHydrated.value = true
+  console.log('hydrated')
 }
 
 export const getMyContracts = async () => {
@@ -31,17 +30,9 @@ export const getContractByAddress = (gaAddress) => {
   )
 }
 
-
-export const getUniversalStamp = async () => {
-  // todo node from variable
-  //  todo move to utils
-  const node = await Node({ url: 'https://testnet.aeternity.io' })
-
-  return await Universal({
-    nodes: [{
-      name: 'testnet',
-      instance: node,
-    }],
-    compilerUrl: COMPILER_URL,
-  })
+export const getContractByContractId = (contractId) => {
+  const { multisigContracts } = toRefs(app)
+  return multisigContracts.value.find(contract =>
+    contract.contractId === contractId,
+  )
 }

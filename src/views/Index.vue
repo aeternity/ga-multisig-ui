@@ -10,8 +10,8 @@
 
    <div v-if="address && !walletStatus">
      <div v-for="contract in myContracts">
-       <router-link :to="`/detail/${contract.gaKeyPair.publicKey}`">
-         {{ contract.gaKeyPair.publicKey }}
+       <router-link :to="`/detail/${contract.contractId}`">
+         {{ contract.contractId }}
        </router-link>
      </div>
      <div v-if="myContracts?.length ===0">
@@ -21,14 +21,15 @@
     <loader-image v-else/>
   </div>
 </template>
-<!--todo come up with better hydrating-->
 
 <script setup>
 import { app } from "../store"
 import { aeWallet } from '../utils/aeternity'
 import { toRefs } from "vue"
 import LoaderImage from "../components/LoaderImage"
+import { useRoute } from "vue-router"
 
+const route = useRoute()
 const { myContracts, isAppHydrated } = toRefs(app)
 
 const {
@@ -36,5 +37,5 @@ const {
   address,
 } = toRefs(aeWallet)
 
-// todo rehydrate when going to index
+
 </script>

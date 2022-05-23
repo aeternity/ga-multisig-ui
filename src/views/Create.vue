@@ -51,20 +51,23 @@ import SendForm from "../components/SendForm"
 import ProposeList from "./ProposeList"
 import SignerList from "./SignerList"
 import WalletInfo from "../components/WalletInfo"
-
+import { useRoute } from "vue-router"
 import {
   clearState,
   contractDetail,
   getSpendTx,
+  hydrateApp,
   initMultisigContract,
+  loadContractDetail,
   patchProposalByContractId,
   patchRevokedStatus,
   proposeTx,
   revokeTx,
   storeContractToDB,
-  updateContractInfo,
 } from '../store'
-import { onMounted, ref, toRefs } from "vue"
+import { onMounted, ref, toRefs, watch } from "vue"
+
+const route = useRoute()
 
 const {
   version,
@@ -95,11 +98,17 @@ const requiredSignersAmount = ref(0)
 
 onMounted(() => clearState())
 
+watch(route,
+  async (newRoute, oldRoute) => {
+    if (oldRoute.name === 'index') {
+      // reload when going back to index, so new contract will appear
+      await hydrateApp()
+    }
+  },
+)
+
 async function crateGaAccount () {
   gaKeyPair.value = Crypto.generateKeyPair()
-  // todo is this needed to push to store before? can it be reactive?
-  // todo how to push this into state - because its not accissible with .value (torefs?)
-  // todo try universal as this in data
 
   const signersss = [ //todo fix this
     signer1Key.value,
@@ -112,7 +121,7 @@ async function crateGaAccount () {
   ]
 
   await initMultisigContract(contractArgs, gaKeyPair.value)
-  await updateContractInfo() //todo the order is hasty. Probably too much anstraction
+  await loadContractDetail() //todo the order is hasty. Probably too much anstraction
   await storeContractToDB(contractId.value, gaKeyPair.value, signersss)
 }
 
@@ -122,13 +131,13 @@ async function propose () {
 
   await proposeTx(tx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
-  await updateContractInfo()// todo is this neccessary? can be doe rectively?
+  await loadContractDetail()// todo is this neccessary? can be doe rectively?
 }
 
 async function revoke () {
   const revokedBy = await revokeTx(spendTx.value, contractId.value)
   await patchRevokedStatus(contractId.value, revokedBy)
-  await updateContractInfo()
+  await loadContractDetail()
 }
 
 // todo conditions as computed properties

@@ -143,9 +143,22 @@ export const buildAuthTxHash = async (rlpTransaction) => {
     Crypto.hash(
       Buffer.concat([
         networkId,
-        decoded
+        decoded,
       ]),
     ),
   )
 }
+
+export const getUniversalStamp = async () => {
+  const node = await Node({ url: 'https://testnet.aeternity.io' })
+
+  return await Universal({
+    nodes: [{
+      name: 'testnet',
+      instance: node,
+    }],
+    compilerUrl: COMPILER_URL,
+  })
+}
+
 

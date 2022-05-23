@@ -6,7 +6,8 @@ import Index from "../views/Index"
 const routes = [
   {
     path: '/',
-    name: 'load',
+    alias: '/index',
+    name: 'index',
     component: Index,
   },
   {

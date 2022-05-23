@@ -1,119 +1,52 @@
 {
   "multisigContracts": [
     {
-      "contractId": "ct_2sbY4zCPqP6yeUD3soXTRQC4LAoLdjf1xffriAQMGy4nswAXh2",
+      "contractId": "ct_2RgmQs6L853S89UUtW8vTZvByyV4TxzQe3ta1q5fq5yBMfqmo3",
       "gaKeyPair": {
-        "publicKey": "ak_2YEeU6LBC4pbE8LQd4vLqjE6UdRwAM1mrcR2WqvLdtHLeWS1kT",
-        "secretKey": "6b5b261a08cd58730d918beca44e7e20d4074ac7e32edb76bf6d1963247a4670ca9e9ebd1eb3959512fe9f8467c1ac320cc4f63980e99ac824dd76629e01fb89"
+        "publicKey": "ak_2M9ayHY2gP5bAs6cP14bWbuLH7uRMwmf45hMt6cHm525bGceQU",
+        "secretKey": "ea9a6fe4581db35bdd6add02820ddc7ff37a6afd255b86e0716d1c8d746e368db171d5459feb466050df3ac60cdd9ceec8781920259cd4271275ec0fd667f021"
       },
       "signers": [
         "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
         "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
       ],
-      "id": 1,
-      "recipientAddress": "ak_vkzLJS973XnakDZvfc5vBRbD7QSJ62zu2QvnQuakzpnSRYnV4",
-      "proposedAmount": "567"
+      "id": 1
     },
     {
-      "contractId": "ct_2qVRCjktaay1yyo4Pbpo3PtEHbneEDtwoVkGyjZoAsototsQ5H",
+      "contractId": "ct_E1yjSbGQEHJQwFbtUr1dGNrzEVJh4jVRrB97VM3G8S5BbboPV",
       "gaKeyPair": {
-        "publicKey": "ak_2nMmy2mvHs1uVKk4yPJKYwVDv77mrC3n2aEq3ycrwuxaULKzXp",
-        "secretKey": "19355613e267f359af14e12ee56462eab8ec8c6d117c10ef02344dc79dcb89b6eaaffb0e6217f41ea77ed9fcbe0cade6884bd985f2ee02f74e53e9b16d4aef2f"
+        "publicKey": "ak_FziNBLZmzAfWTe3ZzKcBTfUeCPK7kkuC8RrWKskLx8p7Kr5vX",
+        "secretKey": "11cbf869c3850dc9786576a43cf597f2b2b4f6db1f35c931cfce325b4241e6bb220c50bb054bdf3bdf01fa130a3acc745e21a726d59a845a1a359721ca3f96fa"
       },
       "signers": [
         "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
         "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
       ],
-      "id": 2,
-      "recipientAddress": "ak_U5kywPo8GmUTJzMUEvu7Ky7TnYgyNTDGfPzQkbbyHRhH3d25C",
-      "proposedAmount": "574"
+      "id": 2
     },
     {
-      "contractId": "ct_g88dFRmY5rgfYp3oUkyou4N61Kpo7AfXjvLChfEexGSqFs282",
+      "contractId": "ct_syUHPmPFhVpuZpwdJ6CMHTxJkrgueLSNtHP3V4VbPAN2GN61V",
       "gaKeyPair": {
-        "publicKey": "ak_2bCESLRSxnMWXRFDyp6oC9rpLw4TgHmU5Wb5D1ZzS3Lm7uaEnY",
-        "secretKey": "c6d30cdd310a19b5c4c268ee1f32a41e490d92e94c3630a29aafee145b9e613ad15642f9632982437f26df111ee3c7e96ed3f5f4c330249268c6240cfff12a56"
+        "publicKey": "ak_zsW62Fmmi7iYK6p3LX4VHiPmgoizvmbd94NmuqCck5rDrHPN6",
+        "secretKey": "90af4f8f66af887b07f74d167704ab3e9c4e095db136dd306da4495b97209c0183670cc86059bf2e16e90a82366f52c133f89444fc22f33409d82d7e4ddae67b"
       },
       "signers": [
         "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
         "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
       ],
-      "id": 3,
-      "recipientAddress": "ak_2CFbMs3ZinWKVB597WFg442exQr93VFK2LyQKX1bVsruiVkH4f",
-      "proposedAmount": "58",
-      "revokedBy": [
-        {
-          "name": "TxRevoked",
-          "args": [
-            {
-              "0": 111,
-              "1": 13,
-              "2": 247,
-              "3": 203,
-              "4": 85,
-              "5": 221,
-              "6": 174,
-              "7": 241,
-              "8": 79,
-              "9": 148,
-              "10": 251,
-              "11": 187,
-              "12": 101,
-              "13": 189,
-              "14": 55,
-              "15": 84,
-              "16": 159,
-              "17": 119,
-              "18": 30,
-              "19": 10,
-              "20": 20,
-              "21": 53,
-              "22": 77,
-              "23": 38,
-              "24": 85,
-              "25": 100,
-              "26": 176,
-              "27": 4,
-              "28": 235,
-              "29": 97,
-              "30": 235,
-              "31": 7
-            },
-            "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
-          ],
-          "contract": {
-            "name": "SimpleGAMultiSig",
-            "address": "ct_g88dFRmY5rgfYp3oUkyou4N61Kpo7AfXjvLChfEexGSqFs282"
-          }
-        }
-      ]
+      "id": 3
     },
     {
-      "contractId": "ct_pkgdGEHQ3vjpa83icLWuSHbUuhakUGVwzegaBx4ZVB3y7tztv",
+      "contractId": "ct_tzkgxyCQBmGm5xiGRt234rCWet34XNfRgDBUVW6aR9JeLe1LF",
       "gaKeyPair": {
-        "publicKey": "ak_B8vB8jBuNrxtJuZD3EuBgoKoTXfuyYyE8AvboHQ3GXTWUTYuV",
-        "secretKey": "a804e3c1a646f7107279217b5ac9b4feac79d68ac04e2ea1da0ee5ed4f369d39170422c6fad8a6931cf9a2cadfc4cb17e0aaeb02eafba8ca9572604f4a872b10"
+        "publicKey": "ak_2Fytk1uFtFrBCrMJXaDLHWvTRwMsZarWeQoJK2VCVzWrCy2ynf",
+        "secretKey": "59655fd140db82014b2f1859f74f51311d3d6fe131d8417f27d1440ffe5b31aea5b64964ed0d3364bbc5a97f236f94c78327e0ef9d4ff3ae05aab07b45749ef8"
       },
       "signers": [
         "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
         "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
       ],
-      "id": 4,
-      "revokedBy": "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7"
-    },
-    {
-      "contractId": "ct_jtdSprZVQQZnNkKcUhaDQFkTF2oy3FJ7nvpqbHmfWkyQJj9Qf",
-      "gaKeyPair": {
-        "publicKey": "ak_xEjunm6VP84EtyowxJ95e48E6LapAtH5LisCn9R1Kh3TuFaDh",
-        "secretKey": "ac1483bd0c7ae43eb9f7117df5d865aa1f5b7431c5611603c7a40e0ec1c5a9c87d6c10561a447f34dc3a153833188f1871adb57fd7cc9bb1adb7e5f9c5a7d150"
-      },
-      "signers": [
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
-        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
-      ],
-      "id": 5,
-      "recipientAddress": "ak_WapVeUaNsyAFtzp7gR5Sbfzweo8UwfBxuBrBcqAvoTTj2Y1gE",
-      "proposedAmount": "456"
+      "id": 4
     }
   ]
 }

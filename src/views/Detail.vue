@@ -38,13 +38,13 @@
       :has-consensus="hasConsensus"
       @send-clicked="send"
       @revoke-clicked="revoke"/>
-    <div v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</div>
-    <div v-if="sentBy">
-      The transaction has been sent by user {{ sentBy }} to account
+    <h3 v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</h3>
+    <h3 v-if="sentBy">
+      The transaction has been sent by user <i>{{ sentBy }}</i> to account
       <a :href="`https://explorer.testnet.aeternity.io/account/${recipientAddress}`">
         {{ recipientAddress }}
       </a>
-    </div>
+    </h3>
   </div>
   <loader-image v-else/>
 </template>
@@ -55,15 +55,16 @@ import {
   clearState,
   confirmTx,
   contractDetail,
+  getContractByContractId,
   getSpendTx,
   hydrateApp,
+  loadContractDetail,
   patchProposalByContractId,
   patchRevokedStatus,
   patchSentStatus,
   proposeTx,
   revokeTx,
   sendTx,
-  updateContractInfo,
 } from '../store'
 
 import ProposeForm from "../components/ProposeForm"
@@ -107,17 +108,22 @@ const { isAppHydrated } = toRefs(app)
 onMounted(async () => {
   clearState()
 
+  //when going directly to detail page from pasted url
   if (!isAppHydrated.value) {
-    // todo improve this. Mounting in app should be enough
-    //when going directly to detail page
     await hydrateApp()
   }
 
-  // todo revert
-  gaKeyPair.value = { 'publicKey': route.params.id }
-
-  await updateContractInfo()
+  await initContractDetail()
 })
+
+async function initContractDetail () {
+  const contractId = route.params.id
+  const contractDetail = await getContractByContractId(contractId)
+  gaKeyPair.value = contractDetail.gaKeyPair
+
+  await loadContractDetail()
+}
+
 
 async function propose () {
   const tx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
@@ -125,23 +131,23 @@ async function propose () {
 
   await proposeTx(tx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
-  await updateContractInfo()
+  await loadContractDetail()
 }
 
 async function confirm () {
   await confirmTx(contractId.value, txHash.value)
-  await updateContractInfo()
+  await loadContractDetail()
 }
 
 async function send () {
   await sendTx(gaKeyPair.value, spendTx.value, contractInstance.value)
-  await patchSentStatus(contractId.value, gaKeyPair.value.address)
-  await updateContractInfo()
+  await patchSentStatus(contractId.value, gaKeyPair.value.publicKey)
+  await loadContractDetail()
 }
 
 async function revoke () {
   const revokedBy = await revokeTx(spendTx.value, contractId.value)
   await patchRevokedStatus(contractId.value, revokedBy)
-  await updateContractInfo()
+  await loadContractDetail()
 }
 </script>

@@ -1,7 +1,6 @@
-import { aeWallet, buildAuthTxHash } from "../utils/aeternity"
+import { aeWallet, buildAuthTxHash, getUniversalStamp } from "../utils/aeternity"
 import multisigContract from "../utils/aeternity/contracts/SimpleGAMultiSig.aes"
 import { MemoryAccount } from '@aeternity/aepp-sdk'
-import { getUniversalStamp } from "./app"
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'

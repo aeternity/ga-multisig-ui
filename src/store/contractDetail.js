@@ -1,7 +1,7 @@
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
-import { aeWallet } from "../utils/aeternity"
-import { getContractByAddress, getUniversalStamp } from "./app"
+import { aeWallet, getUniversalStamp } from "../utils/aeternity"
+import { getContractByAddress } from "./app"
 import { getSpendTx } from "./contractActions"
 
 const getInitialData = () => ({
@@ -36,7 +36,7 @@ export const clearState = () => {
   Object.assign(contractDetail, getInitialData())
 }
 
-export const updateContractInfo = async () => {
+export const loadContractDetail = async () => {
   // todo rename loadContractInfo and separate from reactive
   const {
     version,
