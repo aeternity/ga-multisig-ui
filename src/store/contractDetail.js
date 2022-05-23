@@ -3,6 +3,7 @@ import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet } from "../utils/aeternity"
 import { getContractByGaAddress } from "./offChainDB"
 import { getUniversalStamp } from "./app"
+import { getSpendTx } from "./contractActions"
 
 const getInitialData = () => ({
   // todo sort on all other places
@@ -24,6 +25,7 @@ const getInitialData = () => ({
   confirmations: null,
   confirmationsRequired: null,
   confirmedBy: null,
+  spendTx: null,
   txHash: null,
   version: null,
 });
@@ -44,6 +46,7 @@ export const updateContractInfo = async () => {
     hasConsensus,
     isCurrentUserSigner,
     txHash,
+    spendTx,
     proposedAmount,
     recipientAddress,
     gaKeyPair,
@@ -88,6 +91,11 @@ export const updateContractInfo = async () => {
 
   proposedAmount.value = offChainProposeData?.proposedAmount
   recipientAddress.value = offChainProposeData?.recipientAddress
+
+  if (recipientAddress.value && proposedAmount.value) {
+    spendTx.value = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
+  }
+
   isRevoked.value = !!offChainProposeData?.isRevoked
   isSent.value = !!offChainProposeData?.isSent
 }

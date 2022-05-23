@@ -32,7 +32,10 @@
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
 
-    <propose-list v-else :proposed-amount="proposedAmount" :recipientAddress="recipientAddress"/>
+    <propose-list
+      v-else
+      :proposed-amount="proposedAmount"
+      :recipientAddress="recipientAddress"/>
 
     <send-form
       :class="[{'disabled': !hasProposedTx}]"
@@ -50,14 +53,15 @@ import { Crypto } from '@aeternity/aepp-sdk'
 import SignersForm from "../components/SignersForm"
 import ProposeForm from "../components/ProposeForm"
 import ConfirmationList from "../components/ConfirmationList"
-import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
+import SendForm from "../components/SendForm"
+import ProposeList from "./ProposeList"
+import SignerList from "./SignerList"
+import WalletInfo from "../components/WalletInfo"
 
 import {
   clearState,
-  confirmIt,
   contractDetail,
   getSpendTx,
-  getUniversalStamp,
   initMultisigContract,
   patchProposalByContractId,
   patchRevokedStatus,
@@ -69,10 +73,6 @@ import {
   updateContractInfo,
 } from '../store'
 import { onMounted, ref, toRefs } from "vue"
-import SendForm from "../components/SendForm"
-import ProposeList from "./ProposeList"
-import SignerList from "./SignerList"
-import WalletInfo from "../components/WalletInfo"
 
 const {
   version,
@@ -83,6 +83,7 @@ const {
   hasProposedTx,
   isCurrentUserSigner,
   txHash,
+  spendTx,
   proposedAmount,
   gaKeyPair,
   recipientAddress,
@@ -102,19 +103,14 @@ const requiredSignersAmount = ref(0)
 onMounted(() => clearState())
 
 async function crateGaAccount () {
-  gaKeyPair.value = Crypto.generateKeyPair() //todo try to replace pubkey and secret with keypair
+  gaKeyPair.value = Crypto.generateKeyPair()
+  // todo try to replace pubkey and secret with keypair
   // todo is this needed to push to store before? can it be reactive?
-//todo how to push this into state - because its not accissible with .value (torefs?)
+  // todo how to push this into state - because its not accissible with .value (torefs?)
   // todo try universal as this in data
 
-  const signerSdk = await getUniversalStamp()
 
-  const contractInstanceInitial = await signerSdk.getContractInstance(
-    { source: multisigContract })
-
-  await contractInstanceInitial.compile()
-
-  const signersss = [ //todofix this
+  const signersss = [ //todo fix this
     signer1Key.value,
     signer2Key.value,
   ]
@@ -124,45 +120,30 @@ async function crateGaAccount () {
     signersss,
   ]
 
-  await initMultisigContract(contractArgs, contractInstanceInitial, gaKeyPair.value)
-  await updateContractInfo() //todo order
+  await initMultisigContract(contractArgs, gaKeyPair.value)
   await storeContractToDB(contractId.value, gaKeyPair.value.publicKey, gaKeyPair.value.secretKey, signersss)
+  await updateContractInfo()
 }
 
 async function proposeTx () {
+  const tx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
 
-  //todo move this to store or contract action??
-  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-  await proposeIt(spendTx, contractId.value)
+  await proposeIt(tx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
   await updateContractInfo()// todo is this neccessary? can be doe rectively?
 }
 
-async function confirmTx () {
-  await confirmIt(contractId.value, txHash.value)
-  // await confirmIt(contractId.value, spendTxHash.value)
-  await updateContractInfo()
-}
-
 async function sendTx () {
-  //todo move this to store or contract action??
-  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-
-  await sendIt(contractInstance.value, gaKeyPair.value.publicKey, gaAccount.value, spendTx)
+  await sendIt(gaKeyPair.value, spendTx.value, contractInstance.value)
   await patchSentStatus(contractId.value)
   await updateContractInfo()
 }
 
 async function revokeTx () {
-  //todo move this to store or contract action??
-  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-
-  await revokeIt(spendTx, contractId.value)
-
+  await revokeIt(spendTx.value, contractId.value)
   await patchRevokedStatus(contractId.value)
   await updateContractInfo()   // todo is this updating neccessary?
 }
 
 // todo conditions as computed properties
-
 </script>

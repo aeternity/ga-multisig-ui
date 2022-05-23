@@ -22,6 +22,8 @@
       <br>
       recipientAddress: {{ recipientAddress }}
       <br>
+      spendTx: {{ spendTx }}
+      <br>
       <hr>
       <br>
       isCurrentUserSigner: {{ isCurrentUserSigner }}
@@ -71,6 +73,7 @@ const {
   contractId,
   isRevoked,
   isSent,
+  spendTx,
 } = toRefs(contractDetail)
 </script>
 

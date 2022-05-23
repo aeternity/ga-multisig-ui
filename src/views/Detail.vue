@@ -2,9 +2,11 @@
   <WalletInfo class="wallet-info"/>
   <div class="detail" v-if="gaKeyPair && signers">
     <h2>Multisig Detail</h2>
-    <!--    todo merge detail and create-->
 
-    <signer-list :contract-id="contractId" :ga-pub-key="gaKeyPair.publicKey" :version="version"/>
+    <signer-list
+      :contract-id="contractId"
+      :ga-pub-key="gaKeyPair.publicKey"
+      :version="version"/>
 
     <confirmation-list
       :class="[{'disabled': signers && !confirmedBy}]"
@@ -19,7 +21,10 @@
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="proposeTx"/>
 
-    <propose-list v-else :proposed-amount="proposedAmount" :recipientAddress="recipientAddress"/>
+    <propose-list
+      v-else
+      :proposed-amount="proposedAmount"
+      :recipientAddress="recipientAddress"/>
 
     <confirm-form
       v-if="!hasConsensus"
@@ -27,6 +32,7 @@
       :is-confirm-hidden="isConfirmedByCurrentUser"
       @confirm-clicked="confirmTx"
       @revoke-clicked="revokeTx"/>
+
     <send-form
       :class="[{'disabled': !hasConsensus}]"
       :has-consensus="hasConsensus"
@@ -78,6 +84,7 @@ const {
   hasProposedTx,
   isCurrentUserSigner,
   txHash,
+  spendTx,
   proposedAmount,
   gaPubKey,
   recipientAddress,
@@ -106,7 +113,7 @@ onMounted(async () => {
   const contractDetails = await getContractByContractId(contractId)
 
   gaKeyPair.value = {
-    publicKey: contractDetails.gaAddress,
+    publicKey: contractDetails.gaAddress, //todo get whole keypair
     secretKey: contractDetails.gaSecret, //todo rename
   }
 
@@ -115,9 +122,9 @@ onMounted(async () => {
 })
 
 async function proposeTx () {
-  //todo move this to store or contract action??
-  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-  await proposeIt(spendTx, contractId.value)
+  const tx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
+
+  await proposeIt(tx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
   await updateContractInfo()
   // todo is ti reaally necceasry?
@@ -129,19 +136,14 @@ async function confirmTx () {
 }
 
 async function sendTx () {
-  //todo move this to store or contract action??
-  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-
-  await sendIt(contractInstance.value, gaKeyPair.value.publicKey, gaKeyPair.value.secretKey, spendTx)
+  await sendIt(gaKeyPair.value, spendTx.value, contractInstance.value)
   //todo is this neccessary to pass?
   await patchSentStatus(contractId.value)
   await updateContractInfo()
 }
 
 async function revokeTx () {
-  //todo move this to store or contract action??
-  const spendTx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-  await revokeIt(spendTx, contractId.value)
+  await revokeIt(spendTx.value, contractId.value)
   await patchRevokedStatus(contractId.value)
   await updateContractInfo()
 }

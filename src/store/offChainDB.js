@@ -41,7 +41,7 @@ export const patchProposalByContractId = async (contractId, recipientAddress, pr
     await axios.patch(`${dbURL}/${contractById.id}`, {
       recipientAddress, //todo now we store recipiant key and secret Maybe we can store only recipiant key
       proposedAmount,
-    });
+    })
 
     await restoreContractsFromDB()
   } catch (e) {
@@ -64,7 +64,6 @@ export const patchRevokedStatus = async (contractId) => {
   } catch (e) {
     console.error(e)
   }
-
 }
 
 export const patchSentStatus = async (contractId) => {

@@ -8,16 +8,17 @@ import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 
 export const getSpendTx = async (gaPubKey, recipientAddress, proposedAmount) => {
   return await aeWallet.sdk.spendTx({
-    //todo this is duplicated so try to separate it
     senderId: gaPubKey,
     recipientId: recipientAddress,
     amount: proposedAmount,
   })
 }
 
-export const initMultisigContract = async (contractArgs, contractInstance, gaKeyPair) => {
+export const initMultisigContract = async (contractArgs, gaKeyPair) => {
   const signerSdk = await getUniversalStamp()
-  const gaAccount = MemoryAccount({ keypair: gaKeyPair })
+
+  const contractInstance = await signerSdk.getContractInstance({ source: multisigContract })
+  await contractInstance.compile()
 
   const attachTX = await signerSdk.gaAttachTx({
     ownerId: gaKeyPair.publicKey,
@@ -32,7 +33,7 @@ export const initMultisigContract = async (contractArgs, contractInstance, gaKey
 
   const { rawTx } = await signerSdk.send(attachTX.tx, {
     innerTx: true,
-    onAccount: gaAccount,
+    onAccount: MemoryAccount({ keypair: gaKeyPair }), // todo will this work without MemoryAccount?
   })
 
   await aeWallet.sdk.payForTransaction(rawTx)
@@ -45,12 +46,10 @@ export const proposeIt = async (spendTx, contractId) => {
   const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
   const spendTxHash = await buildAuthTxHash(encoded)
 
-  const gaContractRpc = await aeWallet.sdk.getContractInstance(
-    {
-      source: multisigContract,
-      contractAddress: contractId,
-    },
-  )
+  const gaContractRpc = await aeWallet.sdk.getContractInstance({
+    source: multisigContract,
+    contractAddress: contractId,
+  })
 
   await gaContractRpc.methods.propose.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
@@ -59,17 +58,15 @@ export const confirmIt = async (contractId, spendTxHash) => {
   const signerSdk = await getUniversalStamp()
   const expirationHeight = await signerSdk.height() + 50
 
-  const gaContractRpc = await aeWallet.sdk.getContractInstance(
-    {
-      source: multisigContract,
-      contractAddress: contractId,
-    },
-  )
+  const gaContractRpc = await aeWallet.sdk.getContractInstance({
+    source: multisigContract,
+    contractAddress: contractId,
+  })
 
   await gaContractRpc.methods.confirm.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
-export const sendIt = async (contractInstance, gaPubkey, gaSecret, spendTx) => {
+export const sendIt = async (gaKeypair, spendTx, contractInstance) => {
   // todoshorten params to Keypair
   const signerSdk = await getUniversalStamp()
 
@@ -82,18 +79,14 @@ export const sendIt = async (contractInstance, gaPubkey, gaSecret, spendTx) => {
 
   await aeWallet.sdk.spend(
     776440000000000,
-    gaPubkey,
+    gaKeypair.gaPubkey,
     // todo do button workaround  pre charge GA account create this.gaAccount on chai
   )
-  const keypair = {
-    publicKey: gaPubkey,
-    secretKey: gaSecret, //todo shorten
-  }
-  const gaAccount = MemoryAccount({ keypair: keypair })
+
   await signerSdk.send(
     spendTx,
     {
-      onAccount: gaAccount,
+      onAccount: MemoryAccount({ keypair: gaKeypair }),
       authData: { source: multisigContract, args: [nonce] },
     })
 }
@@ -102,15 +95,13 @@ export const revokeIt = async (spendTx, contractId) => {
   const encoded = encode(unpackTx(spendTx).rlpEncoded, 'tx')
   const spendTxHash = await buildAuthTxHash(encoded)
 
-  const gaContractRpc = await aeWallet.sdk.getContractInstance(
-    {
-      source: multisigContract,
-      contractAddress: contractId,
-    },
-  )
+  const gaContractRpc = await aeWallet.sdk.getContractInstance({
+    source: multisigContract,
+    contractAddress: contractId,
+  })
+
   const revokeTx = await gaContractRpc.methods.revoke.send(spendTxHash)
 
-  // todo improve/reduce params
   // todo show link to successful transaction just for show
 }
 
