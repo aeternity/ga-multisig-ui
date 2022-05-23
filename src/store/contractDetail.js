@@ -1,7 +1,7 @@
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet } from "../utils/aeternity"
-import { getContractByContractId, getUniversalStamp } from "./app"
+import { getContractByAddress, getUniversalStamp } from "./app"
 import { getSpendTx } from "./contractActions"
 
 const getInitialData = () => ({
@@ -61,13 +61,11 @@ export const updateContractInfo = async () => {
     confirmationsMap,
   } = toRefs(contractDetail)
 
-  const { address } = toRefs(aeWallet)
   const signerSdk = await getUniversalStamp()
+  const { address } = toRefs(aeWallet)
+  const offChainContractData = getContractByAddress(gaKeyPair.value.publicKey)
 
   contractAccount.value = await signerSdk.getAccount(gaKeyPair.value.publicKey)
-  // todo isolate to function to contract actions
-  // todo fix je vubec potreba contractaddress ?
-  // todo nejde to udelat rovnou s  contractId namisto gaPubKey?
 
   contractId.value = contractAccount.value.contractId
 
@@ -75,8 +73,6 @@ export const updateContractInfo = async () => {
     source: multisigContract,
     contractAddress: contractId.value,
   })
-
-  const offChainProposeData = getContractByContractId(contractId.value)
 
   signers.value = (await contractInstance.value.methods.get_signers()).decodedResult
   version.value = (await contractInstance.value.methods.get_version()).decodedResult
@@ -92,8 +88,8 @@ export const updateContractInfo = async () => {
   isCurrentUserSigner.value = signers.value.includes(address.value)
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
-  proposedAmount.value = offChainProposeData?.proposedAmount
-  recipientAddress.value = offChainProposeData?.recipientAddress
+  proposedAmount.value = offChainContractData?.proposedAmount
+  recipientAddress.value = offChainContractData?.recipientAddress
 
   if (confirmedBy.value) {
     confirmationsMap.value = getConfirmationMap(signers.value, confirmedBy.value)
@@ -102,8 +98,8 @@ export const updateContractInfo = async () => {
     spendTx.value = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
   }
 
-  isRevoked.value = !!offChainProposeData?.isRevoked
-  isSent.value = !!offChainProposeData?.isSent
+  isRevoked.value = !!offChainContractData?.isRevoked
+  isSent.value = !!offChainContractData?.isSent
 }
 
 // todo some values here are just computed

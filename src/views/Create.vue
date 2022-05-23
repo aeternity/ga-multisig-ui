@@ -6,7 +6,7 @@
     <signer-list
       v-if="signers && confirmedBy"
       :contract-id="contractId"
-      :ga-pub-key="gaKeyPair.publicKey"
+      :ga-public-key="gaKeyPair.publicKey"
       :version="version"/>
 
     <signers-form
@@ -98,7 +98,6 @@ onMounted(() => clearState())
 
 async function crateGaAccount () {
   gaKeyPair.value = Crypto.generateKeyPair()
-  // todo try to replace pubkey and secret with keypair
   // todo is this needed to push to store before? can it be reactive?
   // todo how to push this into state - because its not accissible with .value (torefs?)
   // todo try universal as this in data

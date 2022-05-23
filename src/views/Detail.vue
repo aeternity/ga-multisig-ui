@@ -5,7 +5,7 @@
 
     <signer-list
       :contract-id="contractId"
-      :ga-pub-key="gaKeyPair.publicKey"
+      :ga-public-key="gaKeyPair.publicKey"
       :version="version"/>
 
     <confirmation-list
@@ -50,7 +50,6 @@ import {
   clearState,
   confirmTx,
   contractDetail,
-  getContractByContractId,
   getSpendTx,
   hydrateApp,
   patchProposalByContractId,
@@ -86,7 +85,6 @@ const {
   txHash,
   spendTx,
   proposedAmount,
-  gaPubKey,
   recipientAddress,
   confirmedBy,
   gaKeyPair,
@@ -110,22 +108,18 @@ onMounted(async () => {
     await hydrateApp()
   }
 
-  const contractId = route.params.id
-  const contractDetails = await getContractByContractId(contractId)
-
-  gaKeyPair.value = contractDetails.gaKeyPair
+  gaKeyPair.value = { 'publicKey': route.params.id }
 
   await updateContractInfo()
-  // todo can be this done better?
 })
 
 async function propose () {
   const tx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
+  // todo fix pre tx
 
   await proposeTx(tx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
   await updateContractInfo()
-  // todo is ti reaally necceasry?
 }
 
 async function confirm () {
@@ -135,7 +129,6 @@ async function confirm () {
 
 async function send () {
   await sendTx(gaKeyPair.value, spendTx.value, contractInstance.value)
-  //todo is this neccessary to pass?
   await patchSentStatus(contractId.value)
   await updateContractInfo()
 }

@@ -10,8 +10,8 @@
 
    <div v-if="address && !walletStatus">
      <div v-for="contract in myContracts">
-       <router-link :to="`/detail/${contract.contractId}`">
-         {{ contract.contractId }}
+       <router-link :to="`/detail/${contract.gaKeyPair.publicKey}`">
+         {{ contract.gaKeyPair.publicKey }}
        </router-link>
      </div>
      <div v-if="myContracts?.length ===0">

@@ -6,9 +6,9 @@ import { MemoryAccount } from '@aeternity/aepp-sdk'
 import { getUniversalStamp } from "./app"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 
-export const getSpendTx = async (gaPubKey, recipientAddress, proposedAmount) => {
+export const getSpendTx = async (senderAddress, recipientAddress, proposedAmount) => {
   return await aeWallet.sdk.spendTx({
-    senderId: gaPubKey,
+    senderId: senderAddress,
     recipientId: recipientAddress,
     amount: proposedAmount,
   })

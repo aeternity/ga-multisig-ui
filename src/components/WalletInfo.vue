@@ -4,7 +4,7 @@
       <div>Connected Address</div>
       <div class="wallet-address">{{ address }}</div>
       <div>Contract Info</div>
-      Multisig account address: {{ gaPubKey }}
+      Multisig account address: {{ gaKeyPair.publicKey }}
       <br>
       contract Id: {{ contractId }}
       <br>
@@ -67,7 +67,7 @@ const {
   isConfirmedByCurrentUser,
   txHash,
   proposedAmount,
-  gaPubKey,
+  gaKeyPair,
   recipientAddress,
   confirmedBy,
   contractId,

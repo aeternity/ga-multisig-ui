@@ -24,11 +24,10 @@ export const getMyContracts = async () => {
   return multisigContracts.value.filter(contract => contract.signers.includes(address.value))
 }
 
-export const getContractByContractId = (contractId) => {
-  // todo think of better usage
+export const getContractByAddress = (gaAddress) => {
   const { multisigContracts } = toRefs(app)
   return multisigContracts.value.find(contract =>
-    contract.contractId === contractId,
+    contract.gaKeyPair.publicKey === gaAddress,
   )
 }
 

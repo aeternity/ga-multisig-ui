@@ -2,7 +2,7 @@
   <div>
     <strong>Multisig account address: </strong>
     <br>
-    {{ gaPubKey }}
+    {{ gaPublicKey }}
     <br>
     <br>
     <strong>Contract id: </strong>
@@ -18,6 +18,6 @@
 <script>
 export default {
   name: 'signer-list',
-  props: ['gaPubKey', 'contractId', 'version'],
+  props: ['gaPublicKey', 'contractId', 'version'],
 }
 </script>
