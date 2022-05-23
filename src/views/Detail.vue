@@ -33,13 +33,18 @@
       @revoke-clicked="revoke"/>
 
     <send-form
-      v-if="!isRevoked || !isSent"
+      v-if="!revokedBy || !sentBy"
       :class="[{'disabled': !hasConsensus}]"
       :has-consensus="hasConsensus"
       @send-clicked="send"
       @revoke-clicked="revoke"/>
-    <div v-if="isRevoked">The transaction has been revoked by user ...</div>
-    <div v-if="isSent">The transaction has been sent by user...</div>
+    <div v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</div>
+    <div v-if="sentBy">
+      The transaction has been sent by user {{ sentBy }} to account
+      <a :href="`https://explorer.testnet.aeternity.io/account/${recipientAddress}`">
+        {{ recipientAddress }}
+      </a>
+    </div>
   </div>
   <loader-image v-else/>
 </template>
@@ -90,8 +95,8 @@ const {
   gaKeyPair,
   contractId,
   isConfirmedByCurrentUser,
-  isRevoked,
-  isSent,
+  revokedBy,
+  sentBy,
   contractAccount,
   contractInstance,
   confirmationsMap,
@@ -108,6 +113,7 @@ onMounted(async () => {
     await hydrateApp()
   }
 
+  // todo revert
   gaKeyPair.value = { 'publicKey': route.params.id }
 
   await updateContractInfo()
@@ -129,13 +135,13 @@ async function confirm () {
 
 async function send () {
   await sendTx(gaKeyPair.value, spendTx.value, contractInstance.value)
-  await patchSentStatus(contractId.value)
+  await patchSentStatus(contractId.value, gaKeyPair.value.address)
   await updateContractInfo()
 }
 
 async function revoke () {
-  await revokeTx(spendTx.value, contractId.value)
-  await patchRevokedStatus(contractId.value)
+  const revokedBy = await revokeTx(spendTx.value, contractId.value)
+  await patchRevokedStatus(contractId.value, revokedBy)
   await updateContractInfo()
 }
 </script>

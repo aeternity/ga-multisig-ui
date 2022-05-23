@@ -4,7 +4,7 @@
       <div>Connected Address</div>
       <div class="wallet-address">{{ address }}</div>
       <div>Contract Info</div>
-      Multisig account address: {{ gaKeyPair.publicKey }}
+      Multisig account address: {{ gaKeyPair?.publicKey }}
       <br>
       contract Id: {{ contractId }}
       <br>
@@ -34,9 +34,9 @@
       <br>
       hasConsensus: {{ hasConsensus }}
       <br>
-      isRevoked: {{ isRevoked }}
+      revokedBy: {{ revokedBy }}
       <br>
-      isSent: {{ isSent }}
+      sentBy: {{ sentBy }}
     </div>
 
     <img
@@ -57,6 +57,7 @@ import { contractDetail } from '../store'
 const { address, walletStatus } = toRefs(aeWallet)
 
 const {
+  gaKeyPair,
   version,
   confirmations,
   confirmationsRequired,
@@ -67,12 +68,11 @@ const {
   isConfirmedByCurrentUser,
   txHash,
   proposedAmount,
-  gaKeyPair,
   recipientAddress,
   confirmedBy,
   contractId,
-  isRevoked,
-  isSent,
+  revokedBy,
+  sentBy,
   spendTx,
 } = toRefs(contractDetail)
 </script>

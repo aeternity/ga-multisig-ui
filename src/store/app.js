@@ -27,13 +27,14 @@ export const getMyContracts = async () => {
 export const getContractByAddress = (gaAddress) => {
   const { multisigContracts } = toRefs(app)
   return multisigContracts.value.find(contract =>
-    contract.gaKeyPair.publicKey === gaAddress,
+    contract.gaKeyPair.publicKey === gaAddress
   )
 }
 
 
 export const getUniversalStamp = async () => {
   // todo node from variable
+  //  todo move to utils
   const node = await Node({ url: 'https://testnet.aeternity.io' })
 
   return await Universal({

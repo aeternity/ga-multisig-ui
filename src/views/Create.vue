@@ -33,13 +33,12 @@
       :recipientAddress="recipientAddress"/>
 
     <send-form
-      v-if="!isRevoked || !isSent"
+      v-if="!revokedBy || !sentBy"
       :class="[{'disabled': !hasProposedTx}]"
       :has-consensus="hasConsensus"
       @revoke-clicked="revoke"/>
     <!--    todo add charge button-->
-    <h3 v-if="isRevoked">The transaction has been revoked by user ...</h3>
-    <h3 v-if="isSent">The transaction has been sent by user...</h3>
+    <h3 v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</h3>
   </div>
 </template>
 
@@ -83,8 +82,8 @@ const {
   confirmedBy,
   isConfirmedByCurrentUser,
   contractId,
-  isRevoked,
-  isSent,
+  revokedBy,
+  sentBy,
   contractAccount,
   contractInstance,
   confirmationsMap,
@@ -127,8 +126,8 @@ async function propose () {
 }
 
 async function revoke () {
-  await revokeTx(spendTx.value, contractId.value)
-  await patchRevokedStatus(contractId.value)
+  const revokedBy = await revokeTx(spendTx.value, contractId.value)
+  await patchRevokedStatus(contractId.value, revokedBy)
   await updateContractInfo()
 }
 

@@ -1,11 +1,11 @@
 const fs = require('fs');
 
-const fungibleTokenFullInterface =
+const content =
   fs.readFileSync(
-    'node_modules/ga-contractDetail-contract/contracts/SimpleGAMultiSig.aes',
-    'utf-8');
+    'node_modules/ga-multisig-contract/contracts/SimpleGAMultiSig.aes',
+    'utf-8')
 
 fs.writeFileSync(
   'src/utils/aeternity/contracts/SimpleGAMultiSig.aes',
-  fungibleTokenFullInterface,
+  content,
   'utf-8');

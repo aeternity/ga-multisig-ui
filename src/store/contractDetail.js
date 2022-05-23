@@ -13,8 +13,8 @@ const getInitialData = () => ({
 
   hasProposedTx: null,
   hasConsensus: null,
-  isRevoked: false,
-  isSent: false,
+  revokedBy: false,
+  sentBy: false,
   isConfirmedByCurrentUser: null,
   isCurrentUserSigner: null,
 
@@ -54,8 +54,8 @@ export const updateContractInfo = async () => {
     confirmedBy,
     contractId,
     isConfirmedByCurrentUser,
-    isRevoked,
-    isSent,
+    revokedBy,
+    sentBy,
     contractAccount,
     contractInstance,
     confirmationsMap,
@@ -98,8 +98,8 @@ export const updateContractInfo = async () => {
     spendTx.value = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
   }
 
-  isRevoked.value = !!offChainContractData?.isRevoked
-  isSent.value = !!offChainContractData?.isSent
+  revokedBy.value = offChainContractData?.revokedBy
+  sentBy.value = offChainContractData?.sentBy
 }
 
 // todo some values here are just computed

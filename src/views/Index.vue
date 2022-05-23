@@ -15,7 +15,7 @@
        </router-link>
      </div>
      <div v-if="myContracts?.length ===0">
-       No contracts created
+       No contracts assigned to you, but you can create one
      </div>
    </div>
     <loader-image v-else/>
@@ -37,5 +37,4 @@ const {
 } = toRefs(aeWallet)
 
 // todo rehydrate when going to index
-
 </script>

@@ -48,12 +48,12 @@ export const patchProposalByContractId = async (contractId, recipientAddress, pr
   }
 }
 
-export const patchRevokedStatus = async (contractId) => {
+export const patchRevokedStatus = async (contractId, revokedBy) => {
   const id = await getDBIndex(contractId)
 
   try {
     await axios.patch(`${dbURL}/${id}`, {
-      isRevoked: true, //todo add by who
+      revokedBy,
     })
     await hydrateApp()
 
@@ -62,11 +62,11 @@ export const patchRevokedStatus = async (contractId) => {
   }
 }
 
-export const patchSentStatus = async (contractId) => {
+export const patchSentStatus = async (contractId, sentBy) => {
   const id = await getDBIndex(contractId)
   try {
     await axios.patch(`${dbURL}/${id}`, {
-      isSent: true, //todo add by who
+      sentBy,
     })
     await hydrateApp()
 
