@@ -27,7 +27,8 @@ onMounted(async () => {
 watch(walletStatus,
   async (newStatus) => {
     if (newStatus === null) {
-      // wait for wallet connection but make hydrate better
+      // wait for wallet connection because wallet =address is needed to filter My Contracts
+      // this should be done in mounted hook
       await hydrateApp()
     }
   },
