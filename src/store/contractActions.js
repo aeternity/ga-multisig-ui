@@ -19,6 +19,7 @@ export const initMultisigContract = async (contractArgs, gaKeyPair) => {
   const contractInstance = await signerSdk.getContractInstance({ source: multisigContract })
   await contractInstance.compile()
 
+  // todo try shorten this https://github.com/aeternity/aepp-sdk-js/issues/1401 authorize
   const attachTX = await signerSdk.gaAttachTx({
     ownerId: gaKeyPair.publicKey,
     code: contractInstance.bytecode,
@@ -53,6 +54,13 @@ export const proposeTx = async (spendTx, contractId) => {
   await gaContractRpc.methods.propose.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
+export const preChargeMultisigAccount = async (gaPublicKey) => {
+  await aeWallet.sdk.spend(
+    776440000000000,
+    gaPublicKey,
+  )
+}
+
 export const confirmTx = async (contractId, spendTxHash) => {
   const signerSdk = await getUniversalStamp()
   const expirationHeight = await signerSdk.height() + 50
@@ -65,26 +73,15 @@ export const confirmTx = async (contractId, spendTxHash) => {
   await gaContractRpc.methods.confirm.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
-export const sendTx = async (gaKeypair, spendTx, contractInstance) => {
+export const sendTx = async (gaKeyPair, spendTx, contractInstance) => {
   const signerSdk = await getUniversalStamp()
 
   const nonce = (await contractInstance.methods.get_nonce()).decodedResult
 
-  // todo try wrapping it in a PayingForTx?
-  //  The issue is the Account the generalized Account is created from (creation is conversion) has to pay for the costs.
-  //  Maybe this can be solved using PayingForTx, so someone else pay the fee.
-  //  If that approach works we can integrate it into the sdk.
-
-  await aeWallet.sdk.spend(
-    776440000000000,
-    gaKeypair.publicKey,
-    // todo do button workaround  pre charge GA account create this.gaAccount on chai
-  )
-
   await signerSdk.send(
     spendTx,
     {
-      onAccount: MemoryAccount({ keypair: gaKeypair }),
+      onAccount: MemoryAccount({ keypair: gaKeyPair }),
       authData: { source: multisigContract, args: [nonce] },
     })
 }

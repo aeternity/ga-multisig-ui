@@ -6,6 +6,7 @@ import { getSpendTx } from "./contractActions"
 
 const getInitialData = () => ({
   gaKeyPair: null,
+  isMultisigAccountCharged: false,
   contractId: null,
   contractAccount: null,
   contractInstance: null,
@@ -14,8 +15,8 @@ const getInitialData = () => ({
   hasConsensus: null,
   revokedBy: null,
   sentBy: null,
-  isConfirmedByCurrentUser: null,
-  isCurrentUserSigner: null,
+  isConfirmedByCurrentUser: false,
+  isCurrentUserSigner: false,
 
   signers: null,
   proposedAmount: null,
@@ -38,6 +39,7 @@ export const clearState = () => {
 export const loadContractDetail = async () => {
   const {
     gaKeyPair,
+    isMultisigAccountCharged,
     contractId,
     contractAccount,
     contractInstance,
@@ -71,6 +73,8 @@ export const loadContractDetail = async () => {
     source: multisigContract,
     contractAddress: contractId.value,
   })
+
+  isMultisigAccountCharged.value = await signerSdk.getBalance(gaKeyPair.value.publicKey) > 0
 
   signers.value = (await contractInstance.value.methods.get_signers()).decodedResult
   version.value = (await contractInstance.value.methods.get_version()).decodedResult

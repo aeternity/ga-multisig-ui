@@ -13,6 +13,7 @@
     <strong>Contract version: </strong>
     <br>
     {{ version }}
+<!--    todo show nonce-->
   </div>
 </template>
 <script>

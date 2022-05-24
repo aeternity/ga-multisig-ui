@@ -2,7 +2,7 @@
   <div class="confirmation-list">
     <h3>Confirmations</h3>
     <ul>
-      <h4>{{ confirmations }} / {{ confirmationsRequired }}</h4>
+      <strong>{{ confirmations }} / {{ confirmationsRequired }}</strong>
       <li v-for="confirmation in confirmationsMap">
         <strong>
           {{ confirmation.isConfirmed ? '&#x2705;' : '&#x274C' }}

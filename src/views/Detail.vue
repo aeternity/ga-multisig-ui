@@ -35,8 +35,10 @@
       v-if="!(revokedBy || sentBy)"
       :class="[{'disabled': !hasConsensus}]"
       :has-consensus="hasConsensus"
+      :is-multisig-account-charged="isMultisigAccountCharged"
       @send-clicked="send"
-      @revoke-clicked="revoke"/>
+      @revoke-clicked="revoke"
+      @charge-clicked="chargeAccount"/>
     <h5 v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</h5>
     <h5 v-if="sentBy">
       The transaction has been sent by user <i>{{ sentBy }}</i> to account
@@ -62,6 +64,7 @@ import {
   patchProposalByContractId,
   patchRevokedStatus,
   patchSentStatus,
+  preChargeMultisigAccount,
   proposeTx,
   revokeTx,
   sendTx,
@@ -78,9 +81,11 @@ import LoaderImage from "../components/LoaderImage"
 import ProposeList from "./ProposeList"
 import SignerList from "./SignerList"
 
+
 const route = useRoute()
 const {
   gaKeyPair,
+  isMultisigAccountCharged,
   contractId,
   contractAccount,
   contractInstance,
@@ -123,7 +128,6 @@ async function initContractDetail () {
   await loadContractDetail()
 }
 
-
 async function propose () {
   const tx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
   // todo fix pre tx
@@ -135,6 +139,12 @@ async function propose () {
 
 async function confirm () {
   await confirmTx(contractId.value, txHash.value)
+  await loadContractDetail()
+}
+
+async function chargeAccount () {
+  // workaround to pre charge multisig account in order to have enough funds to make sendTx
+  await preChargeMultisigAccount(gaKeyPair.value.publicKey)
   await loadContractDetail()
 }
 
