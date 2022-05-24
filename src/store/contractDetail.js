@@ -4,7 +4,7 @@ import { aeWallet, getUniversalStamp } from "../utils/aeternity"
 import { getContractByAddress } from "./app"
 import { getSpendTx } from "./contractActions"
 
-const getInitialData = () => ({
+const getInitialContractDetail = () => ({
   gaKeyPair: null,
   isMultisigAccountCharged: false,
   contractId: null,
@@ -31,10 +31,10 @@ const getInitialData = () => ({
   nonce: null,
 })
 
-export const contractDetail = reactive(getInitialData())
+export const contractDetail = reactive(getInitialContractDetail())
 
-export const clearState = () => {
-  Object.assign(contractDetail, getInitialData())
+export const clearContractDetail = () => {
+  Object.assign(contractDetail, getInitialContractDetail())
 }
 
 export const loadContractDetail = async () => {

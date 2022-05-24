@@ -55,7 +55,7 @@
 <script setup>
 import {
   app,
-  clearState,
+  clearContractDetail,
   confirmTx,
   contractDetail,
   getContractByContractId,
@@ -112,7 +112,7 @@ const {
 const { isAppHydrated } = toRefs(app)
 
 onMounted(async () => {
-  clearState()
+  clearContractDetail()
 
   //when going directly to detail page from pasted url
   if (!isAppHydrated.value) {

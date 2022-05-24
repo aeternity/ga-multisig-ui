@@ -51,7 +51,7 @@ import ProposeList from "./ProposeList"
 import SignerList from "./SignerList"
 import { useRoute } from "vue-router"
 import {
-  clearState,
+  clearContractDetail,
   contractDetail,
   getSpendTx,
   initMultisigContract,
@@ -94,7 +94,7 @@ const signer1Key = ref('')
 const signer2Key = ref('')
 const requiredSignersAmount = ref(2)
 
-onMounted(() => clearState())
+onMounted(() => clearContractDetail())
 
 async function crateGaAccount () {
   gaKeyPair.value = Crypto.generateKeyPair()
