@@ -19,7 +19,6 @@ export const initMultisigContract = async (contractArgs, gaKeyPair) => {
   const contractInstance = await signerSdk.getContractInstance({ source: multisigContract })
   await contractInstance.compile()
 
-  // todo try shorten this https://github.com/aeternity/aepp-sdk-js/issues/1401 authorize
   const attachTX = await signerSdk.gaAttachTx({
     ownerId: gaKeyPair.publicKey,
     code: contractInstance.bytecode,
