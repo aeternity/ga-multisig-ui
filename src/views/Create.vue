@@ -56,8 +56,8 @@ import {
   getSpendTx,
   initMultisigContract,
   loadContractDetail,
-  patchProposalByContractId,
-  patchRevokedStatus,
+  patchProposal,
+  patchRevokedBy,
   proposeTx,
   revokeTx,
   storeContractToDB,
@@ -119,13 +119,13 @@ async function propose () {
 // todo this does not serve well. Probably too much abstraction
 
   await proposeTx(tx, contractId.value)
-  await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
+  await patchProposal(contractId.value, recipientAddress.value, proposedAmount.value)
   await loadContractDetail()
 }
 
 async function revoke () {
   const revokedBy = await revokeTx(spendTx.value, contractId.value)
-  await patchRevokedStatus(contractId.value, revokedBy)
+  await patchRevokedBy(contractId.value, revokedBy)
   await loadContractDetail()
 }
 </script>

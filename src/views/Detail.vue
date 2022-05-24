@@ -62,9 +62,9 @@ import {
   getSpendTx,
   hydrateApp,
   loadContractDetail,
-  patchProposalByContractId,
-  patchRevokedStatus,
-  patchSentStatus,
+  patchProposal,
+  patchRevokedBy,
+  patchSentBy,
   preChargeMultisigAccount,
   proposeTx,
   revokeTx,
@@ -135,7 +135,7 @@ async function propose () {
   // todo fix pre tx
 
   await proposeTx(tx, contractId.value)
-  await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
+  await patchProposal(contractId.value, recipientAddress.value, proposedAmount.value)
   await loadContractDetail()
 }
 
@@ -152,13 +152,13 @@ async function chargeAccount () {
 
 async function send () {
   await sendTx(gaKeyPair.value, spendTx.value, contractInstance.value)
-  await patchSentStatus(contractId.value, gaKeyPair.value.publicKey)
+  await patchSentBy(contractId.value, gaKeyPair.value.publicKey)
   await loadContractDetail()
 }
 
 async function revoke () {
   const revokedBy = await revokeTx(spendTx.value, contractId.value)
-  await patchRevokedStatus(contractId.value, revokedBy)
+  await patchRevokedBy(contractId.value, revokedBy)
   await loadContractDetail()
 }
 </script>

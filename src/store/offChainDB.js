@@ -3,6 +3,13 @@ import { hydrateApp } from './app'
 
 const dbURL = "http://localhost:3001/multisigContracts"
 
+export const getDBIndex = async (contractId) => {
+  const contracts = await restoreContractsFromDB()
+  return contracts.find(contract =>
+    contract.contractId === contractId,
+  ).id
+}
+
 export const storeContractToDB = async (contractId, gaKeyPair, signers) => {
   try {
     await axios.post(dbURL,
@@ -26,15 +33,7 @@ export const restoreContractsFromDB = async () => {
   }
 }
 
-export const getDBIndex = async (contractId) => {
-  const contracts = await restoreContractsFromDB()
-  return contracts.find(contract =>
-    contract.contractId === contractId,
-  ).id
-}
-
-
-export const patchProposalByContractId = async (contractId, recipientAddress, proposedAmount) => {
+export const patchProposal = async (contractId, recipientAddress, proposedAmount) => {
   const id = await getDBIndex(contractId)
 
   try {
@@ -49,7 +48,7 @@ export const patchProposalByContractId = async (contractId, recipientAddress, pr
   }
 }
 
-export const patchRevokedStatus = async (contractId, revokedBy) => {
+export const patchRevokedBy = async (contractId, revokedBy) => {
   const id = await getDBIndex(contractId)
 
   try {
@@ -63,7 +62,7 @@ export const patchRevokedStatus = async (contractId, revokedBy) => {
   }
 }
 
-export const patchSentStatus = async (contractId, sentBy) => {
+export const patchSentBy = async (contractId, sentBy) => {
   const id = await getDBIndex(contractId)
   try {
     await axios.patch(`${dbURL}/${id}`, {
