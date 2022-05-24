@@ -28,6 +28,7 @@ const getInitialData = () => ({
   spendTx: null,
   txHash: null,
   version: null,
+  nonce: null,
 })
 
 export const contractDetail = reactive(getInitialData())
@@ -59,6 +60,7 @@ export const loadContractDetail = async () => {
     spendTx,
     txHash,
     version,
+    nonce,
   } = toRefs(contractDetail)
 
   const signerSdk = await getUniversalStamp()
@@ -75,7 +77,7 @@ export const loadContractDetail = async () => {
   })
 
   isMultisigAccountCharged.value = await signerSdk.getBalance(gaKeyPair.value.publicKey) > 0
-
+  nonce.value = (await contractInstance.value.methods.get_nonce()).decodedResult
   signers.value = (await contractInstance.value.methods.get_signers()).decodedResult
   version.value = (await contractInstance.value.methods.get_version()).decodedResult
   const consensus = (await contractInstance.value.methods.get_consensus_info()).decodedResult

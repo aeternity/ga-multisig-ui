@@ -5,7 +5,8 @@
     <signer-list
       :contract-id="contractId"
       :ga-public-key="gaKeyPair.publicKey"
-      :version="version"/>
+      :version="version"
+      :nonce="nonce"/>
 
     <confirmation-list
       :class="[{'disabled': signers && !confirmedBy}]"
@@ -105,6 +106,7 @@ const {
   spendTx,
   txHash,
   version,
+  nonce,
 } = toRefs(contractDetail)
 
 const { isAppHydrated } = toRefs(app)

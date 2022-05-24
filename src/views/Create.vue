@@ -6,7 +6,8 @@
       v-if="signers && confirmedBy"
       :contract-id="contractId"
       :ga-public-key="gaKeyPair.publicKey"
-      :version="version"/>
+      :version="version"
+      :nonce="nonce"/>
 
     <signers-form
       v-if="!signers && !confirmedBy"
@@ -36,7 +37,6 @@
       :class="[{'disabled': !hasProposedTx}]"
       :has-consensus="hasConsensus"
       @revoke-clicked="revoke"/>
-    <!--    todo add charge button-->
     <h5 v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</h5>
   </div>
 </template>
@@ -87,6 +87,7 @@ const {
   spendTx,
   txHash,
   version,
+  nonce,
 } = toRefs(contractDetail)
 
 const signer1Key = ref('')

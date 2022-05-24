@@ -13,12 +13,17 @@
     <strong>Contract version: </strong>
     <br>
     {{ version }}
-<!--    todo show nonce-->
+    <br>
+    <br>
+    <strong>Current nonce: </strong>
+    <br>
+    {{ nonce }}
+
   </div>
 </template>
 <script>
 export default {
   name: 'signer-list',
-  props: ['gaPublicKey', 'contractId', 'version'],
+  props: ['gaPublicKey', 'contractId', 'version', 'nonce'],
 }
 </script>
