@@ -4,7 +4,7 @@
     <h3>Send TX</h3>
     <br>
     <div v-if="!isMultisigAccountCharged && hasConsensus">
-      <p>Multisig accound needs to be charged to be able to fund send transaction</p>
+      <p>Multisig account needs to be charged to be able to fund send transaction</p>
       <button
 
         @click="$emit('charge-clicked')">
