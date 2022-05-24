@@ -106,7 +106,6 @@ export const loadContractDetail = async () => {
   sentBy.value = offChainContractData?.sentBy || null
 }
 
-// todo some values here are just computed
 export const getConfirmationMap = (signers, confirmedBy) => {
   return signers.map(signer => {
       return {

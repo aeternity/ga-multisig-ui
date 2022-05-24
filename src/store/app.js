@@ -18,7 +18,6 @@ export const hydrateApp = async () => {
 export const getMyContracts = async () => {
   const { address } = toRefs(aeWallet)
   const { multisigContracts } = toRefs(app)
-
   return multisigContracts.value.filter(contract => contract.signers.includes(address.value))
 }
 

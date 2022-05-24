@@ -13,7 +13,6 @@
       v-if="!signers && !confirmedBy"
       v-model:requiredSignersAmount="requiredSignersAmount"
       v-model:signersList="proposedSigners"
-      @signers-list-changed="updateSigners"
       @create-clicked="crateGaAccount"/>
 
     <confirmation-list
@@ -104,18 +103,14 @@ async function crateGaAccount () {
     proposedSigners.value,
   ]
 
-  console.log('contractArgs', contractArgs)
-
   await initMultisigContract(contractArgs, gaKeyPair.value)
   await loadContractDetail() //todo the order is hasty. Probably too much anstraction
-  await storeContractToDB(contractId.value, gaKeyPair.value, proposedSigners)
+  await storeContractToDB(contractId.value, gaKeyPair.value, proposedSigners.value)
 }
 
 async function propose () {
-  const tx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-// todo this does not serve well. Probably too much abstraction
-
-  await proposeTx(tx, contractId.value)
+  const txToPropose = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
+  await proposeTx(txToPropose, contractId.value)
   await patchProposal(contractId.value, recipientAddress.value, proposedAmount.value)
   await loadContractDetail()
 }
@@ -124,11 +119,5 @@ async function revoke () {
   const revokedBy = await revokeTx(spendTx.value, contractId.value)
   await patchRevokedBy(contractId.value, revokedBy)
   await loadContractDetail()
-}
-
-function updateSigners (e) {
-  console.log('e', e)
-
-
 }
 </script>

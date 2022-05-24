@@ -75,13 +75,12 @@ import ProposeForm from "../components/ProposeForm"
 import ConfirmForm from "../components/ConfirmForm"
 import SendForm from "../components/SendForm"
 import ConfirmationList from "../components/ConfirmationList"
-
-import { onMounted, toRefs } from "vue"
-import { useRoute } from "vue-router"
 import LoaderImage from "../components/LoaderImage"
 import ProposeList from "../components/ProposeList"
 import SignersList from "../components/SignersList"
 
+import { onMounted, toRefs } from "vue"
+import { useRoute } from "vue-router"
 
 const route = useRoute()
 const {
@@ -131,10 +130,9 @@ async function initContractDetail () {
 }
 
 async function propose () {
-  const tx = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-  // todo fix pre tx
+  const txToPropose = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
 
-  await proposeTx(tx, contractId.value)
+  await proposeTx(txToPropose, contractId.value)
   await patchProposal(contractId.value, recipientAddress.value, proposedAmount.value)
   await loadContractDetail()
 }
