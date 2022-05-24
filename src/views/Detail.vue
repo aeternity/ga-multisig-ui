@@ -14,7 +14,7 @@
       :confirmations-map="confirmationsMap"/>
 
     <propose-form
-      v-if="!hasProposedTx"
+      v-if="!hasProposedTx  && !(revokedBy || sentBy)"
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="propose"/>
@@ -25,25 +25,26 @@
       :recipientAddress="recipientAddress"/>
 
     <confirm-form
-      v-if="!hasConsensus"
+      v-if="!hasConsensus && !(revokedBy || sentBy)"
       :class="[{'disabled': !hasProposedTx}]"
       :is-confirm-hidden="isConfirmedByCurrentUser"
       @confirm-clicked="confirm"
       @revoke-clicked="revoke"/>
 
     <send-form
-      v-if="!revokedBy || !sentBy"
+      v-if="!(revokedBy || sentBy)"
       :class="[{'disabled': !hasConsensus}]"
       :has-consensus="hasConsensus"
       @send-clicked="send"
       @revoke-clicked="revoke"/>
-    <h3 v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</h3>
-    <h3 v-if="sentBy">
+    <h5 v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</h5>
+    <h5 v-if="sentBy">
       The transaction has been sent by user <i>{{ sentBy }}</i> to account
-      <a :href="`https://explorer.testnet.aeternity.io/account/${recipientAddress}`">
+      <a :href="`https://explorer.testnet.aeternity.io/account/${recipientAddress}`"
+         target="_blank">
         {{ recipientAddress }}
       </a>
-    </h3>
+    </h5>
   </div>
   <loader-image v-else/>
 </template>

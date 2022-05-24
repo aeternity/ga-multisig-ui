@@ -21,7 +21,7 @@
       :confirmations-map="confirmationsMap"/>
 
     <propose-form
-      v-if="!hasProposedTx"
+      v-if="!hasProposedTx && !revokedBy"
       :class="[{'disabled': !signers && !confirmedBy}]"
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
@@ -32,12 +32,12 @@
       :recipientAddress="recipientAddress"/>
 
     <send-form
-      v-if="!revokedBy || !sentBy"
+      v-if="!revokedBy"
       :class="[{'disabled': !hasProposedTx}]"
       :has-consensus="hasConsensus"
       @revoke-clicked="revoke"/>
     <!--    todo add charge button-->
-    <h3 v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</h3>
+    <h5 v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</h5>
   </div>
 </template>
 
@@ -119,7 +119,7 @@ async function propose () {
 
   await proposeTx(tx, contractId.value)
   await patchProposalByContractId(contractId.value, recipientAddress.value, proposedAmount.value)
-  await loadContractDetail()// todo is this neccessary? can be doe rectively?
+  await loadContractDetail()
 }
 
 async function revoke () {
@@ -127,6 +127,4 @@ async function revoke () {
   await patchRevokedStatus(contractId.value, revokedBy)
   await loadContractDetail()
 }
-
-// todo conditions as computed properties
 </script>

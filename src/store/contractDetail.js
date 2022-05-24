@@ -12,8 +12,8 @@ const getInitialData = () => ({
 
   hasProposedTx: null,
   hasConsensus: null,
-  revokedBy: false,
-  sentBy: false,
+  revokedBy: null,
+  sentBy: null,
   isConfirmedByCurrentUser: null,
   isCurrentUserSigner: null,
 
@@ -96,8 +96,8 @@ export const loadContractDetail = async () => {
     spendTx.value = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
   }
 
-  revokedBy.value = offChainContractData?.revokedBy
-  sentBy.value = offChainContractData?.sentBy
+  revokedBy.value = offChainContractData?.revokedBy || null
+  sentBy.value = offChainContractData?.sentBy || null
 }
 
 // todo some values here are just computed
