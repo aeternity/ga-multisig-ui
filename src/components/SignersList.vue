@@ -23,7 +23,7 @@
 </template>
 <script>
 export default {
-  name: 'signer-list',
+  name: 'signers-list',
   props: ['gaPublicKey', 'contractId', 'version', 'nonce'],
 }
 </script>

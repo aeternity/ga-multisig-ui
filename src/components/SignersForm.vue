@@ -7,31 +7,38 @@
       <br>
       My addres #2 <i>ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU</i>
     </small>
+    <ul>
+      <li v-for="(signer, index ) in signersList"
+          class="signers-item">
+        <input
+          placeholder="Signer address"
+          type="text"
+          :value="signer"
+          @input="update($event, index)">
+        <span
+          class="signers-close"
+          v-if="index > 1"
+          @click="removeInput(index)">
+          &#9587;
+        </span>
+      </li>
+    </ul>
+
+
+    <button @click="addInput">+ Add signer</button>
     <br>
     <br>
-    <label>Signer 1 address</label>
-    <br>
-    <input
-      type="text"
-      :value="signer1Key"
-      @input="$emit('update:signer1Key', $event.target.value)">
-    <br>
-    <br>
-    <label>Signer 2 address</label>
-    <br>
-    <input
-      type="text"
-      :value="signer2Key"
-      @input="$emit('update:signer2Key', $event.target.value)">
-    <br>
-    <br>
-    <label>Amount of signers</label>
-    <br>
-    <input
-      min="2"
-      type="number"
+    Required count:
+    <select
       :value="requiredSignersAmount"
       @input="$emit('update:requiredSignersAmount', $event.target.value)">
+      <option selected disabled value="">Please select one</option>
+      <template v-for="( signer, index ) in signersList">
+        <option v-if="index > 0" :value="index + 1">
+          {{ index + 1 }}
+        </option>
+      </template>
+    </select>
     <br>
     <br>
     <button
@@ -40,10 +47,41 @@
     </button>
   </div>
 </template>
-
 <script>
 export default {
-  name: 'SignersForm',
-  props: ['signer1Key', 'signer2Key', 'requiredSignersAmount'],
+  name: 'signers-form',
+  props: ['signersList', 'requiredSignersAmount'],
+
+  methods: {
+    addInput () {
+      this.signersList.push('')
+    },
+    removeInput (index) {
+      this.signersList.splice(index, 1)
+      if (this.requiredSignersAmount > this.signersList.length) {
+        this.$emit('update:requiredSignersAmount', this.signersList.length)
+      }
+    },
+    update (event, index) {
+      const modifiedList = this.signersList
+      modifiedList[index] = event.target.value
+      this.$emit('update:signersList', modifiedList)
+    },
+  },
 }
 </script>
+
+<style>
+.signers-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.signers-close {
+  position: relative;
+  bottom: 8px;
+  cursor: pointer;
+}
+</style>

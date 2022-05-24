@@ -2,7 +2,7 @@
   <div class="create">
     <h2>Create Multisig Account</h2>
 
-    <signer-list
+    <signers-list
       v-if="signers && confirmedBy"
       :contract-id="contractId"
       :ga-public-key="gaKeyPair.publicKey"
@@ -11,10 +11,11 @@
 
     <signers-form
       v-if="!signers && !confirmedBy"
-      v-model:signer1Key="signer1Key"
-      v-model:signer2Key="signer2Key"
-      v-model:required-signers-amount="requiredSignersAmount"
+      v-model:requiredSignersAmount="requiredSignersAmount"
+      v-model:signersList="proposedSigners"
+      @signers-list-changed="updateSigners"
       @create-clicked="crateGaAccount"/>
+
     <confirmation-list
       v-else
       :confirmations="confirmations"
@@ -47,8 +48,8 @@ import SignersForm from "../components/SignersForm"
 import ProposeForm from "../components/ProposeForm"
 import ConfirmationList from "../components/ConfirmationList"
 import SendForm from "../components/SendForm"
-import ProposeList from "./ProposeList"
-import SignerList from "./SignerList"
+import ProposeList from "../components/ProposeList"
+import SignersList from "../components/SignersList"
 import { useRoute } from "vue-router"
 import {
   clearContractDetail,
@@ -90,8 +91,7 @@ const {
   nonce,
 } = toRefs(contractDetail)
 
-const signer1Key = ref('')
-const signer2Key = ref('')
+const proposedSigners = ref(['', '']) //todo move this to store
 const requiredSignersAmount = ref(2)
 
 onMounted(() => clearContractDetail())
@@ -99,15 +99,12 @@ onMounted(() => clearContractDetail())
 async function crateGaAccount () {
   gaKeyPair.value = Crypto.generateKeyPair()
 
-  const proposedSigners = [
-    signer1Key.value,
-    signer2Key.value,
-  ]
-
   const contractArgs = [
     requiredSignersAmount.value,
-    proposedSigners,
+    proposedSigners.value,
   ]
+
+  console.log('contractArgs', contractArgs)
 
   await initMultisigContract(contractArgs, gaKeyPair.value)
   await loadContractDetail() //todo the order is hasty. Probably too much anstraction
@@ -127,5 +124,11 @@ async function revoke () {
   const revokedBy = await revokeTx(spendTx.value, contractId.value)
   await patchRevokedBy(contractId.value, revokedBy)
   await loadContractDetail()
+}
+
+function updateSigners (e) {
+  console.log('e', e)
+
+
 }
 </script>

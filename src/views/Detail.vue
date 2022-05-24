@@ -2,7 +2,7 @@
   <div class="detail" v-if="gaKeyPair && signers">
     <h2>Multisig Detail</h2>
 
-    <signer-list
+    <signers-list
       :contract-id="contractId"
       :ga-public-key="gaKeyPair.publicKey"
       :version="version"
@@ -79,8 +79,8 @@ import ConfirmationList from "../components/ConfirmationList"
 import { onMounted, toRefs } from "vue"
 import { useRoute } from "vue-router"
 import LoaderImage from "../components/LoaderImage"
-import ProposeList from "./ProposeList"
-import SignerList from "./SignerList"
+import ProposeList from "../components/ProposeList"
+import SignersList from "../components/SignersList"
 
 
 const route = useRoute()

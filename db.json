@@ -172,6 +172,54 @@
       "recipientAddress": "ak_5oytqRxbXq4ytVFVn76RSpvCcoNBdEyGeUiCSvLP997teXf3P",
       "proposedAmount": "74",
       "sentBy": "ak_2HQ8SCw5SzZ9ie8YPc5VP3jDBU6CpLtoNQVExr3CGmCGqnxico"
+    },
+    {
+      "contractId": "ct_pqinqVL6Wc545DT5Sfqy2DFeVH8EpQ4cSQmJC5QSu1vM6iDwb",
+      "gaKeyPair": {
+        "publicKey": "ak_FUiKEP53kbYbH2jjW4t8QCEbqcnu4adnBG3e3HeJE4mSkdcQC",
+        "secretKey": "41615657b3202b5d524a7e7c6ac505d8b35924bf2c20799cfb64c9c9b0292f7420dfa51552106968333dbd3c9eba9606f902d87de6beefe4a0a764503aa5a2f6"
+      },
+      "signers": {
+        "__v_isShallow": false,
+        "dep": {
+          "w": 0,
+          "n": 0
+        },
+        "__v_isRef": true,
+        "_rawValue": [
+          "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+          "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+        ],
+        "_value": [
+          "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+          "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+        ]
+      },
+      "id": 14
+    },
+    {
+      "contractId": "ct_2po9xAv4XKjeise1D98WNpLJa5EjkACYKSdcAPNrUx9yEwo9S6",
+      "gaKeyPair": {
+        "publicKey": "ak_2KQtW3SS3wAU2Sjpi985VUV4x9Y6ajGVR4jUMmB9o5hgsCWdU1",
+        "secretKey": "0acecdad00a436e750cc15209e512f1efe3bd30551e0a69af5ae3e2706f19542ad80a26b2e2913b636256f1251276466f02ff97165b6f794c13af4ece33494a6"
+      },
+      "signers": {
+        "__v_isShallow": false,
+        "dep": {
+          "w": 0,
+          "n": 0
+        },
+        "__v_isRef": true,
+        "_rawValue": [
+          "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+          "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+        ],
+        "_value": [
+          "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+          "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+        ]
+      },
+      "id": 15
     }
   ]
 }
