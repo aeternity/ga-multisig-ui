@@ -91,7 +91,7 @@ const {
 } = toRefs(contractDetail)
 onMounted(() => clearContractDetail())
 
-const initSigners = ref(['', '']) //todo move this to store
+const initSigners = ref(['', ''])
 const initConfirmationsRequired = ref(2)
 
 async function crateMultisigAccount () {
