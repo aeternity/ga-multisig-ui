@@ -5,10 +5,8 @@
     <br>
     <div v-if="!isMultisigAccountCharged && hasConsensus">
       <p>Multisig account needs to be charged to be able to fund send transaction</p>
-      <button
-
-        @click="$emit('charge-clicked')">
-        Pre Charge Multisig account
+      <button @click="$emit('charge-clicked')">
+        Pre-charge Multisig account
       </button>
       <br>
       <br>

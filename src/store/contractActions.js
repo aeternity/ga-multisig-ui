@@ -13,7 +13,13 @@ export const getSpendTx = async (senderAddress, recipientAddress, proposedAmount
   })
 }
 
-export const initMultisigContract = async (contractArgs, gaKeyPair) => {
+export const initMultisigContract = async (signers, confirmationsRequired, gaKeyPair) => {
+
+  const contractArgs = [
+    confirmationsRequired,
+    signers,
+  ]
+
   const signerSdk = await getUniversalStamp()
 
   const contractInstance = await signerSdk.getContractInstance({ source: multisigContract })

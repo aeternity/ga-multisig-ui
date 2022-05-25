@@ -1,6 +1,6 @@
 <template>
   <div class="detail" v-if="gaKeyPair && signers">
-    <h2>Multisig Detail</h2>
+    <h2>Multisig Wallet Detail</h2>
 
     <signers-list
       :contract-id="contractId"

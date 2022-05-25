@@ -1,6 +1,6 @@
 <template>
   <div class="create">
-    <h2>Create Multisig Account</h2>
+    <h2>Create Multisig Wallet</h2>
 
     <signers-list
       v-if="signers && confirmedBy"
@@ -11,9 +11,9 @@
 
     <signers-form
       v-if="!signers && !confirmedBy"
-      v-model:requiredSignersAmount="requiredSignersAmount"
-      v-model:signersList="proposedSigners"
-      @create-clicked="crateGaAccount"/>
+      v-model:initConfirmationsRequired="initConfirmationsRequired"
+      v-model:signersList="initSigners"
+      @create-clicked="crateMultisigAccount"/>
 
     <confirmation-list
       v-else
@@ -89,23 +89,17 @@ const {
   version,
   nonce,
 } = toRefs(contractDetail)
-
-const proposedSigners = ref(['', '']) //todo move this to store
-const requiredSignersAmount = ref(2)
-
 onMounted(() => clearContractDetail())
 
-async function crateGaAccount () {
+const initSigners = ref(['', '']) //todo move this to store
+const initConfirmationsRequired = ref(2)
+
+async function crateMultisigAccount () {
   gaKeyPair.value = Crypto.generateKeyPair()
 
-  const contractArgs = [
-    requiredSignersAmount.value,
-    proposedSigners.value,
-  ]
-
-  await initMultisigContract(contractArgs, gaKeyPair.value)
-  await loadContractDetail() //todo the order is hasty. Probably too much anstraction
-  await storeContractToDB(contractId.value, gaKeyPair.value, proposedSigners.value)
+  await initMultisigContract(initSigners.value, initConfirmationsRequired.value, gaKeyPair.value)
+  await loadContractDetail()
+  await storeContractToDB(contractId.value, gaKeyPair.value, initSigners.value)
 }
 
 async function propose () {
