@@ -14,11 +14,13 @@
 import { onMounted, toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
 import { hydrateApp } from "./store"
+import { useRoute } from "vue-router"
 
 const {
   walletStatus,
   address,
 } = toRefs(aeWallet)
+const route = useRoute()
 
 onMounted(async () => {
   await aeInitWallet()
@@ -33,6 +35,15 @@ watch(walletStatus,
     }
   },
 )
+watch(route,
+  async (newRoute) => {
+    if (newRoute.name === 'index') {
+      // rehydrete whn going back to index
+      await hydrateApp()
+    }
+  },
+)
+
 
 </script>
 

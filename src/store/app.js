@@ -10,15 +10,15 @@ export const app = reactive({
 
 export const hydrateApp = async () => {
   const { isAppHydrated, myContracts, multisigContracts } = toRefs(app)
+  const { address } = toRefs(aeWallet)
+
   multisigContracts.value = await restoreContractsFromDB()
-  myContracts.value = await getMyContracts()
+  myContracts.value = getMyContracts(multisigContracts, address)
   isAppHydrated.value = true
 }
 
-export const getMyContracts = async () => {
-  const { address } = toRefs(aeWallet)
-  const { multisigContracts } = toRefs(app)
-  return multisigContracts.value.filter(contract => contract.signers.includes(address.value))
+export const getMyContracts = (contracts, address) => {
+  return contracts.value.filter(contract => contract.signers.includes(address.value))
 }
 
 export const getContractByAddress = (gaAddress) => {
