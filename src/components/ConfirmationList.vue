@@ -8,6 +8,11 @@
           {{ confirmation.isConfirmed ? '&#x2705;' : '&#x274C' }}
         </strong>
         {{ confirmation.signer }}
+        <br>
+
+        <strong>{{ confirmation.chainName }} </strong>
+        <br>
+        <br>
       </li>
     </ul>
   </div>
