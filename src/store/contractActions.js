@@ -59,9 +59,8 @@ export const proposeTx = async (spendTx, contractId) => {
   await gaContractRpc.methods.propose.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
-const spendFee = 776440000000000
-
 export const preChargeMultisigAccount = async (gaPublicKey) => {
+  const spendFee = 776440000000000
   await aeWallet.sdk.spend(
     spendFee,
     gaPublicKey,
