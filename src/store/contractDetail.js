@@ -3,7 +3,7 @@ import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
 import { getContractByAddress } from "./app"
 import { getSpendTx } from "./contractActions"
-import axios from "axios"
+import { chainNames } from "./chainNames"
 
 const getInitialContractDetail = () => ({
   gaKeyPair: null,
@@ -30,7 +30,6 @@ const getInitialContractDetail = () => ({
   txHash: null,
   version: null,
   nonce: null,
-  chainNames: [],
 })
 
 export const contractDetail = reactive(getInitialContractDetail())
@@ -63,7 +62,6 @@ export const loadContractDetail = async () => {
     txHash,
     version,
     nonce,
-    chianNames,
   } = toRefs(contractDetail)
 
   const signerSdk = await getUniversalStamp()
@@ -90,9 +88,6 @@ export const loadContractDetail = async () => {
   txHash.value = consensus.tx_hash
   hasConsensus.value = consensus.has_consensus
   confirmedBy.value = consensus.confirmed_by
-
-  const names = await getNames()
-  chianNames.value = names
 
   hasProposedTx.value = !!confirmations.value
   isCurrentUserSigner.value = signers.value.includes(address.value)
@@ -123,27 +118,9 @@ export const getConfirmationMap = (signers, confirmedBy) => {
   )
 }
 
-export const getNames = async (cursor) => {
-  const { chainNames } = toRefs(contractDetail)
-
-  const address = cursor || '/v2/names?limit=10'
-  try {
-    const { data } = await fetchNames(address)
-    chainNames.value = [...chainNames.value, ...data.data]
-    await getNames(data.next)
-  } catch (e) {
-    console.log(e)
-  }
-}
-
 export const getChainNameByAddress = (address) => {
-  const { chainNames } = toRefs(contractDetail)
-  return chainNames.value.find(name => name.info.ownership.current === address).name
-}
-
-export const fetchNames = async (address) => {
-  const url = 'https://testnet.aeternity.io/mdw'
-  return await axios.get(url + address)
+  const { names } = toRefs(chainNames)
+  return names.value.find(name => name.info.ownership.current === address).name
 }
 
 
