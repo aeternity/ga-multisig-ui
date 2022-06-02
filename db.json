@@ -188,6 +188,18 @@
       "recipientAddress": "ak_2rVss9cUXxeRpQWiJNhVt9ogbyJaEVsWtzyZPNu4CnNZh1VFHx",
       "proposedAmount": "123",
       "sentBy": "ak_2R6i3BdKcVnETnoeqpgFKZBvnaghkmAXMUZD5MtHFciPhJKfEP"
+    },
+    {
+      "contractId": "ct_2MHREWxx9nGDbVmukUXRJr9n9BN5DKCqhvGMZTUVsRfbiN14eA",
+      "gaKeyPair": {
+        "publicKey": "ak_2DvPW7norq6Vp96yAg4KDkcxuTVuvnY3VGYcQomGjcgJLAYnjh",
+        "secretKey": "88e2313f7d3d064b3aea4d8be97becc75f5cd2f11836e27c5e95b27b343dc7efa1089c0540515101b20ebdc8323c967e163a011297d8d35f966a2fd71e927f2f"
+      },
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+      ],
+      "id": 14
     }
   ]
 }

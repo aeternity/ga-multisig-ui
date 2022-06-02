@@ -3,7 +3,7 @@ import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
 import { getContractByAddress } from "./app"
 import { getSpendTx } from "./contractActions"
-import { chainNames } from "./chainNames"
+import { resolveChainName } from "./chainNames"
 
 const getInitialContractDetail = () => ({
   gaKeyPair: null,
@@ -97,7 +97,7 @@ export const loadContractDetail = async () => {
   recipientAddress.value = offChainContractData?.recipientAddress
 
   if (confirmedBy.value) {
-    confirmationsMap.value = getConfirmationMap(signers.value, confirmedBy.value)
+    confirmationsMap.value = await getConfirmationMap(signers.value, confirmedBy.value)
   }
   if (recipientAddress.value && proposedAmount.value) {
     spendTx.value = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
@@ -107,22 +107,18 @@ export const loadContractDetail = async () => {
   sentBy.value = offChainContractData?.sentBy
 }
 
-export const getConfirmationMap = (signers, confirmedBy) => {
-  return signers.map(signer => {
-      return {
-        'isConfirmed': confirmedBy.includes(signer),
-        'signer': signer,
-        'chainName': getChainNameByAddress(signer),
-      }
-    },
+export const getConfirmationMap = async (signers, confirmedBy) => {
+  return await Promise.all(
+    signers.map(async signer => {
+        return {
+          'isConfirmed': confirmedBy.includes(signer),
+          'signer': signer,
+          'chainName': await resolveChainName(signer),
+        }
+      },
+    ),
   )
 }
-
-export const getChainNameByAddress = (address) => {
-  const { names } = toRefs(chainNames)
-  return names.value.find(name => name.info.ownership.current === address).name
-}
-
 
 
 

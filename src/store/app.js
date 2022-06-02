@@ -1,7 +1,6 @@
 import { reactive, toRefs } from "vue"
 import { aeWallet } from "../utils/aeternity"
 import { restoreWalletsFromDB } from "./offChainDB"
-import { loadChainNAmes } from "./chainNames"
 
 export const app = reactive({
   multisigWallets: null,
@@ -13,7 +12,6 @@ export const hydrateApp = async () => {
   const { isAppHydrated, myWallets, multisigWallets } = toRefs(app)
   const { address } = toRefs(aeWallet)
 
-  await loadChainNAmes()
   multisigWallets.value = await restoreWalletsFromDB()
   myWallets.value = getMyWallets(multisigWallets, address)
   isAppHydrated.value = true
