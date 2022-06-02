@@ -1,9 +1,9 @@
 import { aeWallet, buildAuthTxHash, getUniversalStamp } from "../utils/aeternity"
-import multisigContract from "../utils/aeternity/contracts/SimpleGAMultiSig.aes"
 import { MemoryAccount } from '@aeternity/aepp-sdk'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { encode } from '@aeternity/aepp-sdk/es/utils/encoder'
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
+import multisigContract from 'ga-multisig-contract/gaMultisigContract.aes'
 
 export const getSpendTx = async (senderAddress, recipientAddress, proposedAmount) => {
   return await aeWallet.sdk.spendTx({

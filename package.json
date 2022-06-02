@@ -8,15 +8,14 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e --mode e2e",
     "lint": "vue-cli-service lint",
-    "reinstall": "rm -rf node_modules/ && yarn cache clean && yarn install && yarn serve",
-    "postinstall": "node .scripts/postinstall.js"
+    "reinstall": "rm -rf node_modules/ && yarn cache clean && yarn install && yarn serve"
   },
   "dependencies": {
     "@aeternity/aepp-sdk": "^11.0.1",
     "axios": "^0.27.2",
     "buffer": "^6.0.3",
     "core-js": "^3.6.5",
-    "ga-multisig-contract": "github:aeternity/ga-multisig-contract",
+    "ga-multisig-contract": "github:janmichek/ga-multisig-contract#postinstall",
     "raw-loader": "^4.0.2",
     "simpledotcss": "^2.0.6",
     "vue": "^3.0.0",
