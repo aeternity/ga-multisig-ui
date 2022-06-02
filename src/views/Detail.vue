@@ -69,6 +69,7 @@ import {
   proposeTx,
   revokeTx,
   sendTx,
+  subscribeToSocket,
 } from '../store'
 
 import ProposeForm from "../components/ProposeForm"
@@ -110,6 +111,7 @@ const {
 
 const { isAppHydrated } = toRefs(app)
 
+
 onMounted(async () => {
   clearContractDetail()
 
@@ -119,6 +121,7 @@ onMounted(async () => {
   }
 
   await initContractDetail()
+  await subscribeToSocket(contractId.value)
 })
 
 async function initContractDetail () {

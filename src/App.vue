@@ -13,7 +13,7 @@
 <script setup>
 import { onMounted, toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
-import { hydrateApp } from "./store"
+import { hydrateApp, initWebSocket } from "./store"
 import { useRoute } from "vue-router"
 
 const {
@@ -24,6 +24,22 @@ const route = useRoute()
 
 onMounted(async () => {
   await aeInitWallet()
+  await initWebSocket()
+
+  // const socket = new WebSocket('wss://testnet.aeternity.art/mdw/websocket')
+  //
+  //  socket.onopen = (e) => {
+  //    console.info('connected')
+  //    socket.send('{"op":"Subscribe", "payload":"Object", "target": "ct_2XwrTRk5APt8J7Ujn651918AnhmUq1nJhG1UQPFNuvWkSn4Lbe" }')
+  //  }
+  // socket.onmessage = async (e) => {
+  //    const message = JSON.parse(e.data)
+  //   console.log('message', message)
+  //    if (message.payload === "Contract"){
+  //      await hydrateApp()
+  //    }
+  //  }
+
 })
 
 watch(walletStatus,
@@ -84,3 +100,5 @@ small {
 }
 </style>
 
+
+{"op":"Subscribe", "payload": "Object", "target":"ak_KwsxqWjMzk8mewXJiibqf3Bj74sKCmyaNWUN46dD1B7HY5o1G"}
