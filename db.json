@@ -1,5 +1,5 @@
 {
-  "multisigContracts": [
+  "multisigWallets": [
     {
       "contractId": "ct_2F2U2EVrVtduTHPeyJdAMHDLbpmYHmF1WpK5HZgLcscn8Pb5mm",
       "gaKeyPair": {
@@ -173,6 +173,21 @@
       "recipientAddress": "ak_25Sy9DmKXtavyTvPaN8KSxsknJvHee8VqeufTyh5FNk3m4M4Zy",
       "proposedAmount": "423",
       "sentBy": "ak_2vzMj7NputF5wZZH2M3LWDecLRghdAZxWnpcPwp9Ey2NTrXCiv"
+    },
+    {
+      "contractId": "ct_hNH3FvkXviYAkKcToXpbNdYFL4GEt4sV5iUK8vm4Dym1M9n2a",
+      "gaKeyPair": {
+        "publicKey": "ak_2R6i3BdKcVnETnoeqpgFKZBvnaghkmAXMUZD5MtHFciPhJKfEP",
+        "secretKey": "f961f2d23266f2c00dcc63e9bf7916ea9f3e9127b4fc09ee3241dae2865888a1ba6a1af912817beedbc205f57c0c1ed014b5f677eaac1024494d24992e1b150a"
+      },
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+      ],
+      "id": 13,
+      "recipientAddress": "ak_2rVss9cUXxeRpQWiJNhVt9ogbyJaEVsWtzyZPNu4CnNZh1VFHx",
+      "proposedAmount": "123",
+      "sentBy": "ak_2R6i3BdKcVnETnoeqpgFKZBvnaghkmAXMUZD5MtHFciPhJKfEP"
     }
   ]
 }

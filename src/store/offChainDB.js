@@ -1,16 +1,16 @@
 import axios from "axios"
 import { hydrateApp } from './app'
 
-const dbURL = "http://localhost:3001/multisigContracts"
+const dbURL = "http://localhost:3001/multisigWallets"
 
 export const getDBIndex = async (contractId) => {
-  const contracts = await restoreContractsFromDB()
+  const contracts = await restoreWalletsFromDB()
   return contracts.find(contract =>
     contract.contractId === contractId,
   ).id
 }
 
-export const storeContractToDB = async (contractId, gaKeyPair, signers) => {
+export const storeWalletToDB = async (contractId, gaKeyPair, signers) => {
   try {
     await axios.post(dbURL,
       {
@@ -24,7 +24,7 @@ export const storeContractToDB = async (contractId, gaKeyPair, signers) => {
   }
 }
 
-export const restoreContractsFromDB = async () => {
+export const restoreWalletsFromDB = async () => {
   try {
     const res = await axios.get(dbURL)
     return res.data

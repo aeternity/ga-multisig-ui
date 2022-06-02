@@ -1,38 +1,38 @@
 import { reactive, toRefs } from "vue"
 import { aeWallet } from "../utils/aeternity"
-import { restoreContractsFromDB } from "./offChainDB"
+import { restoreWalletsFromDB } from "./offChainDB"
 import { loadChainNAmes } from "./chainNames"
 
 export const app = reactive({
-  multisigContracts: null,
-  myContracts: null,
+  multisigWallets: null,
+  myWallets: null,
   isAppHydrated: false,
 })
 
 export const hydrateApp = async () => {
-  const { isAppHydrated, myContracts, multisigContracts } = toRefs(app)
+  const { isAppHydrated, myWallets, multisigWallets } = toRefs(app)
   const { address } = toRefs(aeWallet)
 
   await loadChainNAmes()
-  multisigContracts.value = await restoreContractsFromDB()
-  myContracts.value = getMyContracts(multisigContracts, address)
+  multisigWallets.value = await restoreWalletsFromDB()
+  myWallets.value = getMyWallets(multisigWallets, address)
   isAppHydrated.value = true
 }
 
-export const getMyContracts = (contracts, address) => {
+export const getMyWallets = (contracts, address) => {
   return contracts.value.filter(contract => contract.signers.includes(address.value))
 }
 
 export const getContractByAddress = (gaAddress) => {
-  const { multisigContracts } = toRefs(app)
-  return multisigContracts.value.find(contract =>
-    contract.gaKeyPair.publicKey === gaAddress
+  const { multisigWallets } = toRefs(app)
+  return multisigWallets.value.find(contract =>
+    contract.gaKeyPair.publicKey === gaAddress,
   )
 }
 
 export const getContractByContractId = (contractId) => {
-  const { multisigContracts } = toRefs(app)
-  return multisigContracts.value.find(contract =>
+  const { multisigWallets } = toRefs(app)
+  return multisigWallets.value.find(contract =>
     contract.contractId === contractId,
   )
 }

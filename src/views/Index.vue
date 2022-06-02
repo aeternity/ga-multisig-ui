@@ -9,12 +9,12 @@
     </h2>
 
     <div v-if="address && !walletStatus">
-      <div v-for="contract in myContracts">
+      <div v-for="contract in myWallets">
         <router-link :to="`/detail/${contract.contractId}`">
           {{ contract.contractId }}
         </router-link>
       </div>
-      <div v-if="myContracts?.length === 0">
+      <div v-if="myWallets?.length === 0">
         No contracts assigned to you, but you can create one
       </div>
     </div>
@@ -30,7 +30,7 @@ import LoaderImage from "../components/LoaderImage"
 import { useRoute } from "vue-router"
 
 const route = useRoute()
-const { myContracts, isAppHydrated } = toRefs(app)
+const { myWallets, isAppHydrated } = toRefs(app)
 
 const {
   walletStatus,

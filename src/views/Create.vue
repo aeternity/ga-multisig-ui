@@ -60,7 +60,7 @@ import {
   patchRevokedBy,
   proposeTx,
   revokeTx,
-  storeContractToDB,
+  storeWalletToDB,
 } from '../store'
 import { onMounted, ref, toRefs } from "vue"
 
@@ -99,7 +99,7 @@ async function crateMultisigAccount () {
 
   await initMultisigContract(initSigners.value, initConfirmationsRequired.value, gaKeyPair.value)
   await loadContractDetail()
-  await storeContractToDB(contractId.value, gaKeyPair.value, initSigners.value)
+  await storeWalletToDB(contractId.value, gaKeyPair.value, initSigners.value)
 }
 
 async function propose () {
