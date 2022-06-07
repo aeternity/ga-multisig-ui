@@ -60,7 +60,7 @@
         @click="goToStep(2)">
         back
       </button>
-      <button @click="crateMultisigAccount">Create</button>
+      <button @click="createMultisigAccount">Create</button>
 
     </div>
 
@@ -103,7 +103,7 @@ const step = ref(1)
 const initSigners = ref(['', '']) //todo move this to store
 const initConfirmationsRequired = ref('')
 
-async function crateMultisigAccount () {
+async function createMultisigAccount () {
   gaKeyPair.value = Crypto.generateKeyPair()
 
   await initMultisigContract(initSigners.value, initConfirmationsRequired.value, gaKeyPair.value)
