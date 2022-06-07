@@ -83,7 +83,7 @@ import {
   contractDetail,
   initMultisigContract,
   loadContractDetail,
-  storeContractToDB,
+  storeWalletToDB,
 } from "../store"
 
 onMounted(() => clearContractDetail())
@@ -108,7 +108,7 @@ async function crateMultisigAccount () {
 
   await initMultisigContract(initSigners.value, initConfirmationsRequired.value, gaKeyPair.value)
   await loadContractDetail()
-  await storeContractToDB(contractId.value, gaKeyPair.value, initSigners.value)
+  await storeWalletToDB(contractId.value, gaKeyPair.value, initSigners.value)
 }
 
 async function connect () {

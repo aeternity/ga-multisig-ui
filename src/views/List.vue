@@ -1,11 +1,15 @@
 <template>
-  <div class="about">
+  <div class="list">
     <h2>Transactions </h2>
 
     <div v-if="address && !walletStatus">
-      <div v-for="contract in myWallets">
-        <router-link :to="`/detail/${contract.contractId}`">
-          {{ contract.contractId }}
+      <div v-for="wallet in myWallets">
+        <router-link :to="`/detail/${wallet.contractId}`">
+          {{ wallet.contractId }}
+          {{ !!wallet.revokedBy ? 'REVOKED' : null }}
+          {{ !!wallet.sentBy ? 'SENT' : null }}
+          {{ !!wallet.proposedAmount ? 'PROPOSED' : null }}
+
         </router-link>
       </div>
       <div v-if="myWallets?.length === 0">

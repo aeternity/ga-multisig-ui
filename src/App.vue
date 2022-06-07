@@ -2,13 +2,15 @@
   <div class="container">
 
     <header>
-      <router-link to="/welcome" class="home-link">
-        <img alt="Aeternity" src="./assets/logo.svg" width="80"/>
+      <!--      todo layout-->
+      <router-link to="/landing" class="home-link">
+        <img alt="Aeternity" src="./assets/logo.svg" width="60"/>
         <h1> Multisig Wallet</h1>
       </router-link>
       <div class="wallet">
         <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="40">
         <div class="address"> {{ address || 'not connected' }}
+          <!--          todo if not connected-->
           <br>
           Chain name
         </div>
@@ -16,7 +18,7 @@
       </div>
     </header>
 
-    <aside>
+    <aside v-if="route.name !== 'landing'">
       <ul>
         <li>
           <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="100">
@@ -99,6 +101,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: rgba(40, 54, 61, 0.18) 0px 2px 4px 0px;
 }
 
 aside {
@@ -125,6 +128,11 @@ article {
   width: 280px;
 }
 
+h1 {
+  color: #de3f6b;
+  font-size: 24px;
+  margin-left: 20px;
+}
 
 </style>
 
@@ -138,9 +146,6 @@ body {
   padding: 0;
 }
 
-h1 {
-  color: #de3f6b;
-}
 
 li {
   list-style: none;
