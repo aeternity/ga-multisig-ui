@@ -69,7 +69,6 @@ import {
   proposeTx,
   revokeTx,
   sendTx,
-  subscribeToSocket,
 } from '../store'
 
 import ProposeForm from "../components/ProposeForm"
@@ -82,6 +81,11 @@ import SignersList from "../components/SignersList"
 
 import { onMounted, toRefs } from "vue"
 import { useRoute } from "vue-router"
+import { aeWallet } from "../utils/aeternity"
+
+const {
+  address,
+} = toRefs(aeWallet)
 
 const route = useRoute()
 const {
@@ -121,7 +125,7 @@ onMounted(async () => {
   }
 
   await initContractDetail()
-  await subscribeToSocket(contractId.value)
+  // await subscribeToSocket(contractId.value)
 })
 
 async function initContractDetail () {
@@ -153,7 +157,7 @@ async function chargeAccount () {
 
 async function send () {
   await sendTx(gaKeyPair.value, spendTx.value, contractInstance.value)
-  await patchSentBy(contractId.value, gaKeyPair.value.publicKey)
+  await patchSentBy(contractId.value, address.value)
   await loadContractDetail()
 }
 

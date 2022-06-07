@@ -3,7 +3,6 @@ import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
 import { getContractByAddress } from "./app"
 import { getSpendTx } from "./contractActions"
-import { resolveChainName } from "./chainNames"
 
 const getInitialContractDetail = () => ({
   gaKeyPair: null,

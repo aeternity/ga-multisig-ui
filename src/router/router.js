@@ -1,14 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Create from "../views/Create"
 import Detail from "../views/Detail"
-import Index from "../views/Index"
+import Welcome from "../views/Welcome"
+import List from "../views/List"
 
 const routes = [
   {
     path: '/',
-    alias: '/index',
-    name: 'index',
-    component: Index,
+    alias: '/welcome',
+    name: 'welcome',
+    component: Welcome,
+  },
+  {
+    alias: '/list',
+    name: 'list',
+    component: List,
   },
   {
     path: '/create',

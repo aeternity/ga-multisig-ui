@@ -1,7 +1,5 @@
 <template>
   <div class="signers-form">
-    <hr>
-    <h3>Select Signers</h3>
     <small>
       My addres #1 <i>ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7</i>
       <br>
@@ -24,27 +22,29 @@
       </li>
     </ul>
 
+    <button @click="addInput">+ Add another signer</button>
+    <br>
+    <br>
+    Any transactions requires the confirmation of:
+    <br>
 
-    <button @click="addInput">+ Add signer</button>
-    <br>
-    <br>
-    Required count:
     <select
       :value="requiredSignersAmount"
       @input="$emit('update:requiredSignersAmount', $event.target.value)">
-      <option selected disabled value="">Please select one</option>
+      <option selected disabled value="">select</option>
       <template v-for="( signer, index ) in signersList">
         <option v-if="index > 0" :value="index + 1">
           {{ index + 1 }}
         </option>
       </template>
     </select>
-    <br>
-    <br>
-    <button
-      @click="$emit('create-clicked')">
-      Create Account
-    </button>
+    <span> out of {{ signersList.length }} users</span>
+    <!--    <br>-->
+    <!--    <br>-->
+    <!--    <button-->
+    <!--      @click="$emit('create-clicked')">-->
+    <!--      Create Account-->
+    <!--    </button>-->
   </div>
 </template>
 <script>
@@ -71,7 +71,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .signers-item {
   display: flex;
   align-items: center;
@@ -83,5 +83,9 @@ export default {
   position: relative;
   bottom: 8px;
   cursor: pointer;
+}
+
+select {
+  width: 50px;
 }
 </style>

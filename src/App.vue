@@ -1,19 +1,55 @@
 <template>
   <div class="container">
-    <router-link to="/" class="home-link">
-      <h1>
+
+    <header>
+      <router-link to="/welcome" class="home-link">
         <img alt="Aeternity" src="./assets/logo.svg" width="80"/>
-        Multisig App
-      </h1>
-    </router-link>
+        <h1> Multisig Wallet</h1>
+      </router-link>
+      <div class="wallet">
+        <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="40">
+        <div class="address"> {{ address || 'not connected' }}
+          <br>
+          Chain name
+        </div>
+
+      </div>
+    </header>
+
+    <aside>
+      <ul>
+        <li>
+          <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="100">
+          <div class="address"> {{ address || 'not connected' }}</div>
+        </li>
+        <li>
+          <router-link to="/create">
+            <button>
+              New Transaction
+            </button>
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/list" class="home-link">
+            Transactions
+          </router-link>
+        </li>
+      </ul>
+    </aside>
+
+    <main>
+      <article>
+        <router-view/>
+      </article>
+    </main>
+
   </div>
-  <router-view/>
 </template>
 
 <script setup>
 import { onMounted, toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
-import { hydrateApp, initWebSocket } from "./store"
+import { hydrateApp } from "./store"
 import { useRoute } from "vue-router"
 
 const {
@@ -24,22 +60,6 @@ const route = useRoute()
 
 onMounted(async () => {
   await aeInitWallet()
-  await initWebSocket()
-
-  // const socket = new WebSocket('wss://testnet.aeternity.art/mdw/websocket')
-  //
-  //  socket.onopen = (e) => {
-  //    console.info('connected')
-  //    socket.send('{"op":"Subscribe", "payload":"Object", "target": "ct_2XwrTRk5APt8J7Ujn651918AnhmUq1nJhG1UQPFNuvWkSn4Lbe" }')
-  //  }
-  // socket.onmessage = async (e) => {
-  //    const message = JSON.parse(e.data)
-  //   console.log('message', message)
-  //    if (message.payload === "Contract"){
-  //      await hydrateApp()
-  //    }
-  //  }
-
 })
 
 watch(walletStatus,
@@ -63,13 +83,59 @@ watch(route,
 
 </script>
 
+<style scoped>
+
+.container {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "aside main";
+  grid-template-rows: 55px calc(100vh - 55px);
+  grid-template-columns: 200px auto;
+}
+
+header {
+  grid-area: header;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+aside {
+  grid-area: aside;
+  padding: 0;
+  margin-left: 0;
+  width: 100%;
+  border: 0;
+}
+
+main {
+  grid-area: main;
+  overflow: auto;
+  padding-top: 0;
+}
+
+article {
+  border: 0;
+
+}
+
+.wallet {
+  display: flex;
+  width: 280px;
+}
+
+
+</style>
+
+
 <style>
+
 body {
-  display: block;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+//grid-template-columns: 1fr min(100rem, 100%) 1fr; display: block !important; font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 30px;
+  padding: 0;
 }
 
 h1 {
@@ -96,9 +162,14 @@ small {
 }
 
 .home-link {
+  display: flex;
   text-decoration: none;
+}
+
+.address {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
 
-
-{"op":"Subscribe", "payload": "Object", "target":"ak_KwsxqWjMzk8mewXJiibqf3Bj74sKCmyaNWUN46dD1B7HY5o1G"}

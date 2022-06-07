@@ -1,12 +1,6 @@
 <template>
   <div class="about">
-    <h2>My Wallets
-      <router-link to="/create" style="position: relative; bottom: 10px;">
-        <button>
-          + Create Multisig Wallet
-        </button>
-      </router-link>
-    </h2>
+    <h2>Transactions </h2>
 
     <div v-if="address && !walletStatus">
       <div v-for="contract in myWallets">
