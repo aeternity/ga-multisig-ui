@@ -29,13 +29,9 @@ export const getContractByAddress = (gaAddress) => {
 }
 
 export const getSafeByContractId = (contractId) => {
-  console.log('getSafeByContractId contractId', contractId)
   const { multisigSafes } = toRefs(app)
-  console.log('multisigSafes', multisigSafes)
 
-  const aaa = multisigSafes.value.find(safe =>
+  return multisigSafes.value.find(safe =>
     safe.contractId === contractId, //todo contractid vs safeid
   )
-  console.log('aaa', aaa)
-  return aaa
 }

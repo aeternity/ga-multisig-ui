@@ -134,8 +134,10 @@ onMounted(async () => {
 })
 
 async function initTransaction () {
-  safeId.value = await getSafeByContractId(safeId.value)
-  gaKeyPair.value = transactionDetail.gaKeyPair
+  console.log('safeId.value', safeId.value)
+  const neco = await getSafeByContractId(safeId.value)
+  console.log('neco', neco)
+  gaKeyPair.value = neco.gaKeyPair
 
   await loadTransactionDetail()
 }

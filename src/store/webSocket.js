@@ -17,7 +17,6 @@ export async function initWebSocket () {
 
   socket.value.onmessage = async (e) => {
     const message = JSON.parse(e.data)
-    console.log('message', message)
     await hydrateApp()
     await loadtransactionDetail()
   }

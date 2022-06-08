@@ -27,8 +27,6 @@ export const initSafe = async (signers, confirmationsRequired, gaKeyPair) => {
   const { creationStep1, creationStep2, creationStep3, creationStep4, creationStep5 } = toRefs(creationSteps)
   const { safeId, nonce, version } = toRefs(safeDetail)
 
-  console.log('initSafe gaKeyPair', gaKeyPair.publicKey)
-
   const contractArgs = [
     confirmationsRequired,
     signers,
@@ -67,8 +65,7 @@ export const initSafe = async (signers, confirmationsRequired, gaKeyPair) => {
 
 
   const contractAccount = await signerSdk.getAccount(gaKeyPair.publicKey)
-  safeId.value = contractAccount.safeId
-  await loadSafeDetail(safeId.value)
+  safeId.value = contractAccount.contractId
   return safeId.value
 }
 
@@ -89,11 +86,9 @@ export const loadSafeDetail = async (contractId) => {
   // const offChainSafeData = getSafeByAddress(gaKeyPair.value.publicKey)
   const safeData = getSafeByContractId(contractId)
   gaKeyPair.value = safeData.gaKeyPair.publicKey
-  // console.log('gaKeyPair.value', gaKeyPair.value)
   // safeAccount.value = await signerSdk.getAccount(gaKeyPair.value)
 
   safeId.value = safeData.contractId
-  console.log('safeId.value', safeId.value)
   safeInstance.value = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: safeId.value,
@@ -102,7 +97,6 @@ export const loadSafeDetail = async (contractId) => {
   // await safeInstance.value.deploy()
   // await safeInstance.value.compile()
 
-  console.log('safeInstance', safeInstance.value)
   // isMultisigAccountCharged.value = await signerSdk.getBalance(safeData.gaKeyPair.publicKey) > 0
   nonce.value = (await safeInstance.value.methods.get_nonce()).decodedResult
   version.value = (await safeInstance.value.methods.get_version()).decodedResult

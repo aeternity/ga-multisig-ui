@@ -13,7 +13,6 @@ export const getSafeDBIndex = async (contractId) => {
 
 
 export const storeSafeToDB = async (contractId, gaKeyPair, signers) => {
-  console.log('storeSafeToDB', contractId, gaKeyPair, signers)
   try {
     await axios.post(safeUrl,
       {
@@ -45,7 +44,6 @@ export const storeTransactionToDB = async (contractId, gaKeyPair, signers) => {
 export const restoreSafesFromDB = async () => {
   try {
     const res = await axios.get(safeUrl)
-    console.log('res.data', res.data)
     return res.data
   } catch (e) {
     console.error(e)

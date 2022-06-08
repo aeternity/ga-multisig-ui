@@ -18,7 +18,7 @@
     TBD
     <br>
 
-    <router-link to="create-transaction">
+    <router-link to="/create-transaction">
       <button>New Transaction</button>
     </router-link>
 
@@ -58,7 +58,6 @@ onMounted(async () => {
   if (!isAppHydrated.value) {
     await hydrateApp()
   }
-  console.log('route.id', route.params.id)
   await loadSafeDetail(route.params.id)
 })
 

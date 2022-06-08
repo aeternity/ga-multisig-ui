@@ -140,9 +140,10 @@ const initConfirmationsRequired = ref('')
 async function createSafe () {
   gaKeyPair.value = Crypto.generateKeyPair()
 
-  await initSafe(initSigners.value, initConfirmationsRequired.value, gaKeyPair.value)
-  console.log('safeId.value', safeId.value)
-  await storeSafeToDB(safeId.value, gaKeyPair.value, initSigners.value)
+  const safeId = await initSafe(initSigners.value, initConfirmationsRequired.value, gaKeyPair.value)
+
+  await storeSafeToDB(safeId, gaKeyPair.value, initSigners.value)
+
 }
 
 async function connect () {

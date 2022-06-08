@@ -30,7 +30,7 @@
             <!--          todo disconnect-->
           </li>
           <li>
-            <router-link to="/create">
+            <router-link to="/create-transaction">
               <button>
                 New Transaction
               </button>
