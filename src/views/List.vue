@@ -9,6 +9,7 @@
           {{ !!wallet.revokedBy ? 'REVOKED' : null }}
           {{ !!wallet.sentBy ? 'SENT' : null }}
           {{ !!wallet.proposedAmount ? 'PROPOSED' : null }}
+<!--          todo make it better-->
 
         </router-link>
       </div>

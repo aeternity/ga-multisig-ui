@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-
+    <!--    todo componentize-->
+    <!--todo mobile firest-->
     <header>
       <!--      todo layout-->
       <router-link to="/landing" class="home-link">
@@ -19,24 +20,30 @@
     </header>
 
     <aside v-if="route.name !== 'landing'">
-      <ul>
-        <li>
-          <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="100">
-          <div class="address"> {{ address || 'not connected' }}</div>
-        </li>
-        <li>
-          <router-link to="/create">
-            <button>
-              New Transaction
-            </button>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/list" class="home-link">
-            Transactions
-          </router-link>
-        </li>
-      </ul>
+      <div class="sidebar">
+
+        <ul>
+          <li class="user">
+
+            <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="100">
+            <div class="address"> {{ address || 'not connected' }}</div>
+            <!--          todo disconnect-->
+          </li>
+          <li>
+            <router-link to="/create">
+              <button>
+                New Transaction
+              </button>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/list" class="home-link">
+              Transactions
+            </router-link>
+          </li>
+        </ul>
+      </div>
+
     </aside>
 
     <main>
@@ -128,6 +135,17 @@ article {
   width: 280px;
 }
 
+.user {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar {
+  padding: 8px;
+}
+
 h1 {
   color: #de3f6b;
   font-size: 24px;
@@ -140,8 +158,7 @@ h1 {
 <style>
 
 body {
-//grid-template-columns: 1fr min(100rem, 100%) 1fr; display: block !important; font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
+//grid-template-columns: 1fr min(100rem, 100%) 1fr; display: block !important; font-family: Avenir, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding: 0;
 }
@@ -172,6 +189,7 @@ small {
 }
 
 .address {
+  width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

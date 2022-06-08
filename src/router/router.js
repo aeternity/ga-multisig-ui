@@ -5,6 +5,8 @@ import Landing from "../views/Landing"
 import List from "../views/List"
 import Index from "../views/Index"
 
+// todo fix routing
+
 const routes = [
   {
     path: '/',
