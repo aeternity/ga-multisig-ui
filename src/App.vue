@@ -6,7 +6,7 @@
       <!--      todo layout-->
       <router-link to="/landing" class="home-link">
         <img alt="Aeternity" src="./assets/logo.svg" width="60"/>
-        <h1> Multisig Wallet</h1>
+        <h1> Multisig Safe</h1>
       </router-link>
       <div class="wallet">
         <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="40">
@@ -37,8 +37,8 @@
             </router-link>
           </li>
           <li>
-            <router-link to="/list" class="home-link">
-              Transactions
+            <router-link to="/my-safes" class="home-link">
+              My Safes
             </router-link>
           </li>
         </ul>

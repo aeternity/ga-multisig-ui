@@ -1,18 +1,21 @@
 import axios from "axios"
 import { hydrateApp } from './app'
 
-const dbURL = "http://localhost:3001/multisigWallets"
+const safeUrl = "http://localhost:3001/safes"
+const transactionUrl = "http://localhost:3001/transactions"
 
-export const getDBIndex = async (contractId) => {
-  const contracts = await restoreWalletsFromDB()
-  return contracts.find(contract =>
-    contract.contractId === contractId,
+export const getSafeDBIndex = async (contractId) => {
+  const safes = await restoreSafesFromDB()
+  return safes.find(contract =>
+    safes.contractId === contractId,
   ).id
 }
 
-export const storeWalletToDB = async (contractId, gaKeyPair, signers) => {
+
+export const storeSafeToDB = async (contractId, gaKeyPair, signers) => {
+  console.log('storeSafeToDB', contractId, gaKeyPair, signers)
   try {
-    await axios.post(dbURL,
+    await axios.post(safeUrl,
       {
         contractId,
         gaKeyPair,
@@ -24,9 +27,25 @@ export const storeWalletToDB = async (contractId, gaKeyPair, signers) => {
   }
 }
 
-export const restoreWalletsFromDB = async () => {
+export const storeTransactionToDB = async (contractId, gaKeyPair, signers) => {
   try {
-    const res = await axios.get(dbURL)
+    await axios.post(transactionUrl,
+      {
+        contractId,
+        gaKeyPair,
+        signers,
+      })
+    await hydrateApp()
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+
+export const restoreSafesFromDB = async () => {
+  try {
+    const res = await axios.get(safeUrl)
+    console.log('res.data', res.data)
     return res.data
   } catch (e) {
     console.error(e)
@@ -34,10 +53,10 @@ export const restoreWalletsFromDB = async () => {
 }
 
 export const patchProposal = async (contractId, recipientAddress, proposedAmount) => {
-  const id = await getDBIndex(contractId)
+  const id = await getSafeDBIndex(contractId)
 
   try {
-    await axios.patch(`${dbURL}/${id}`, {
+    await axios.patch(`${transactionUrl}/${id}`, {
       recipientAddress,
       proposedAmount,
     })
@@ -49,10 +68,10 @@ export const patchProposal = async (contractId, recipientAddress, proposedAmount
 }
 
 export const patchRevokedBy = async (contractId, revokedBy) => {
-  const id = await getDBIndex(contractId)
+  const id = await getSafeDBIndex(contractId)
 
   try {
-    await axios.patch(`${dbURL}/${id}`, {
+    await axios.patch(`${transactionUrl}/${id}`, {
       revokedBy,
     })
     await hydrateApp()
@@ -63,9 +82,9 @@ export const patchRevokedBy = async (contractId, revokedBy) => {
 }
 
 export const patchSentBy = async (contractId, sentBy) => {
-  const id = await getDBIndex(contractId)
+  const id = await getSafeDBIndex(contractId)
   try {
-    await axios.patch(`${dbURL}/${id}`, {
+    await axios.patch(`${transactionUrl}/${id}`, {
       sentBy,
     })
     await hydrateApp()

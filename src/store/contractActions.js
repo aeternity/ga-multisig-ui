@@ -1,8 +1,7 @@
 import { aeWallet, buildAuthTxHash, getUniversalStamp } from "../utils/aeternity"
 import { MemoryAccount } from '@aeternity/aepp-sdk'
-import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import multisigContract from 'ga-multisig-contract/SimpleGAMultiSig.aes'
-import { reactive, toRefs } from "vue"
+import { reactive } from "vue"
 
 
 export const creationSteps = reactive({
@@ -22,45 +21,6 @@ export const getSpendTx = async (senderAddress, recipientAddress, proposedAmount
   })
 }
 
-export const initMultisigContract = async (signers, confirmationsRequired, gaKeyPair) => {
-  const { creationStep1, creationStep2, creationStep3, creationStep4, creationStep5 } = toRefs(creationSteps)
-
-
-  const contractArgs = [
-    confirmationsRequired,
-    signers,
-  ]
-
-  const signerSdk = await getUniversalStamp()
-
-  const contractInstance = await signerSdk.getContractInstance({ source: multisigContract })
-  creationStep1.value = true
-
-  await contractInstance.compile()
-  creationStep2.value = true
-
-
-  const attachTX = await signerSdk.gaAttachTx({
-    ownerId: gaKeyPair.publicKey,
-    code: contractInstance.bytecode,
-    callData: contractInstance.calldata.encode(contractInstance._name, 'init', contractArgs),
-    authFun: hash('authorize'),
-    gas: await contractInstance._estimateGas('init', contractArgs),
-    options: {
-      innerTx: true,
-    },
-  })
-  creationStep3.value = true
-
-
-  const { rawTx } = await signerSdk.send(attachTX.tx, {
-    innerTx: true,
-    onAccount: gaKeyPair,
-  })
-
-  await aeWallet.sdk.payForTransaction(rawTx)
-  creationStep4.value = true
-}
 
 export const proposeTx = async (spendTx, contractId) => {
   const signerSdk = await getUniversalStamp()

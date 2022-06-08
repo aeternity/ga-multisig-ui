@@ -1,19 +1,16 @@
 <template>
   <div class="list">
-    <h2>Transactions </h2>
+    <h2>Safes </h2>
 
-    <div v-if="address && !walletStatus">
-      <div v-for="wallet in myWallets">
-        <router-link :to="`/detail/${wallet.contractId}`">
-          {{ wallet.contractId }}
-          {{ !!wallet.revokedBy ? 'REVOKED' : null }}
-          {{ !!wallet.sentBy ? 'SENT' : null }}
-          {{ !!wallet.proposedAmount ? 'PROPOSED' : null }}
-<!--          todo make it better-->
+    <div v-if="address && !walletStatus && isAppHydrated">
+      <div v-for="safe in mySafes">
+        <router-link :to="`/detail-safe/${safe.contractId}`">
+          {{ safe.contractId }}
+          <!--          todo make it better-->
 
         </router-link>
       </div>
-      <div v-if="myWallets?.length === 0">
+      <div v-if="mySafes?.length === 0">
         No contracts assigned to you, but you can create one
       </div>
     </div>
@@ -29,7 +26,7 @@ import LoaderImage from "../components/LoaderImage"
 import { useRoute } from "vue-router"
 
 const route = useRoute()
-const { myWallets, isAppHydrated } = toRefs(app)
+const { mySafes, isAppHydrated } = toRefs(app)
 
 const {
   walletStatus,

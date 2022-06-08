@@ -1,10 +1,11 @@
 <template>
+  <h2>Create Safe</h2>
   <div v-if="creationStep1 || creationStep2 || creationStep3 || creationStep4 || creationStep5">
 
-    <h2>Wallet creation process</h2>
+    <h3>Safe creation process</h3>
     <div>
       <br>
-      {{ creationStep1 ? '&#9989;' : '&#9312;' }} preparing multisig wallet
+      {{ creationStep1 ? '&#9989;' : '&#9312;' }} preparing multisig safe
 
       <br>
       {{ creationStep2 ? '&#9989;' : '&#9313;' }} compiling smart contract
@@ -13,15 +14,15 @@
       {{ creationStep3 ? '&#9989;' : '&#9314;' }} deploying smart contract
 
       <br>
-      {{ creationStep4 ? '&#9989;' : '&#9315;' }} createing wallet account
+      {{ creationStep4 ? '&#9989;' : '&#9315;' }} createing safe account
     </div>
-    <router-link :to="`/detail/${contractId}`">
+    <router-link to="/my-safes">
       <button :disabled="!creationStep4">Get Started</button>
     </router-link>
   </div>
 
   <div v-else>
-    <h2>&#9312; Connect Wallet</h2>
+    <h3>&#9312; Connect Wallet</h3>
     <div :class="[{'hidden': step !==1 }]">
       <button @click="connect">Connect</button>
       <br>
@@ -37,7 +38,7 @@
     </div>
 
 
-    <h2>&#9313; Owners and confirmations</h2>
+    <h3>&#9313; Owners and confirmations</h3>
     <div :class="[{'hidden': step !==2 }]">
       <signers-form
         v-model:initConfirmationsRequired="initConfirmationsRequired"
@@ -57,7 +58,7 @@
     </div>
 
 
-    <h2>&#9314; Review</h2>
+    <h3>&#9314; Review</h3>
     <div :class="[{'hidden': step !==3 }]">
       <strong>Any transactions requires the confirmation of:</strong>
       <br>
@@ -70,13 +71,13 @@
       <br>
       <li v-for="signer in initSigners">
         <strong>
-          &#x274C; {{ signer }}
+          {{ signer }}
         </strong>
         <br>
       </li>
       <br>
       <p>
-        You're about to create a new Multisig wallet on Aeternity and will have to confirm a transaction with your
+        You're about to create a new Multisig safe on Aeternity and will have to confirm a transaction with your
         currently connected wallet. The creation will cost approximately 0.00000556 AE. The exact amount will be
         determined
         by your wallet.
@@ -88,13 +89,13 @@
           @click="goToStep(2)">
           back
         </button>
-        <button @click="createMultisigAccount">Create</button>
+        <button @click="createSafe">Create</button>
 
       </div>
 
 
       <div v-if="contractId">
-        <h3>Success Multisig wallet created!</h3>
+        <h3>Success Multisig safe created!</h3>
       </div>
     </div>
 
@@ -108,14 +109,8 @@ import { Crypto } from '@aeternity/aepp-sdk'
 
 import { onMounted, ref, toRefs } from 'vue'
 import { aeInitWallet, aeWallet } from '../utils/aeternity'
-import {
-  clearContractDetail,
-  contractDetail,
-  creationSteps,
-  initMultisigContract,
-  loadContractDetail,
-  storeWalletToDB,
-} from "../store"
+import { clearTransactionDetail, creationSteps, storeSafeToDB } from "../store"
+import { initSafe, safeDetail } from "../store/safeDetail"
 
 const {
   creationStep1,
@@ -125,7 +120,7 @@ const {
   creationStep5,
 } = toRefs(creationSteps)
 
-onMounted(() => clearContractDetail())
+onMounted(() => clearTransactionDetail())
 
 const {
   address,
@@ -133,8 +128,8 @@ const {
 
 const {
   gaKeyPair,
-  contractId,
-} = toRefs(contractDetail)
+  safeId,
+} = toRefs(safeDetail)
 
 
 const step = ref(1)
@@ -142,12 +137,12 @@ const step = ref(1)
 const initSigners = ref(['', '']) //todo move this to store
 const initConfirmationsRequired = ref('')
 
-async function createMultisigAccount () {
+async function createSafe () {
   gaKeyPair.value = Crypto.generateKeyPair()
 
-  await initMultisigContract(initSigners.value, initConfirmationsRequired.value, gaKeyPair.value)
-  await loadContractDetail()
-  await storeWalletToDB(contractId.value, gaKeyPair.value, initSigners.value)
+  await initSafe(initSigners.value, initConfirmationsRequired.value, gaKeyPair.value)
+  console.log('safeId.value', safeId.value)
+  await storeSafeToDB(safeId.value, gaKeyPair.value, initSigners.value)
 }
 
 async function connect () {

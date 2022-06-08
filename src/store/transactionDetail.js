@@ -3,8 +3,9 @@ import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
 import { getContractByAddress } from "./app"
 import { getSpendTx } from "./contractActions"
+import { resolveChainName } from "./chainNames"
 
-const getInitialContractDetail = () => ({
+const getInitialTransactionDetail = () => ({
   gaKeyPair: null,
   isMultisigAccountCharged: false,
   contractId: null,
@@ -31,13 +32,13 @@ const getInitialContractDetail = () => ({
   nonce: null,
 })
 
-export const contractDetail = reactive(getInitialContractDetail())
+export const transactionDetail = reactive(getInitialTransactionDetail())
 
-export const clearContractDetail = () => {
-  Object.assign(contractDetail, getInitialContractDetail())
+export const clearTransactionDetail = () => {
+  Object.assign(transactionDetail, getInitialTransactionDetail())
 }
 
-export const loadContractDetail = async () => {
+export const loadTransactionDetail = async () => {
   const {
     gaKeyPair,
     isMultisigAccountCharged,
@@ -61,7 +62,7 @@ export const loadContractDetail = async () => {
     txHash,
     version,
     nonce,
-  } = toRefs(contractDetail)
+  } = toRefs(transactionDetail)
 
   const signerSdk = await getUniversalStamp()
   const { address } = toRefs(aeWallet)

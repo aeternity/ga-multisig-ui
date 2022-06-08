@@ -1,6 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('Create.vue', () => {
+describe('CreateSafe.vue', () => {
   it('Verifies wallet', () => {
     cy.visit('/')
     cy.contains('h1', 'Welcome To Aeternity')

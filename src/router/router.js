@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Create from "../views/Create"
-import Detail from "../views/Detail"
+import CreateSafe from "../views/CreateSafe"
+import CreateTransaction from "../views/CreateTransaction"
+import DetailSafe from "../views/DetailSafe"
 import Landing from "../views/Landing"
-import List from "../views/List"
+import MySafes from "../views/MySafes"
 import Index from "../views/Index"
 
 // todo fix routing
@@ -15,9 +16,9 @@ const routes = [
     component: Landing,
   },
   {
-    alias: '/list',
-    name: 'list',
-    component: List,
+    alias: '/my-safes',
+    name: 'my-safes',
+    component: MySafes,
   },
   {
     alias: '/index',
@@ -25,14 +26,19 @@ const routes = [
     component: Index,
   },
   {
-    path: '/create',
-    name: 'create',
-    component: Create,
+    path: '/create-safe',
+    name: 'create-safe',
+    component: CreateSafe,
   },
   {
-    path: '/detail/:id',
-    name: 'detail',
-    component: Detail,
+    path: '/create-transaction',
+    name: 'create-transaction',
+    component: CreateTransaction,
+  },
+  {
+    path: '/detail-safe/:id',
+    name: 'detail-safe',
+    component: DetailSafe,
   },
 ]
 
