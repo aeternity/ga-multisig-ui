@@ -26,6 +26,11 @@ const routes = [
     component: Index,
   },
   {
+    alias: '/index',
+    name: 'index',
+    component: Index,
+  },
+  {
     alias: '/topup',
     name: 'topup',
     component: TopUp,
@@ -41,8 +46,8 @@ const routes = [
     component: CreateTransaction,
   },
   {
-    path: '/detail-safe/:id',
-    name: 'detail-safe',
+    path: '/dashboard/:id',
+    name: 'dashboard',
     component: DetailSafe,
   },
 ]

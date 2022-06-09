@@ -22,12 +22,19 @@
 
     <aside v-if="route.name !== 'landing'">
       <div class="sidebar" v-if="gaKeyPair">
-        Selected safe
+        Your safes
         <select>
           <option @click="loadSafeDetail(safe.contractId)" v-for="safe in mySafes" :value="safe.gaKeyPair.publicKey">
             {{ safe.gaKeyPair.publicKey }}
           </option>
         </select>
+        <br>
+        <router-link to="/create-safe">
+          <button>
+            New Safe
+          </button>
+        </router-link>
+        <hr>
         <ul>
           <li class="user">
 
@@ -35,13 +42,7 @@
             <div class="address"> {{ gaKeyPair.publicKey || 'not connected' }}</div>
             <!--          todo disconnect-->
           </li>
-          <li>
-            <router-link to="/create-transaction">
-              <button>
-                New Transaction
-              </button>
-            </router-link>
-          </li>
+
           <li>
             Balance
             <br>
@@ -50,6 +51,21 @@
             <router-link to="/topup">
               top up
             </router-link>
+            <hr>
+          </li>
+          <li>
+            <router-link :to="`/dashboard/${safeId}`">
+              <button>
+                Home
+              </button>
+            </router-link>
+          </li>
+          <li>
+            <a target="_blank" :href="`https://explorer.testnet.aeternity.io/account/${gaKeyPair.publicKey}`">
+              <button>
+                History
+              </button>
+            </a>
           </li>
 
         </ul>
@@ -80,7 +96,7 @@ const {
 const { mySafes } = toRefs(app)
 
 
-const { gaKeyPair, balance } = toRefs(safeDetail)
+const { gaKeyPair, balance, safeId } = toRefs(safeDetail)
 const route = useRoute()
 
 onMounted(async () => {
