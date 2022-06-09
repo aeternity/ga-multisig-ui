@@ -1,4 +1,5 @@
 <template>
+<!--  todo remove this view-->
   <div class="list">
     <h2>Safes </h2>
 
@@ -6,7 +7,6 @@
       <div v-for="safe in mySafes">
         <router-link :to="`/detail-safe/${safe.contractId}`">
           {{ safe.contractId }}
-          <!--          todo make it better-->
 
         </router-link>
       </div>

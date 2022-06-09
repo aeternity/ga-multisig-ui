@@ -14,19 +14,25 @@
           <!--          todo if not connected-->
           <br>
           Chain name
+          <!--          todo connect manually-->
         </div>
 
       </div>
     </header>
 
     <aside v-if="route.name !== 'landing'">
-      <div class="sidebar">
-
+      <div class="sidebar" v-if="gaKeyPair">
+        Selected safe
+        <select>
+          <option @click="loadSafeDetail(safe.contractId)" v-for="safe in mySafes" :value="safe.gaKeyPair.publicKey">
+            {{ safe.gaKeyPair.publicKey }}
+          </option>
+        </select>
         <ul>
           <li class="user">
 
-            <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="100">
-            <div class="address"> {{ address || 'not connected' }}</div>
+            <img :src="`https://avatars.z52da5wt.xyz/${gaKeyPair.publicKey}`" alt="" width="100">
+            <div class="address"> {{ gaKeyPair.publicKey || 'not connected' }}</div>
             <!--          todo disconnect-->
           </li>
           <li>
@@ -37,10 +43,15 @@
             </router-link>
           </li>
           <li>
-            <router-link to="/my-safes" class="home-link">
-              My Safes
+            Balance
+            <br>
+            {{ balance }}
+            <br>
+            <router-link to="/topup">
+              top up
             </router-link>
           </li>
+
         </ul>
       </div>
 
@@ -58,13 +69,18 @@
 <script setup>
 import { onMounted, toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
-import { hydrateApp } from "./store"
+import { app, hydrateApp, loadSafeDetail, safeDetail } from "./store"
 import { useRoute } from "vue-router"
 
 const {
   walletStatus,
   address,
 } = toRefs(aeWallet)
+
+const { mySafes } = toRefs(app)
+
+
+const { gaKeyPair, balance } = toRefs(safeDetail)
 const route = useRoute()
 
 onMounted(async () => {
@@ -77,6 +93,8 @@ watch(walletStatus,
       // wait for wallet connection because wallet =address is needed to filter My Contracts
       // this should be done in mounted hook
       await hydrateApp()
+      console.log('mySafes', mySafes.value)
+      await loadSafeDetail(mySafes.value[0].contractId)
     }
   },
 )
@@ -158,9 +176,7 @@ h1 {
 <style>
 
 body {
-//grid-template-columns: 1fr min(100rem, 100%) 1fr; display: block !important; font-family: Avenir, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  padding: 0;
+//grid-template-columns: 1fr min(100rem, 100%) 1fr; display: block !important; font-family: Avenir, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; padding: 0;
 }
 
 

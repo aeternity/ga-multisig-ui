@@ -14,8 +14,20 @@
     <!--      :confirmations-required="confirmationsRequired"-->
     <!--      :confirmations-map="confirmationsMap"/>-->
 
-    <h3>List of transactions of this safe</h3>
-    TBD
+    <h3>List of open transactions for this safe</h3>
+
+    <ul v-for="transaction in transactions">
+      <li>
+        <router-link :to="`/transaction-detail/${transaction.id}`">
+          {{ transaction.id }}
+          <br>
+          proposed amount: {{ transaction.proposedAmount }}
+          <br>
+          recipient Address: {{ transaction.recipientAddress }}
+        </router-link>
+      </li>
+      <!--      todo more details (status) -->
+    </ul>
     <br>
 
     <router-link to="/create-transaction">
@@ -46,6 +58,7 @@ const {
   safeId,
   version,
   nonce,
+  transactions,
 } = toRefs(safeDetail)
 
 const { isAppHydrated } = toRefs(app)

@@ -61,7 +61,6 @@ import {
   getSpendTx,
   hydrateApp,
   loadTransactionDetail,
-  patchProposal,
   patchRevokedBy,
   patchSentBy,
   preChargeMultisigAccount,
@@ -69,6 +68,7 @@ import {
   revokeTx,
   safeDetail,
   sendTx,
+  storeTransactionToDB,
   transactionDetail,
 } from '../store'
 
@@ -134,9 +134,7 @@ onMounted(async () => {
 })
 
 async function initTransaction () {
-  console.log('safeId.value', safeId.value)
   const neco = await getSafeByContractId(safeId.value)
-  console.log('neco', neco)
   gaKeyPair.value = neco.gaKeyPair
 
   await loadTransactionDetail()
@@ -146,7 +144,7 @@ async function propose () {
   const txToPropose = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
 
   await proposeTx(txToPropose, safeId.value)
-  await patchProposal(safeId.value, recipientAddress.value, proposedAmount.value)
+  await storeTransactionToDB(safeId.value, recipientAddress.value, proposedAmount.value)
   await loadTransactionDetail()
 }
 

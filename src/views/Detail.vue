@@ -62,7 +62,6 @@ import {
   getSpendTx,
   hydrateApp,
   loadContractDetail,
-  patchProposal,
   patchRevokedBy,
   patchSentBy,
   preChargeMultisigAccount,
@@ -140,7 +139,7 @@ async function propose () {
   const txToPropose = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
 
   await proposeTx(txToPropose, contractId.value)
-  await patchProposal(contractId.value, recipientAddress.value, proposedAmount.value)
+  // await patchProposal(contractId.value, recipientAddress.value, proposedAmount.value)
   await loadContractDetail()
 }
 

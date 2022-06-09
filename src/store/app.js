@@ -1,18 +1,20 @@
 import { reactive, toRefs } from "vue"
 import { aeWallet } from "../utils/aeternity"
-import { restoreSafesFromDB } from "./offChainDB"
+import { restoreSafesFromDB, restoreTransactionsFromDB } from "./offChainDB"
 
 export const app = reactive({
   multisigSafes: null,
   mySafes: null,
   isAppHydrated: false,
+  transactions: false,
 })
 
 export const hydrateApp = async () => {
-  const { isAppHydrated, mySafes, multisigSafes } = toRefs(app)
+  const { isAppHydrated, mySafes, multisigSafes, transactions } = toRefs(app)
   const { address } = toRefs(aeWallet)
 
   multisigSafes.value = await restoreSafesFromDB()
+  transactions.value = await restoreTransactionsFromDB()
   mySafes.value = getMySafes(multisigSafes, address)
   isAppHydrated.value = true
 }
@@ -33,5 +35,13 @@ export const getSafeByContractId = (contractId) => {
 
   return multisigSafes.value.find(safe =>
     safe.contractId === contractId, //todo contractid vs safeid
+  )
+}
+
+export const getTransactionBySafe = (contractId) => {
+  const { transactions } = toRefs(app)
+
+  return transactions.value.filter(transaction =>
+    transaction.contractId === contractId, //todo contractid vs safeid
   )
 }

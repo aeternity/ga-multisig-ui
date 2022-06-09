@@ -26,20 +26,19 @@ export const storeSafeToDB = async (contractId, gaKeyPair, signers) => {
   }
 }
 
-export const storeTransactionToDB = async (contractId, gaKeyPair, signers) => {
+export const storeTransactionToDB = async (contractId, recipientAddress, proposedAmount) => {
   try {
     await axios.post(transactionUrl,
       {
         contractId,
-        gaKeyPair,
-        signers,
+        recipientAddress,
+        proposedAmount,
       })
     await hydrateApp()
   } catch (e) {
     console.error(e)
   }
 }
-
 
 export const restoreSafesFromDB = async () => {
   try {
@@ -50,20 +49,15 @@ export const restoreSafesFromDB = async () => {
   }
 }
 
-export const patchProposal = async (contractId, recipientAddress, proposedAmount) => {
-  const id = await getSafeDBIndex(contractId)
-
+export const restoreTransactionsFromDB = async () => {
   try {
-    await axios.patch(`${transactionUrl}/${id}`, {
-      recipientAddress,
-      proposedAmount,
-    })
-    await hydrateApp()
-
+    const res = await axios.get(transactionUrl)
+    return res.data
   } catch (e) {
     console.error(e)
   }
 }
+
 
 export const patchRevokedBy = async (contractId, revokedBy) => {
   const id = await getSafeDBIndex(contractId)

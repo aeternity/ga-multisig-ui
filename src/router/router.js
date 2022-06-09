@@ -3,8 +3,8 @@ import CreateSafe from "../views/CreateSafe"
 import CreateTransaction from "../views/CreateTransaction"
 import DetailSafe from "../views/DetailSafe"
 import Landing from "../views/Landing"
-import MySafes from "../views/MySafes"
 import Index from "../views/Index"
+import TopUp from "../components/TopUp"
 
 // todo fix routing
 
@@ -15,15 +15,20 @@ const routes = [
     name: 'landing',
     component: Landing,
   },
-  {
-    alias: '/my-safes',
-    name: 'my-safes',
-    component: MySafes,
-  },
+  // {
+  //   alias: '/my-safes',
+  //   name: 'my-safes',
+  //   component: MySafes,
+  // },
   {
     alias: '/index',
     name: 'index',
     component: Index,
+  },
+  {
+    alias: '/topup',
+    name: 'topup',
+    component: TopUp,
   },
   {
     path: '/create-safe',
