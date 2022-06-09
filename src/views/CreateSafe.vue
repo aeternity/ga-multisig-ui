@@ -1,6 +1,6 @@
 <template>
   <h2>Create Safe</h2>
-  <div v-if="creationStep1 || creationStep2 || creationStep3 || creationStep4 || creationStep5">
+  <div v-if="creationStep1 || creationStep2 || creationStep3 || creationStep4">
 
     <h3>Safe creation process</h3>
     <div>
@@ -107,9 +107,9 @@
 import SignersForm from "../components/SignersForm"
 import { Crypto } from '@aeternity/aepp-sdk'
 
-import { onMounted, ref, toRefs } from 'vue'
+import { ref, toRefs } from 'vue'
 import { aeInitWallet, aeWallet } from '../utils/aeternity'
-import { clearTransactionDetail, creationSteps, loadSafeDetail, storeSafeToDB } from "../store"
+import { creationSteps, loadSafeDetail, storeSafeToDB } from "../store"
 import { initSafe, safeDetail } from "../store/safeDetail"
 import { useRouter } from "vue-router"
 
@@ -118,10 +118,8 @@ const {
   creationStep2,
   creationStep3,
   creationStep4,
-  creationStep5,
 } = toRefs(creationSteps)
 
-onMounted(() => clearTransactionDetail())
 
 const {
   address,
@@ -153,7 +151,7 @@ async function connect () {
 
 async function getStarted () {
   await loadSafeDetail(safeId.value)
-  await router.push({ path: `/dashboard/${safeId}` })
+  await router.push({ path: `/dashboard/${safeId.value}` })
 }
 
 async function goToStep (index) {

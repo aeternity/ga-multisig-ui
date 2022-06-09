@@ -62,7 +62,7 @@
           <button v-if="hasProposedTx && !isConfirmedByCurrentUser" @click="confirm">Confirm Tx</button>
           <button v-if="hasProposedTx && hasConsensus && isMultisigAccountCharged" @click="send">Send Tx</button>
           <button v-if="hasProposedTx" @click="revoke">Revoke Tx</button>
-          <div>
+          <div v-if="hasConsensus && !isMultisigAccountCharged">
             <router-link to="/topup">Top up</router-link>
             your account to be able to Send Tx
           </div>
@@ -81,6 +81,7 @@ import {
   getSafeByContractId,
   getSpendTx,
   hydrateApp,
+  loadSafeDetail,
   loadTransactionDetail,
   patchRevokedBy,
   patchSentBy,
@@ -185,12 +186,14 @@ async function send () {
   await sendTx(gaKeyPair.value, spendTx.value, contractInstance.value)
   await patchSentBy(safeId.value, address.value)
   await loadTransactionDetail()
+  await loadSafeDetail()
 }
 
 async function revoke () {
   const revokedBy = await revokeTx(spendTx.value, safeId.value)
   await patchRevokedBy(safeId.value, revokedBy)
   await loadTransactionDetail()
+
 }
 </script>
 
@@ -201,11 +204,11 @@ async function revoke () {
 }
 
 .transaction-detail {
-  width: 400px;
+  width: 500px;
   margin-right: 15px;
 }
 
 .transaction-status {
-  width: 500px;
+  width: 200px;
 }
 </style>

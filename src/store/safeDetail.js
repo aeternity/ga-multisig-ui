@@ -26,7 +26,7 @@ export const clearSafeDetail = () => {
 }
 
 export const initSafe = async (signers, confirmationsRequired, gaKeyPair) => {
-  const { creationStep1, creationStep2, creationStep3, creationStep4, creationStep5 } = toRefs(creationSteps)
+  const { creationStep1, creationStep2, creationStep3, creationStep4 } = toRefs(creationSteps)
   const { safeId, nonce, version } = toRefs(safeDetail)
 
   const contractArgs = [
@@ -75,9 +75,7 @@ export const loadSafeDetail = async (contractId) => {
   // todo param or current
   const {
     gaKeyPair,
-    isMultisigAccountCharged,
     safeId,
-    safeAccount,
     safeInstance,
     version,
     nonce,

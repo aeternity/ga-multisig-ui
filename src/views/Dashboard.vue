@@ -19,16 +19,16 @@
     <transaction/>
     <br>
 
-    <router-link to="/create-transaction">
-      <button>New Transaction</button>
-    </router-link>
+    <!--    <router-link to="/create-transaction">-->
+    <!--      <button>New Transaction</button>-->
+    <!--    </router-link>-->
 
     <!--  <loader-image v-else/>-->
   </div>
 </template>
 
 <script setup>
-import { app, clearTransactionDetail, hydrateApp, loadSafeDetail, safeDetail } from '../store'
+import { app, hydrateApp, loadSafeDetail, safeDetail } from '../store'
 
 
 import SignersList from "../components/SignersList"
@@ -55,13 +55,14 @@ const { isAppHydrated } = toRefs(app)
 
 
 onMounted(async () => {
-  clearTransactionDetail()
+  // clearTransactionDetail()
 
   //when going directly to detail page from pasted url
   if (!isAppHydrated.value) {
     await hydrateApp()
   }
-  await loadSafeDetail(route.params.id)
+
+  await loadSafeDetail(safeId.value)
 })
 
 </script>

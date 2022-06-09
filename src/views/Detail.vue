@@ -67,6 +67,7 @@ import {
   preChargeMultisigAccount,
   proposeTx,
   revokeTx,
+  safeDetail,
   sendTx,
 } from '../store'
 
@@ -111,6 +112,9 @@ const {
   version,
   nonce,
 } = toRefs(contractDetail)
+const {
+  safeId,
+} = toRefs(safeDetail)
 
 const { isAppHydrated } = toRefs(app)
 
@@ -128,8 +132,7 @@ onMounted(async () => {
 })
 
 async function initContractDetail () {
-  const contractId = route.params.id
-  const contractDetail = await getContractByContractId(contractId)
+  const contractDetail = await getContractByContractId(safeId)
   gaKeyPair.value = contractDetail.gaKeyPair
 
   await loadContractDetail()

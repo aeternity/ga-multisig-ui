@@ -23,3 +23,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.confirmation-list {
+  margin-left: 28px;
+}
+</style>
