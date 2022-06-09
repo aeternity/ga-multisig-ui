@@ -1,15 +1,9 @@
 <template>
   <div>
     <hr>
-    <strong>Proposed amount</strong>
-    <br>
-    {{ proposedAmount }}
-    <br>
-    <br>
-    <strong>recipient address</strong>
+    <strong> Send</strong> {{ proposedAmount }} Aettos to:
     <br>
     {{ recipientAddress }}
-    <br>
     <br>
   </div>
 </template>

@@ -30,6 +30,13 @@ export const getContractByAddress = (gaAddress) => {
   )
 }
 
+export const getTransactionByContractId = (contractId) => {
+  const { transactions } = toRefs(app)
+  return transactions.value.find(transaction =>
+    transaction.contractId === contractId,
+  )
+}
+
 export const getSafeByContractId = (contractId) => {
   const { multisigSafes } = toRefs(app)
 

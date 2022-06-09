@@ -33,7 +33,6 @@ export const initSafe = async (signers, confirmationsRequired, gaKeyPair) => {
     confirmationsRequired,
     signers,
   ]
-
   const signerSdk = await getUniversalStamp()
 
   const contractInstance = await signerSdk.getContractInstance({ source: multisigContract })
@@ -111,5 +110,4 @@ export const loadSafeDetail = async (contractId) => {
 
   transactions.value = getTransactionBySafe(safeId.value)
 }
-
 

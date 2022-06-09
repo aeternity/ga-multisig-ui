@@ -15,10 +15,12 @@
 
       <br>
       {{ creationStep4 ? '&#9989;' : '&#9315;' }} createing safe account
+
+      <div v-if="creationStep4">
+        <h3>Success Multisig safe created!</h3>
+      </div>
     </div>
-    <router-link to="/my-safes">
-      <button :disabled="!creationStep4">Get Started</button>
-    </router-link>
+    <button @click="getStarted" :disabled="!creationStep4">Get Started</button>
   </div>
 
   <div v-else>
@@ -41,7 +43,7 @@
     <h3>&#9313; Owners and confirmations</h3>
     <div :class="[{'hidden': step !==2 }]">
       <signers-form
-        v-model:initConfirmationsRequired="initConfirmationsRequired"
+        v-model:requiredSignersAmount="initConfirmationsRequired"
         v-model:signersList="initSigners"/>
       <div class="controls">
         <button
@@ -94,9 +96,7 @@
       </div>
 
 
-      <div v-if="contractId">
-        <h3>Success Multisig safe created!</h3>
-      </div>
+
     </div>
 
   </div>
@@ -109,8 +109,9 @@ import { Crypto } from '@aeternity/aepp-sdk'
 
 import { onMounted, ref, toRefs } from 'vue'
 import { aeInitWallet, aeWallet } from '../utils/aeternity'
-import { clearTransactionDetail, creationSteps, storeSafeToDB } from "../store"
+import { clearTransactionDetail, creationSteps, loadSafeDetail, storeSafeToDB } from "../store"
 import { initSafe, safeDetail } from "../store/safeDetail"
+import { useRouter } from "vue-router"
 
 const {
   creationStep1,
@@ -131,6 +132,7 @@ const {
   safeId,
 } = toRefs(safeDetail)
 
+const router = useRouter()
 
 const step = ref(1)
 
@@ -143,11 +145,15 @@ async function createSafe () {
   const safeId = await initSafe(initSigners.value, initConfirmationsRequired.value, gaKeyPair.value)
 
   await storeSafeToDB(safeId, gaKeyPair.value, initSigners.value)
-
 }
 
 async function connect () {
   await aeInitWallet()
+}
+
+async function getStarted () {
+  await loadSafeDetail(safeId.value)
+  await router.push({ path: `/dashboard/${safeId}` })
 }
 
 async function goToStep (index) {

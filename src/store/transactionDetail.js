@@ -1,7 +1,7 @@
 import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
-import { getContractByAddress } from "./app"
+import { getTransactionByContractId } from "./app"
 import { getSpendTx } from "./contractActions"
 import { resolveChainName } from "./chainNames"
 
@@ -66,18 +66,20 @@ export const loadTransactionDetail = async () => {
 
   const signerSdk = await getUniversalStamp()
   const { address } = toRefs(aeWallet)
-  const offChainContractData = getContractByAddress(gaKeyPair.value.publicKey)
-
+  console.log('XXX gaKeyPair.value', gaKeyPair.value)
   contractAccount.value = await signerSdk.getAccount(gaKeyPair.value.publicKey)
 
   contractId.value = contractAccount.value.contractId
+
+  const offChainContractData = getTransactionByContractId(contractId.value)
+
 
   contractInstance.value = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,
   })
 
-  isMultisigAccountCharged.value = await signerSdk.getBalance(gaKeyPair.value.publicKey) > 0
+  isMultisigAccountCharged.value = await signerSdk.getBalance(gaKeyPair.value.publicKey) > 0 // todo better check
   nonce.value = (await contractInstance.value.methods.get_nonce()).decodedResult
   signers.value = (await contractInstance.value.methods.get_signers()).decodedResult
   version.value = (await contractInstance.value.methods.get_version()).decodedResult
@@ -89,7 +91,7 @@ export const loadTransactionDetail = async () => {
   hasConsensus.value = consensus.has_consensus
   confirmedBy.value = consensus.confirmed_by
 
-  hasProposedTx.value = !!confirmations.value
+  hasProposedTx.value = confirmations.value && confirmationsRequired.value
   isCurrentUserSigner.value = signers.value.includes(address.value)
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 

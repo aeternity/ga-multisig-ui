@@ -7,11 +7,6 @@
       <br>
       <br>
     </div>
-    <template v-else>
-      <button @click="$emit('confirm-clicked')">Confirm Tx</button>
-      or
-    </template>
-    <button @click="$emit('revoke-clicked')">Revoke Tx</button>
   </div>
 </template>
 

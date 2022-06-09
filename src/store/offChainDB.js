@@ -6,8 +6,8 @@ const transactionUrl = "http://localhost:3001/transactions"
 
 export const getSafeDBIndex = async (contractId) => {
   const safes = await restoreSafesFromDB()
-  return safes.find(contract =>
-    safes.contractId === contractId,
+  return safes.find(safe =>
+    safe.contractId === contractId,
   ).id
 }
 

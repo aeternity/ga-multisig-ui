@@ -5,6 +5,7 @@
     <br>
     <div v-if="!isMultisigAccountCharged && hasConsensus">
       <p>Multisig account needs to be charged to be able to fund send transaction</p>
+<!--      todo remove pre-charge-->
       <button @click="$emit('charge-clicked')">
         Pre-charge Multisig account
       </button>
@@ -19,18 +20,11 @@
           'Waiting for confirmations from other users'
       }}
     </div>
-    <br>
-    <template v-if="hasConsensus && isMultisigAccountCharged">
-      <button @click="$emit('send-clicked')">Send Tx</button>
-      or
-    </template>
-    <button @click="$emit('revoke-clicked')">Revoke Tx</button>
   </div>
 </template>
 
 <script>
 export default {
   name: 'SendForm',
-  props: ['hasConsensus', 'isMultisigAccountCharged'],
 }
 </script>

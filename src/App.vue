@@ -24,7 +24,7 @@
       <div class="sidebar" v-if="gaKeyPair">
         Your safes
         <select>
-          <option @click="loadSafeDetail(safe.contractId)" v-for="safe in mySafes" :value="safe.gaKeyPair.publicKey">
+          <option @click="selectSafe(safe.contractId)" v-for="safe in mySafes" :value="safe.gaKeyPair.publicKey">
             {{ safe.gaKeyPair.publicKey }}
           </option>
         </select>
@@ -85,8 +85,8 @@
 <script setup>
 import { onMounted, toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
-import { app, hydrateApp, loadSafeDetail, safeDetail } from "./store"
-import { useRoute } from "vue-router"
+import { app, clearTransactionDetail, hydrateApp, loadSafeDetail, loadTransactionDetail, safeDetail } from "./store"
+import { useRoute, useRouter } from "vue-router"
 
 const {
   walletStatus,
@@ -98,10 +98,20 @@ const { mySafes } = toRefs(app)
 
 const { gaKeyPair, balance, safeId } = toRefs(safeDetail)
 const route = useRoute()
+const router = useRouter()
+
 
 onMounted(async () => {
   await aeInitWallet()
 })
+
+async function selectSafe (safeId) {
+  // todo unite functions
+  await loadSafeDetail(safeId)
+  await router.push({ path: `/dashboard/${safeId}` })
+  await clearTransactionDetail()
+  await loadTransactionDetail()
+}
 
 watch(walletStatus,
   async (newStatus) => {
@@ -109,7 +119,6 @@ watch(walletStatus,
       // wait for wallet connection because wallet =address is needed to filter My Contracts
       // this should be done in mounted hook
       await hydrateApp()
-      console.log('mySafes', mySafes.value)
       await loadSafeDetail(mySafes.value[0].contractId)
     }
   },
