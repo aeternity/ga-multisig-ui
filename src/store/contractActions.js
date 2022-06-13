@@ -1,17 +1,6 @@
 import { aeWallet, buildAuthTxHash, getUniversalStamp } from "../utils/aeternity"
 import { MemoryAccount } from '@aeternity/aepp-sdk'
 import multisigContract from 'ga-multisig-contract/SimpleGAMultiSig.aes'
-import { reactive } from "vue"
-
-
-export const creationSteps = reactive({
-  creationStep1: false,
-  creationStep2: false,
-  creationStep3: false,
-  creationStep4: false,
-  creationStep5: false,
-})
-
 
 export const getSpendTx = async (senderAddress, recipientAddress, proposedAmount) => {
   return await aeWallet.sdk.spendTx({

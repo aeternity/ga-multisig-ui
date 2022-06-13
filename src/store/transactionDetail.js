@@ -71,7 +71,6 @@ export const loadTransactionDetail = async () => {
 
   const offChainContractData = getTransactionByContractId(contractId.value)
 
-
   contractInstance.value = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,

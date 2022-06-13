@@ -1,8 +1,7 @@
 import { reactive, toRefs } from 'vue'
 import multisigContract from 'ga-multisig-contract/SimpleGAMultiSig.aes'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
-import { creationSteps } from "./contractActions"
-// import { getSafeByAddress } from "./app"
+import { creationSteps } from "./safeCreation"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { getSafeByContractId, getTransactionBySafe } from "./app"
 
