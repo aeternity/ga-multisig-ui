@@ -66,7 +66,6 @@ export const loadTransactionDetail = async () => {
 
   const signerSdk = await getUniversalStamp()
   const { address } = toRefs(aeWallet)
-  console.log('XXX gaKeyPair.value', gaKeyPair.value)
   contractAccount.value = await signerSdk.getAccount(gaKeyPair.value.publicKey)
 
   contractId.value = contractAccount.value.contractId

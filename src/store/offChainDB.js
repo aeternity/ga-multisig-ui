@@ -34,7 +34,6 @@ export const storeTransactionToDB = async (contractId, recipientAddress, propose
         recipientAddress,
         proposedAmount,
       })
-    console.log('xxx', xxx)
 
     await linkTransactionToSafe(contractId, transaction.data.id)
 

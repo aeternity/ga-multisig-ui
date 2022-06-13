@@ -157,10 +157,7 @@ onMounted(async () => {
 
 
 async function initTransaction () {
-  console.log('1 route.params.id', route.params.id)
-  console.log('2 ga.value', ga.value)
   const safe = await getSafeByContractId(route.params.id)
-  console.log('3 safe', safe)
 
   gaKeyPair.value = ga.value
 
