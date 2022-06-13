@@ -10,7 +10,6 @@ export const getSpendTx = async (senderAddress, recipientAddress, proposedAmount
   })
 }
 
-
 export const proposeTx = async (spendTx, contractId) => {
   const signerSdk = await getUniversalStamp()
   const expirationHeight = await signerSdk.height() + 50
@@ -25,14 +24,6 @@ export const proposeTx = async (spendTx, contractId) => {
   await gaContractRpc.methods.propose.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
-export const preChargeMultisigAccount = async (gaPublicKey) => {
-  const spendFee = 776440000000000
-  await aeWallet.sdk.spend(
-    spendFee,
-    gaPublicKey,
-  )
-}
-
 export const confirmTx = async (contractId, spendTxHash) => {
   const signerSdk = await getUniversalStamp()
   const expirationHeight = await signerSdk.height() + 50
@@ -45,10 +36,8 @@ export const confirmTx = async (contractId, spendTxHash) => {
   await gaContractRpc.methods.confirm.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
-export const sendTx = async (gaKeyPair, spendTx, contractInstance) => {
+export const sendTx = async (gaKeyPair, spendTx, nonce) => {
   const signerSdk = await getUniversalStamp()
-
-  const nonce = (await contractInstance.methods.get_nonce()).decodedResult
 
   await signerSdk.send(
     spendTx,

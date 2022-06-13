@@ -14,8 +14,6 @@
 
     <br>
 
-
-
     <!--  <loader-image v-else/>-->
   </div>
 </template>
@@ -31,7 +29,6 @@ import {
   transactionDetail,
 } from '../store'
 
-
 import SignersList from "../components/SignersList"
 
 import { onMounted, toRefs } from "vue"
@@ -39,23 +36,18 @@ import { useRoute } from "vue-router"
 import { aeWallet } from "../utils/aeternity"
 import Transaction from "../components/Transaction"
 
-const {
-  address,
-} = toRefs(aeWallet)
+const { isAppHydrated } = toRefs(app)
+const { address } = toRefs(aeWallet)
+const { gaKeyPair } = toRefs(transactionDetail)
 
 const route = useRoute()
+
 const {
   safeKeyPair,
   safeId,
   version,
   nonce,
 } = toRefs(safeDetail)
-const {
-  gaKeyPair,
-
-} = toRefs(transactionDetail)
-
-const { isAppHydrated } = toRefs(app)
 
 onMounted(async () => {
   // clearTransactionDetail()
@@ -66,6 +58,8 @@ onMounted(async () => {
   }
 
   await loadSafeDetail(route.params.id || safeId.value)
+
+
   await clearTransactionDetail()
 
   // todo check if needed. Feed with props?

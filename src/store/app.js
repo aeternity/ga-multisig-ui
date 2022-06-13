@@ -41,14 +41,14 @@ export const getSafeByContractId = (contractId) => {
   const { multisigSafes } = toRefs(app)
 
   return multisigSafes.value.find(safe =>
-    safe.contractId === contractId, //todo contractid vs safeid
+    safe.contractId === contractId, //todo refactor contractid vs safeid
   )
 }
 
 export const getTransactionBySafe = (contractId) => {
   const { transactions } = toRefs(app)
 
-  return transactions.value.filter(transaction =>
-    transaction.contractId === contractId, //todo contractid vs safeid
+  return transactions.value.find(transaction =>
+    transaction.contractId === contractId, //todo refactor contractid vs safeid
   )
 }

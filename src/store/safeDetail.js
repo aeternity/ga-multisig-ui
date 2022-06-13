@@ -12,7 +12,7 @@ const getInitialSafeDetail = () => ({
   safeId: null,
   nonce: null,
   version: null,
-  transactions: null,
+  currentTransaction: null,
   balance: null,
 })
 
@@ -24,7 +24,7 @@ export const clearSafeDetail = () => {
 
 export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
   const { creationStep1, creationStep2, creationStep3, creationStep4 } = toRefs(creationSteps)
-  const { safeId, nonce, version } = toRefs(safeDetail)
+  const { safeId } = toRefs(safeDetail)
 
   const contractArgs = [
     confirmationsRequired,
@@ -56,14 +56,12 @@ export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
   })
 
   await aeWallet.sdk.payForTransaction(rawTx)
-
   creationStep4.value = true
 
   const contractAccount = await signerSdk.getAccount(safeKeyPair.publicKey)
   safeId.value = contractAccount.contractId
   return safeId.value
 }
-
 
 export const loadSafeDetail = async (contractId) => {
   // todo param or current
@@ -72,28 +70,26 @@ export const loadSafeDetail = async (contractId) => {
     safeId,
     version,
     nonce,
-    transactions,
+    currentTransaction,
     balance,
   } = toRefs(safeDetail)
 
   const signerSdk = await getUniversalStamp()
   const safeData = getSafeByContractId(contractId)
-  safeKeyPair.value = safeData.safeKeyPair
-  balance.value = await signerSdk.balance(safeKeyPair.value.publicKey)
 
+  safeId.value = contractId
+  safeKeyPair.value = safeData.safeKeyPair //todo get contract id for keypair (reverse)
 
-  safeId.value = safeData.contractId
-
-  const safeInstance = await signerSdk.getContractInstance({
+  const contractInstance = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: safeId.value,
   })
 
+  balance.value = await signerSdk.balance(safeKeyPair.value.publicKey)
 
-  // isMultisigAccountCharged.value = await signerSdk.getBalance(safeData.safeKeyPair.publicKey) > 0
-  nonce.value = (await safeInstance.methods.get_nonce()).decodedResult
-  version.value = (await safeInstance.methods.get_version()).decodedResult
+  nonce.value = (await contractInstance.methods.get_nonce()).decodedResult
+  version.value = (await contractInstance.methods.get_version()).decodedResult
 
-  transactions.value = getTransactionBySafe(safeId.value)
+  currentTransaction.value = getTransactionBySafe(safeId.value)
 }
 

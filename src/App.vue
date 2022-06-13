@@ -23,7 +23,6 @@
             Connect
           </button>
         </div>
-
       </div>
     </header>
 
@@ -31,7 +30,6 @@
       <div class="sidebar" v-if="safeKeyPair">
         My safes
         <select :value="safeId">
-          <!--          todo v-model-->
           <option
             v-for="safe in mySafes"
             @click="selectSafe(safe.contractId)"
@@ -91,7 +89,7 @@
 </template>
 
 <script setup>
-import { toRefs, watch } from 'vue'
+import { onMounted, toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
 import {
   app,
@@ -111,6 +109,10 @@ const { mySafes } = toRefs(app)
 
 const route = useRoute()
 const router = useRouter()
+
+onMounted(async () => {
+  await aeInitWallet()
+})
 
 async function connect () {
   await aeInitWallet()

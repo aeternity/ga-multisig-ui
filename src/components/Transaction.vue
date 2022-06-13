@@ -16,7 +16,6 @@
       <confirm-form
         v-if="!hasConsensus && !(revokedBy || sentBy)"
         :is-confirm-hidden="isConfirmedByCurrentUser"
-
         :class="[{'disabled': !hasProposedTx}]"
       />
 
@@ -36,9 +35,7 @@
       </h5>
       <div v-if="revokedBy || sentBy">
         <!--todo new transaction button clear state and new db entry-->
-        <router-link to="/create-transaction">
-          <button>New Transaction</button>
-        </router-link>
+        <button @click="resetTransaction">New Transaction</button>
       </div>
     </div>
 
@@ -82,18 +79,21 @@ import {
   app,
   clearTransactionDetail,
   confirmTx,
+  getContractByAddress,
   getSpendTx,
+  getTransactionBySafe,
   hydrateApp,
   loadSafeDetail,
   loadTransactionDetail,
-  patchRevokedBy,
-  patchSentBy,
   proposeTx,
   revokeTx,
   safeDetail,
   sendTx,
   storeTransactionToDB,
   transactionDetail,
+  updateProposeTx,
+  updateRevokedBy,
+  updateSentBy,
 } from '../store'
 
 import ProposeForm from "../components/ProposeForm"
@@ -160,19 +160,38 @@ onMounted(async () => {
 
 
 async function initTransaction () {
-  // const safe = await getSafeByContractId(safeId.value)
-
+  console.log('initTransaction')
   gaKeyPair.value = safeKeyPair.value
 
   // todo check if needed. Feed with props?
+  const contract = getContractByAddress(gaKeyPair.value.publicKey)
+  const transaction = getTransactionBySafe(contract.contractId)
+  console.log('transaction', transaction)
+
+  const isTransactionNew = transaction === undefined
+  // const isTransactionNew = !!transaction.length
+  const isTransactionTerminated = !!transaction?.sentBy || !!transaction?.revokedBy
+  // console.log('transaction', transaction.sentBy)
+  // console.log('transaction', transaction.revokedBy)
+  console.log('isTransactionTerminated', isTransactionTerminated)
+  console.log('isTransactionNew', isTransactionNew)
+
+  if (!isTransactionNew || isTransactionTerminated) {
+    await storeTransactionToDB(safeId.value)
+  }
   await loadTransactionDetail()
+}
+
+async function resetTransaction () {
+  await clearTransactionDetail()
+  await initTransaction()
 }
 
 async function propose () {
   const txToPropose = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
 
   await proposeTx(txToPropose, safeId.value)
-  await storeTransactionToDB(safeId.value, recipientAddress.value, proposedAmount.value)
+  await updateProposeTx(safeId.value, recipientAddress.value, proposedAmount.value)
   await loadTransactionDetail()
 }
 
@@ -182,15 +201,15 @@ async function confirm () {
 }
 
 async function send () {
-  await sendTx(gaKeyPair.value, spendTx.value, contractInstance.value)
-  await patchSentBy(safeId.value, address.value)
+  await sendTx(gaKeyPair.value, spendTx.value, nonce.value)
+  await updateSentBy(safeId.value, address.value)
   await loadTransactionDetail()
   await loadSafeDetail()
 }
 
 async function revoke () {
   const revokedBy = await revokeTx(spendTx.value, safeId.value)
-  await patchRevokedBy(safeId.value, revokedBy)
+  await updateRevokedBy(safeId.value, revokedBy)
   await loadTransactionDetail()
 }
 </script>

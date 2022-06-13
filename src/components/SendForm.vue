@@ -3,15 +3,6 @@
     <hr>
     <h3>Send TX</h3>
     <br>
-    <div v-if="!isMultisigAccountCharged && hasConsensus">
-      <p>Multisig account needs to be charged to be able to fund send transaction</p>
-<!--      todo remove pre-charge-->
-      <button @click="$emit('charge-clicked')">
-        Pre-charge Multisig account
-      </button>
-      <br>
-      <br>
-    </div>
 
     <div>
       {{
@@ -27,5 +18,6 @@
 <script>
 export default {
   name: 'SendForm',
+  props: ['hasConsensus'],
 }
 </script>

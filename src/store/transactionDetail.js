@@ -9,8 +9,6 @@ const getInitialTransactionDetail = () => ({
   gaKeyPair: null,
   isMultisigAccountCharged: false,
   contractId: null,
-  contractAccount: null,
-  contractInstance: null,
 
   hasProposedTx: null,
   hasConsensus: null,
@@ -28,8 +26,8 @@ const getInitialTransactionDetail = () => ({
   confirmedBy: null,
   spendTx: null,
   txHash: null,
-  version: null,
   nonce: null, //todo reduce refs
+  // todo where to store nonce
 })
 
 export const transactionDetail = reactive(getInitialTransactionDetail())
@@ -43,8 +41,6 @@ export const loadTransactionDetail = async () => {
     gaKeyPair,
     isMultisigAccountCharged,
     contractId,
-    contractAccount,
-    contractInstance,
     hasProposedTx,
     hasConsensus,
     revokedBy,
@@ -60,27 +56,25 @@ export const loadTransactionDetail = async () => {
     confirmedBy,
     spendTx,
     txHash,
-    version,
     nonce,
   } = toRefs(transactionDetail)
   const signerSdk = await getUniversalStamp()
   const { address } = toRefs(aeWallet)
-  contractAccount.value = await signerSdk.getAccount(gaKeyPair.value.publicKey)
+  const contractAccount = await signerSdk.getAccount(gaKeyPair.value.publicKey)
 
-  contractId.value = contractAccount.value.contractId
+  contractId.value = contractAccount.contractId
 
   const offChainContractData = getTransactionByContractId(contractId.value)
 
-  contractInstance.value = await signerSdk.getContractInstance({
+  const contractInstance = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,
   })
 
   isMultisigAccountCharged.value = await signerSdk.getBalance(gaKeyPair.value.publicKey) > 0 // todo better check
-  nonce.value = (await contractInstance.value.methods.get_nonce()).decodedResult
-  signers.value = (await contractInstance.value.methods.get_signers()).decodedResult
-  version.value = (await contractInstance.value.methods.get_version()).decodedResult
-  const consensus = (await contractInstance.value.methods.get_consensus_info()).decodedResult
+  nonce.value = (await contractInstance.methods.get_nonce()).decodedResult
+  signers.value = (await contractInstance.methods.get_signers()).decodedResult
+  const consensus = (await contractInstance.methods.get_consensus_info()).decodedResult
 
   confirmations.value = consensus.confirmed_by.length
   confirmationsRequired.value = Number(consensus.confirmations_required)
