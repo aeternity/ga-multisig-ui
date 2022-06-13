@@ -12,12 +12,12 @@ export const getSafeDBIndex = async (contractId) => {
 }
 
 
-export const storeSafeToDB = async (contractId, gaKeyPair, signers) => {
+export const storeSafeToDB = async (contractId, safeKeyPair, signers) => {
   try {
     await axios.post(safeUrl,
       {
         contractId,
-        gaKeyPair,
+        safeKeyPair,
         signers,
       })
     await hydrateApp()

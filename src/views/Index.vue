@@ -1,5 +1,5 @@
 <template>
-  <div class="welcome">
+  <div class="create-safe">
     <h2>Welcome to Multisg</h2>
     <p>
       Create a new Safe that is controlled by one or multiple owners.
@@ -18,7 +18,7 @@
 
 
 <style scoped>
-.welcome {
+.create-safe {
 
 }
 </style>

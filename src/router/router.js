@@ -1,12 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CreateSafe from "../views/CreateSafe"
-import CreateTransaction from "../views/CreateTransaction"
-import DetailSafe from "../views/Dashboard"
+import Dashboard from "../views/Dashboard"
 import Landing from "../views/Landing"
 import Index from "../views/Index"
-import TopUp from "../components/TopUp"
+import TopUp from "../views/TopUp"
 
-// todo fix routing
+// todo fix routing - copu gnosis route names
 
 const routes = [
   {
@@ -15,24 +14,14 @@ const routes = [
     name: 'landing',
     component: Landing,
   },
-  // {
-  //   alias: '/my-safes',
-  //   name: 'my-safes',
-  //   component: MySafes,
-  // },
   {
     alias: '/index',
     name: 'index',
     component: Index,
   },
   {
-    alias: '/index',
-    name: 'index',
-    component: Index,
-  },
-  {
-    alias: '/topup',
-    name: 'topup',
+    alias: '/top-up',
+    name: 'top-up',
     component: TopUp,
   },
   {
@@ -41,14 +30,9 @@ const routes = [
     component: CreateSafe,
   },
   {
-    path: '/create-transaction',
-    name: 'create-transaction',
-    component: CreateTransaction,
-  },
-  {
     path: '/dashboard/:id',
     name: 'dashboard',
-    component: DetailSafe,
+    component: Dashboard,
   },
 ]
 

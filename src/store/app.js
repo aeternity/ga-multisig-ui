@@ -26,7 +26,7 @@ export const getMySafes = (contracts, address) => {
 export const getContractByAddress = (gaAddress) => {
   const { multisigSafes } = toRefs(app)
   return multisigSafes.value.find(contract =>
-    contract.gaKeyPair.publicKey === gaAddress,
+    contract.safeKeyPair.publicKey === gaAddress,
   )
 }
 

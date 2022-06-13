@@ -120,13 +120,14 @@ const {
   creationStep4,
 } = toRefs(creationSteps)
 
+// todo disconnect from store
 
 const {
   address,
 } = toRefs(aeWallet)
 
 const {
-  gaKeyPair,
+  safeKeyPair,
   safeId,
 } = toRefs(safeDetail)
 
@@ -138,11 +139,11 @@ const initSigners = ref(['', '']) //todo move this to store
 const initConfirmationsRequired = ref('')
 
 async function createSafe () {
-  gaKeyPair.value = Crypto.generateKeyPair()
+  safeKeyPair.value = Crypto.generateKeyPair()
 
-  const safeId = await initSafe(initSigners.value, initConfirmationsRequired.value, gaKeyPair.value)
+  const safeId = await initSafe(initSigners.value, initConfirmationsRequired.value, safeKeyPair.value)
 
-  await storeSafeToDB(safeId, gaKeyPair.value, initSigners.value)
+  await storeSafeToDB(safeId, safeKeyPair.value, initSigners.value)
 }
 
 async function connect () {

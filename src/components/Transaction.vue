@@ -34,7 +34,12 @@
           {{ recipientAddress }}
         </a>
       </h5>
-      <!--todo new transaction button and clear state-->
+      <div v-if="revokedBy || sentBy">
+        <!--todo new transaction button clear state and new db entry-->
+        <router-link to="/create-transaction">
+          <button>New Transaction</button>
+        </router-link>
+      </div>
     </div>
 
     <div class="transaction-status">
@@ -52,7 +57,6 @@
           <br>
           <confirmation-list
             :class="[{'disabled': signers && !confirmedBy}]"
-
             :confirmations-map="confirmationsMap"/>
         </li>
         <li>
@@ -63,7 +67,7 @@
           <button v-if="hasProposedTx && hasConsensus && isMultisigAccountCharged" @click="send">Send Tx</button>
           <button v-if="hasProposedTx" @click="revoke">Revoke Tx</button>
           <div v-if="hasConsensus && !isMultisigAccountCharged">
-            <router-link to="/topup">Top up</router-link>
+            <router-link to="/top-up">Top up</router-link>
             your account to be able to Send Tx
           </div>
         </li>
@@ -78,7 +82,6 @@ import {
   app,
   clearTransactionDetail,
   confirmTx,
-  getSafeByContractId,
   getSpendTx,
   hydrateApp,
   loadSafeDetail,
@@ -136,7 +139,7 @@ const {
 
 const {
   safeId,
-  gaKeyPair: ga,
+  safeKeyPair,
 } = toRefs(safeDetail)
 
 const { isAppHydrated } = toRefs(app)
@@ -152,16 +155,16 @@ onMounted(async () => {
   }
 
   await initTransaction()
-  // await subscribeToSocket(safeId.value)
+  // todo move conditions here
 })
 
 
 async function initTransaction () {
-  const safe = await getSafeByContractId(route.params.id)
+  // const safe = await getSafeByContractId(safeId.value)
 
-  gaKeyPair.value = ga.value
+  gaKeyPair.value = safeKeyPair.value
 
-
+  // todo check if needed. Feed with props?
   await loadTransactionDetail()
 }
 
@@ -178,7 +181,6 @@ async function confirm () {
   await loadTransactionDetail()
 }
 
-
 async function send () {
   await sendTx(gaKeyPair.value, spendTx.value, contractInstance.value)
   await patchSentBy(safeId.value, address.value)
@@ -190,10 +192,8 @@ async function revoke () {
   const revokedBy = await revokeTx(spendTx.value, safeId.value)
   await patchRevokedBy(safeId.value, revokedBy)
   await loadTransactionDetail()
-
 }
 </script>
-
 
 <style scoped>
 .transaction {

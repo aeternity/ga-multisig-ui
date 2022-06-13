@@ -1,34 +1,35 @@
 <template>
-  <div class="detail" v-if="gaKeyPair">
+  <div class="detail" v-if="safeKeyPair">
     <h2>Safe Detail</h2>
 
     <signers-list
       :contract-id="safeId"
-      :ga-public-key="gaKeyPair.publicKey"
+      :ga-public-key="safeKeyPair.publicKey"
       :version="version"
       :nonce="nonce"/>
-
-    <!--    <confirmation-list-->
-    <!--      :class="[{'disabled': signers && !confirmedBy}]"-->
-    <!--      :confirmations="confirmations"-->
-    <!--      :confirmations-required="confirmationsRequired"-->
-    <!--      :confirmations-map="confirmationsMap"/>-->
 
     <h2>Transaction</h2>
 
     <transaction/>
+
     <br>
 
-    <!--    <router-link to="/create-transaction">-->
-    <!--      <button>New Transaction</button>-->
-    <!--    </router-link>-->
+
 
     <!--  <loader-image v-else/>-->
   </div>
 </template>
 
 <script setup>
-import { app, hydrateApp, loadSafeDetail, safeDetail } from '../store'
+import {
+  app,
+  clearTransactionDetail,
+  hydrateApp,
+  loadSafeDetail,
+  loadTransactionDetail,
+  safeDetail,
+  transactionDetail,
+} from '../store'
 
 
 import SignersList from "../components/SignersList"
@@ -44,15 +45,17 @@ const {
 
 const route = useRoute()
 const {
-  gaKeyPair,
+  safeKeyPair,
   safeId,
   version,
   nonce,
-  transactions,
 } = toRefs(safeDetail)
+const {
+  gaKeyPair,
+
+} = toRefs(transactionDetail)
 
 const { isAppHydrated } = toRefs(app)
-
 
 onMounted(async () => {
   // clearTransactionDetail()
@@ -62,7 +65,12 @@ onMounted(async () => {
     await hydrateApp()
   }
 
-  await loadSafeDetail(safeId.value)
-})
+  await loadSafeDetail(route.params.id || safeId.value)
+  await clearTransactionDetail()
 
+  // todo check if needed. Feed with props?
+  gaKeyPair.value = safeKeyPair.value
+
+  await loadTransactionDetail()
+})
 </script>

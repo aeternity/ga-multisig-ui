@@ -8,11 +8,9 @@ import { getSafeByContractId, getTransactionBySafe } from "./app"
 
 
 const getInitialSafeDetail = () => ({
-  gaKeyPair: null,
+  safeKeyPair: null,
   isMultisigAccountCharged: false,
   safeId: null,
-  safeAccount: null, // todo can be local?
-  safeInstance: null,// can be local?
   nonce: null,
   version: null,
   transactions: null,
@@ -25,7 +23,7 @@ export const clearSafeDetail = () => {
   Object.assign(safeDetail, getInitialSafeDetail())
 }
 
-export const initSafe = async (signers, confirmationsRequired, gaKeyPair) => {
+export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
   const { creationStep1, creationStep2, creationStep3, creationStep4 } = toRefs(creationSteps)
   const { safeId, nonce, version } = toRefs(safeDetail)
 
@@ -42,7 +40,7 @@ export const initSafe = async (signers, confirmationsRequired, gaKeyPair) => {
   creationStep2.value = true
 
   const attachTX = await signerSdk.gaAttachTx({
-    ownerId: gaKeyPair.publicKey,
+    ownerId: safeKeyPair.publicKey,
     code: contractInstance.bytecode,
     callData: contractInstance.calldata.encode(contractInstance._name, 'init', contractArgs),
     authFun: hash('authorize'),
@@ -53,19 +51,16 @@ export const initSafe = async (signers, confirmationsRequired, gaKeyPair) => {
   })
   creationStep3.value = true
 
-
   const { rawTx } = await signerSdk.send(attachTX.tx, {
     innerTx: true,
-    onAccount: gaKeyPair,
+    onAccount: safeKeyPair,
   })
 
   await aeWallet.sdk.payForTransaction(rawTx)
 
-
   creationStep4.value = true
 
-
-  const contractAccount = await signerSdk.getAccount(gaKeyPair.publicKey)
+  const contractAccount = await signerSdk.getAccount(safeKeyPair.publicKey)
   safeId.value = contractAccount.contractId
   return safeId.value
 }
@@ -74,9 +69,8 @@ export const initSafe = async (signers, confirmationsRequired, gaKeyPair) => {
 export const loadSafeDetail = async (contractId) => {
   // todo param or current
   const {
-    gaKeyPair,
+    safeKeyPair,
     safeId,
-    safeInstance,
     version,
     nonce,
     transactions,
@@ -84,27 +78,22 @@ export const loadSafeDetail = async (contractId) => {
   } = toRefs(safeDetail)
 
   const signerSdk = await getUniversalStamp()
-  const { address } = toRefs(aeWallet)
-  // const offChainSafeData = getSafeByAddress(gaKeyPair.value.publicKey)
   const safeData = getSafeByContractId(contractId)
-  gaKeyPair.value = safeData.gaKeyPair
-  balance.value = await signerSdk.balance(gaKeyPair.value.publicKey)
+  safeKeyPair.value = safeData.safeKeyPair
+  balance.value = await signerSdk.balance(safeKeyPair.value.publicKey)
 
-  // safeAccount.value = await signerSdk.getAccount(gaKeyPair.value)
 
   safeId.value = safeData.contractId
-  safeInstance.value = await signerSdk.getContractInstance({
+
+  const safeInstance = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: safeId.value,
   })
 
 
-  // await safeInstance.value.deploy()
-  // await safeInstance.value.compile()
-
-  // isMultisigAccountCharged.value = await signerSdk.getBalance(safeData.gaKeyPair.publicKey) > 0
-  nonce.value = (await safeInstance.value.methods.get_nonce()).decodedResult
-  version.value = (await safeInstance.value.methods.get_version()).decodedResult
+  // isMultisigAccountCharged.value = await signerSdk.getBalance(safeData.safeKeyPair.publicKey) > 0
+  nonce.value = (await safeInstance.methods.get_nonce()).decodedResult
+  version.value = (await safeInstance.methods.get_version()).decodedResult
 
   transactions.value = getTransactionBySafe(safeId.value)
 }

@@ -21,11 +21,15 @@
     </header>
 
     <aside v-if="route.name !== 'landing'">
-      <div class="sidebar" v-if="gaKeyPair">
-        Your safes
-        <select>
-          <option @click="selectSafe(safe.contractId)" v-for="safe in mySafes" :value="safe.gaKeyPair.publicKey">
-            {{ safe.gaKeyPair.publicKey }}
+      <div class="sidebar" v-if="safeKeyPair">
+        My safes
+        <select :value="safeId">
+          <!--          todo v-model-->
+          <option
+            v-for="safe in mySafes"
+            @click="selectSafe(safe.contractId)"
+            :value="safe.contractId">
+            {{ safe.contractId }}
           </option>
         </select>
         <br>
@@ -38,8 +42,8 @@
         <ul>
           <li class="user">
 
-            <img :src="`https://avatars.z52da5wt.xyz/${gaKeyPair.publicKey}`" alt="" width="100">
-            <div class="address"> {{ gaKeyPair.publicKey || 'not connected' }}</div>
+            <img :src="`https://avatars.z52da5wt.xyz/${safeKeyPair.publicKey}`" alt="" width="100">
+            <div class="address"> {{ safeKeyPair.publicKey || 'not connected' }}</div>
             <!--          todo disconnect-->
           </li>
 
@@ -48,7 +52,7 @@
             <br>
             {{ balance }}
             <br>
-            <router-link to="/topup">
+            <router-link to="/top-up">
               top up
             </router-link>
             <hr>
@@ -61,16 +65,14 @@
             </router-link>
           </li>
           <li>
-            <a target="_blank" :href="`https://explorer.testnet.aeternity.io/account/${gaKeyPair.publicKey}`">
+            <a target="_blank" :href="`https://explorer.testnet.aeternity.io/account/${safeKeyPair.publicKey}`">
               <button>
                 History
               </button>
             </a>
           </li>
-
         </ul>
       </div>
-
     </aside>
 
     <main>
@@ -78,28 +80,30 @@
         <router-view/>
       </article>
     </main>
-
   </div>
 </template>
 
 <script setup>
 import { onMounted, toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
-import { app, clearTransactionDetail, hydrateApp, loadSafeDetail, loadTransactionDetail, safeDetail } from "./store"
+import {
+  app,
+  clearTransactionDetail,
+  hydrateApp,
+  loadSafeDetail,
+  loadTransactionDetail,
+  safeDetail,
+  transactionDetail,
+} from "./store"
 import { useRoute, useRouter } from "vue-router"
 
-const {
-  walletStatus,
-  address,
-} = toRefs(aeWallet)
-
+const { walletStatus, address } = toRefs(aeWallet)
+const { safeKeyPair, balance, safeId } = toRefs(safeDetail)
+const { gaKeyPair } = toRefs(transactionDetail)
 const { mySafes } = toRefs(app)
 
-
-const { gaKeyPair, balance, safeId } = toRefs(safeDetail)
 const route = useRoute()
 const router = useRouter()
-
 
 onMounted(async () => {
   await aeInitWallet()
@@ -107,9 +111,11 @@ onMounted(async () => {
 
 async function selectSafe (safeId) {
   // todo unite functions
-  await loadSafeDetail(safeId)
   await router.push({ path: `/dashboard/${safeId}` })
   await clearTransactionDetail()
+
+  // todo check if needed. Feed with props?
+  gaKeyPair.value = safeKeyPair.value
   await loadTransactionDetail()
 }
 
@@ -119,20 +125,10 @@ watch(walletStatus,
       // wait for wallet connection because wallet =address is needed to filter My Contracts
       // this should be done in mounted hook
       await hydrateApp()
-      await loadSafeDetail(mySafes.value[0].contractId)
+      await loadSafeDetail(safeId.value || mySafes.value[0].contractId)
     }
   },
 )
-watch(route,
-  async (newRoute) => {
-    if (newRoute.name === 'index') {
-      // rehydrete whn going back to index
-      await hydrateApp()
-    }
-  },
-)
-
-
 </script>
 
 <style scoped>

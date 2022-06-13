@@ -15,6 +15,7 @@
 
     <div>
       {{
+        // todo improve condition
         hasConsensus ?
           'Send proposed and confirmed tx to recipient account' :
           'Waiting for confirmations from other users'

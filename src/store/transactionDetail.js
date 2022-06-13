@@ -1,5 +1,5 @@
-import { reactive, toRefs } from 'vue'
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
+import { reactive, toRefs } from 'vue'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
 import { getTransactionByContractId } from "./app"
 import { getSpendTx } from "./contractActions"
@@ -29,7 +29,7 @@ const getInitialTransactionDetail = () => ({
   spendTx: null,
   txHash: null,
   version: null,
-  nonce: null,
+  nonce: null, //todo reduce refs
 })
 
 export const transactionDetail = reactive(getInitialTransactionDetail())
@@ -63,7 +63,6 @@ export const loadTransactionDetail = async () => {
     version,
     nonce,
   } = toRefs(transactionDetail)
-
   const signerSdk = await getUniversalStamp()
   const { address } = toRefs(aeWallet)
   contractAccount.value = await signerSdk.getAccount(gaKeyPair.value.publicKey)
