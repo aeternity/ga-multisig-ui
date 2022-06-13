@@ -8,13 +8,20 @@
         <img alt="Aeternity" src="./assets/logo.svg" width="60"/>
         <h1> Multisig Safe</h1>
       </router-link>
-      <div class="wallet">
-        <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="40">
-        <div class="address"> {{ address || 'not connected' }}
-          <!--          todo if not connected-->
-          <br>
-          Chain name
-          <!--          todo connect manually-->
+      <div>
+        <div v-if="address" class="wallet">
+          <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="40">
+          <div class="address"> {{ address }}
+            <br>
+            Chain name
+            <!--          todo chain name-->
+          </div>
+        </div>
+        <div v-else>
+
+          <button @click="connect">
+            Connect
+          </button>
         </div>
 
       </div>
@@ -84,7 +91,7 @@
 </template>
 
 <script setup>
-import { onMounted, toRefs, watch } from 'vue'
+import { toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
 import {
   app,
@@ -105,9 +112,9 @@ const { mySafes } = toRefs(app)
 const route = useRoute()
 const router = useRouter()
 
-onMounted(async () => {
+async function connect () {
   await aeInitWallet()
-})
+}
 
 async function selectSafe (safeId) {
   // todo unite functions
@@ -148,6 +155,7 @@ header {
   justify-content: space-between;
   align-items: center;
   box-shadow: rgba(40, 54, 61, 0.18) 0px 2px 4px 0px;
+  padding: 0 12px;
 }
 
 aside {
