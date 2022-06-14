@@ -60,12 +60,14 @@ export const loadTransactionDetail = async () => {
   } = toRefs(transactionDetail)
   const signerSdk = await getUniversalStamp()
   const { address } = toRefs(aeWallet)
+  console.log('gaKeyPair.value.publicKey', gaKeyPair.value.publicKey)
   const contractAccount = await signerSdk.getAccount(gaKeyPair.value.publicKey)
+  console.log('contractAccount', contractAccount)
 
   contractId.value = contractAccount.contractId
 
   const offChainContractData = getTransactionByContractId(contractId.value)
-
+  console.log('offChainContractData', offChainContractData)
   const contractInstance = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,

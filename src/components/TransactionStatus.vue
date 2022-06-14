@@ -85,6 +85,7 @@ async function confirm () {
 }
 
 async function send () {
+  console.log('send')
   await sendTx(gaKeyPair.value, spendTx.value, nonce.value)
   await updateSentBy(safeId.value, address.value)
   await loadTransactionDetail()

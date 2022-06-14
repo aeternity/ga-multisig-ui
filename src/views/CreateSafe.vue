@@ -1,6 +1,6 @@
 <template>
   <h2>Create Safe</h2>
-  <div v-if="isCreating()">
+  <div v-if="!isCreating()">
     <h3>&#9312; Connect Wallet</h3>
     <div :class="[{'hidden': step !==1 }]">
       <button @click="connect">Connect</button>

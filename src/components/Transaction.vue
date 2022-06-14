@@ -131,18 +131,17 @@ async function initTransaction () {
 
   // todo check if needed. Feed with props?
   const contract = getContractByAddress(gaKeyPair.value.publicKey)
+  console.log('initTransaction contract', contract)
+
   const transaction = getTransactionBySafe(contract.contractId)
-  console.log('transaction', transaction)
+  console.log('initTransaction transaction', transaction)
 
   const isTransactionNew = transaction === undefined
-  // const isTransactionNew = !!transaction.length
   const isTransactionTerminated = !!transaction?.sentBy || !!transaction?.revokedBy
-  // console.log('transaction', transaction.sentBy)
-  // console.log('transaction', transaction.revokedBy)
-  console.log('isTransactionTerminated', isTransactionTerminated)
-  console.log('isTransactionNew', isTransactionNew)
-
-  if (!isTransactionNew || isTransactionTerminated) {
+  console.log('initTransaction isTransactionTerminated', isTransactionTerminated)
+  console.log('initTransaction isTransactionNew', isTransactionNew)
+  console.log('initTransaction condition', isTransactionNew || isTransactionTerminated)
+  if (isTransactionNew || isTransactionTerminated) {
     await storeTransactionToDB(safeId.value)
   }
   await loadTransactionDetail()

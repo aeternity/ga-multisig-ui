@@ -6,7 +6,7 @@ const transactionUrl = "http://localhost:3001/transactions"
 
 export const getSafeDBIndex = async (contractId) => {
   const safes = await restoreSafesFromDB()
-  return safes.filter(safe =>
+  return safes.find(safe =>
     safe.contractId === contractId,
   )
 }
@@ -30,7 +30,7 @@ export const storeTransactionToDB = async (contractId) => {
   try {
     const createdTransaction = await axios.post(transactionUrl,
       {
-        contractId,
+        contractId, //todo this is not needed
         recipientAddress: null,
         proposedAmount: null,
       })
@@ -50,8 +50,7 @@ export const linkTransactionToSafe = async (contractId, transactionId) => {
   console.log('linking safe.id', safe.id)
 
   try {
-    const linkedResult = await axios.patch(`${safeUrl}/${safe[0].id}`, {
-      // todo why is here [0]
+    const linkedResult = await axios.patch(`${safeUrl}/${safe.id}`, {
       currentTransactionId: transactionId,
     })
     console.log('linkedResult', linkedResult)
@@ -81,13 +80,17 @@ export const restoreTransactionsFromDB = async () => {
 }
 
 export const updateProposeTx = async (contractId, recipientAddress, proposedAmount) => {
+  console.log('updateProposeTx', contractId, recipientAddress, proposedAmount)
   const safe = await getSafeDBIndex(contractId)
 
+  console.log('safe', safe)
+  console.log('safe.currentTransactionId', safe.currentTransactionId)
   try {
-    await axios.patch(`${transactionUrl}/${safe.currentTransactionId}`, {
+    const changedTransaction = await axios.patch(`${transactionUrl}/${safe.currentTransactionId}`, {
       recipientAddress,
       proposedAmount,
     })
+    console.log('changedTransaction', changedTransaction)
     await hydrateApp()
 
   } catch (e) {
