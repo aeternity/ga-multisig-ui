@@ -9,7 +9,6 @@
     {{ creationPhase3 ? '&#9989;' : '&#9314;' }} deploying smart contract
     <br>
     {{ creationPhase4 ? '&#9989;' : '&#9315;' }} creating safe account
-    isCreated() {{ isCreated() }}
     <div v-if="isCreated()">
       <strong>Success Multisig safe created!</strong>
     </div>

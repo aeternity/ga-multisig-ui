@@ -57,17 +57,12 @@ import {
   getSpendTx,
   getTransactionBySafe,
   hydrateApp,
-  loadSafeDetail,
   loadTransactionDetail,
   proposeTx,
-  revokeTx,
   safeDetail,
-  sendTx,
   storeTransactionToDB,
   transactionDetail,
   updateProposeTx,
-  updateRevokedBy,
-  updateSentBy,
 } from '../store'
 
 import ProposeForm from "../components/ProposeForm"
@@ -130,7 +125,6 @@ onMounted(async () => {
   // todo move conditions here
 })
 
-
 async function initTransaction () {
   console.log('initTransaction')
   gaKeyPair.value = safeKeyPair.value
@@ -172,18 +166,6 @@ async function confirm () {
   await loadTransactionDetail()
 }
 
-async function send () {
-  await sendTx(gaKeyPair.value, spendTx.value, nonce.value)
-  await updateSentBy(safeId.value, address.value)
-  await loadTransactionDetail()
-  await loadSafeDetail()
-}
-
-async function revoke () {
-  const revokedBy = await revokeTx(spendTx.value, safeId.value)
-  await updateRevokedBy(safeId.value, revokedBy)
-  await loadTransactionDetail()
-}
 </script>
 
 <style scoped>

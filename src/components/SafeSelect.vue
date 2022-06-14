@@ -11,13 +11,12 @@
 <script setup>
 import { toRefs } from "vue"
 import { app, clearTransactionDetail, loadTransactionDetail, safeDetail, transactionDetail } from "../store"
-import { useRoute, useRouter } from "vue-router"
+import { useRouter } from "vue-router"
 
 const { safeKeyPair, safeId } = toRefs(safeDetail)
 const { gaKeyPair } = toRefs(transactionDetail)
 const { mySafes } = toRefs(app)
 
-const route = useRoute()
 const router = useRouter()
 
 async function selectSafe (safeId) {

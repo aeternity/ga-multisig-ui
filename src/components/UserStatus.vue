@@ -19,7 +19,7 @@
 import { aeInitWallet, aeWallet } from "../utils/aeternity"
 import { toRefs } from "vue"
 
-const { walletStatus, address } = toRefs(aeWallet)
+const { address } = toRefs(aeWallet)
 
 async function connect () {
   await aeInitWallet()
