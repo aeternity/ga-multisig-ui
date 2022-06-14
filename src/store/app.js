@@ -23,17 +23,18 @@ export const getMySafes = (contracts, address) => {
   return contracts.value.filter(contract => contract.signers.includes(address.value))
 }
 
-export const getContractByAddress = (gaAddress) => {
-  const { multisigSafes } = toRefs(app)
-  return multisigSafes.value.find(contract =>
-    contract.safeKeyPair.publicKey === gaAddress,
-  )
-}
-
 export const getTransactionByContractId = (contractId) => {
   const { transactions } = toRefs(app)
   return transactions.value.find(transaction =>
     transaction.contractId === contractId,
+  )
+}
+
+export const getTransactionByDBIndex = (dbIndex) => {
+  const { transactions } = toRefs(app)
+  return transactions.value.find(transaction =>
+      transaction.id === dbIndex,
+    //todo refactor contractid vs safeid
   )
 }
 
@@ -45,10 +46,11 @@ export const getSafeByContractId = (contractId) => {
   )
 }
 
-export const getTransactionBySafe = (contractId) => {
-  const { transactions } = toRefs(app)
-  console.log('getTransactionBySafe', transactions.value)
-  return transactions.value.find(transaction =>
-    transaction.contractId === contractId, //todo refactor contractid vs safeid
+export const getSafeByAddress = (gaAddress) => {
+  const { multisigSafes } = toRefs(app)
+  return multisigSafes.value.find(safe =>
+    safe.safeKeyPair.publicKey === gaAddress,
   )
 }
+
+

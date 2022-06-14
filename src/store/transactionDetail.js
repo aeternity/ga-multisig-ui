@@ -1,7 +1,7 @@
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { reactive, toRefs } from 'vue'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
-import { getTransactionByContractId } from "./app"
+import { getSafeByContractId, getTransactionByDBIndex } from "./app"
 import { getSpendTx } from "./contractActions"
 import { resolveChainName } from "./chainNames"
 
@@ -60,14 +60,13 @@ export const loadTransactionDetail = async () => {
   } = toRefs(transactionDetail)
   const signerSdk = await getUniversalStamp()
   const { address } = toRefs(aeWallet)
-  console.log('gaKeyPair.value.publicKey', gaKeyPair.value.publicKey)
   const contractAccount = await signerSdk.getAccount(gaKeyPair.value.publicKey)
-  console.log('contractAccount', contractAccount)
 
   contractId.value = contractAccount.contractId
 
-  const offChainContractData = getTransactionByContractId(contractId.value)
-  console.log('offChainContractData', offChainContractData)
+  const offChainSafeData = getSafeByContractId(contractId.value)
+  const offChainTransactionData = getTransactionByDBIndex(offChainSafeData.currentTransactionId)
+
   const contractInstance = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,
@@ -88,8 +87,8 @@ export const loadTransactionDetail = async () => {
   isCurrentUserSigner.value = signers.value.includes(address.value)
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
-  proposedAmount.value = offChainContractData?.proposedAmount
-  recipientAddress.value = offChainContractData?.recipientAddress
+  proposedAmount.value = offChainTransactionData?.proposedAmount
+  recipientAddress.value = offChainTransactionData?.recipientAddress
 
   if (confirmedBy.value) {
     confirmationsMap.value = await getConfirmationMap(signers.value, confirmedBy.value)
@@ -98,8 +97,8 @@ export const loadTransactionDetail = async () => {
     spendTx.value = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
   }
 
-  revokedBy.value = offChainContractData?.revokedBy
-  sentBy.value = offChainContractData?.sentBy
+  revokedBy.value = offChainTransactionData?.revokedBy
+  sentBy.value = offChainTransactionData?.sentBy
 }
 
 export const getConfirmationMap = async (signers, confirmedBy) => {

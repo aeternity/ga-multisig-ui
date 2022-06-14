@@ -39,12 +39,6 @@
       </template>
     </select>
     <span> out of {{ signersList.length }} users</span>
-    <!--    <br>-->
-    <!--    <br>-->
-    <!--    <button-->
-    <!--      @click="$emit('create-clicked')">-->
-    <!--      Create Account-->
-    <!--    </button>-->
   </div>
 </template>
 <script>

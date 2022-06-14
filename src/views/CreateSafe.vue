@@ -100,8 +100,6 @@ import { useRouter } from "vue-router"
 import CreationPhaseLoader from "../components/CreationPhaseLoader"
 
 const {
-  creationPhase1,
-  creationPhase2,
   creationPhase3,
   creationPhase4,
 } = toRefs(creationPhases)

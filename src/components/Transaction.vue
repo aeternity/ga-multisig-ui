@@ -52,10 +52,9 @@
 import {
   app,
   clearTransactionDetail,
-  confirmTx,
-  getContractByAddress,
+  getSafeByAddress,
   getSpendTx,
-  getTransactionBySafe,
+  getTransactionByDBIndex,
   hydrateApp,
   loadTransactionDetail,
   proposeTx,
@@ -126,22 +125,15 @@ onMounted(async () => {
 })
 
 async function initTransaction () {
-  console.log('initTransaction')
   gaKeyPair.value = safeKeyPair.value
 
   // todo check if needed. Feed with props?
-  const contract = getContractByAddress(gaKeyPair.value.publicKey)
-  console.log('initTransaction contract', contract)
+  const safe = getSafeByAddress(gaKeyPair.value.publicKey)
+  const transaction = getTransactionByDBIndex(safe.currentTransactionId)
 
-  const transaction = getTransactionBySafe(contract.contractId)
-  console.log('initTransaction transaction', transaction)
-
-  const isTransactionNew = transaction === undefined
+  const hasAttachedTransaction = safe.currentTransactionId !== undefined
   const isTransactionTerminated = !!transaction?.sentBy || !!transaction?.revokedBy
-  console.log('initTransaction isTransactionTerminated', isTransactionTerminated)
-  console.log('initTransaction isTransactionNew', isTransactionNew)
-  console.log('initTransaction condition', isTransactionNew || isTransactionTerminated)
-  if (isTransactionNew || isTransactionTerminated) {
+  if (!hasAttachedTransaction || isTransactionTerminated) {
     await storeTransactionToDB(safeId.value)
   }
   await loadTransactionDetail()
@@ -159,12 +151,6 @@ async function propose () {
   await updateProposeTx(safeId.value, recipientAddress.value, proposedAmount.value)
   await loadTransactionDetail()
 }
-
-async function confirm () {
-  await confirmTx(safeId.value, txHash.value)
-  await loadTransactionDetail()
-}
-
 </script>
 
 <style scoped>

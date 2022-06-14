@@ -44,15 +44,11 @@ const {
 } = toRefs(safeDetail)
 
 onMounted(async () => {
-  // clearTransactionDetail()
-
   if (!isAppHydrated.value) {
     await hydrateApp()
   }
 
   await loadSafeDetail(route.params.id || safeId.value)
-
-
   await clearTransactionDetail()
 
   // todo check if needed. Feed with props?

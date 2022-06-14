@@ -3,7 +3,7 @@ import multisigContract from 'ga-multisig-contract/SimpleGAMultiSig.aes'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
 import { creationPhases } from "./safeCreation"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
-import { getSafeByContractId, getTransactionBySafe } from "./app"
+import { getSafeByContractId, getTransactionByContractId } from "./app"
 
 
 const getInitialSafeDetail = () => ({
@@ -76,21 +76,18 @@ export const loadSafeDetail = async (contractId) => {
 
   const signerSdk = await getUniversalStamp()
   const safeData = getSafeByContractId(contractId)
-  console.log('safeData', safeData)
   safeId.value = contractId
   safeKeyPair.value = safeData.safeKeyPair //todo get contract id for keypair (reverse)
-  console.log('safeKeyPair.value', safeKeyPair.value)
   const contractInstance = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: safeId.value,
   })
 
   balance.value = await signerSdk.balance(safeKeyPair.value.publicKey)
-  console.log('balance.value', balance.value)
 
   nonce.value = (await contractInstance.methods.get_nonce()).decodedResult
   version.value = (await contractInstance.methods.get_version()).decodedResult
 
-  currentTransaction.value = getTransactionBySafe(safeId.value)
+  currentTransaction.value = getTransactionByContractId(safeId.value)
 }
 
