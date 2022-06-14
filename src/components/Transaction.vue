@@ -4,7 +4,6 @@
 
     <div class="transaction-detail">
       <!--      todo rename these components-->
-      <!--      todo all components are used?-->
       <propose-form
         v-if="!hasProposedTx  && !(revokedBy || sentBy)"
         v-model:recipient-address="recipientAddress"
@@ -37,7 +36,6 @@
         </a>
       </h5>
       <div v-if="revokedBy || sentBy">
-        <!--todo new transaction button clear state and new db entry-->
         <button @click="resetTransaction">New Transaction</button>
       </div>
     </div>
@@ -105,8 +103,6 @@ const {
   recipientAddress,
   confirmations,
   confirmationsRequired,
-  confirmationsMap,
-  confirmedBy,
   spendTx,
   txHash,
   version,

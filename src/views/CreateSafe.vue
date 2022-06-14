@@ -1,14 +1,6 @@
 <template>
   <h2>Create Safe</h2>
-  <!--  hasCreationStarted {{ hasCreationStarted() }}-->
-  <!--  todo fix condition-->
-
-  <div v-if="creationStep1">
-    <creation-loader/>
-    <button @click="getStarted" :disabled="!creationStep4">Get Started</button>
-  </div>
-
-  <div v-else>
+  <div v-if="isCreating()">
     <h3>&#9312; Connect Wallet</h3>
     <div :class="[{'hidden': step !==1 }]">
       <button @click="connect">Connect</button>
@@ -38,8 +30,7 @@
         </button>
         <button
           @click="goToStep(3)"
-          :disabled="!initSigners[1].length && initConfirmationsRequired">
-          <!--        todo better condition-->
+          :disabled="!isSignerFormFilled">
           Continue
         </button>
       </div>
@@ -83,24 +74,37 @@
       </div>
     </div>
   </div>
+
+  <div v-else>
+    <creation-phase-loader/>
+    <button @click="getStarted" :disabled="!creationPhase4">Get Started</button>
+  </div>
 </template>
 
 <script setup>
 import SignersForm from "../components/SignersForm"
 import { Crypto } from '@aeternity/aepp-sdk'
 
-import { ref, toRefs } from 'vue'
+import { computed, ref, toRefs } from 'vue'
 import { aeInitWallet, aeWallet } from '../utils/aeternity'
-import { clearCreationSteps, creationSteps, initSafe, loadSafeDetail, safeDetail, storeSafeToDB } from "../store"
+import {
+  clearCreationSteps,
+  creationPhases,
+  initSafe,
+  isCreating,
+  loadSafeDetail,
+  safeDetail,
+  storeSafeToDB,
+} from "../store"
 import { useRouter } from "vue-router"
-import CreationLoader from "../components/CreationLoader"
+import CreationPhaseLoader from "../components/CreationPhaseLoader"
 
 const {
-  creationStep1,
-  creationStep2,
-  creationStep3,
-  creationStep4,
-} = toRefs(creationSteps)
+  creationPhase1,
+  creationPhase2,
+  creationPhase3,
+  creationPhase4,
+} = toRefs(creationPhases)
 
 const { address } = toRefs(aeWallet)
 const { safeId } = toRefs(safeDetail)
@@ -112,6 +116,8 @@ const step = ref(1)
 const initSigners = ref(['', ''])
 const initConfirmationsRequired = ref('')
 const initSafeKeyPair = ref('')
+
+const isSignerFormFilled = computed(() => initSigners.value[1].length && initConfirmationsRequired.value)
 
 async function createSafe () {
   initSafeKeyPair.value = Crypto.generateKeyPair()

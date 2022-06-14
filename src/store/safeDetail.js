@@ -1,7 +1,7 @@
 import { reactive, toRefs } from 'vue'
 import multisigContract from 'ga-multisig-contract/SimpleGAMultiSig.aes'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
-import { creationSteps } from "./safeCreation"
+import { creationPhases } from "./safeCreation"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { getSafeByContractId, getTransactionBySafe } from "./app"
 
@@ -23,7 +23,7 @@ export const clearSafeDetail = () => {
 }
 
 export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
-  const { creationStep1, creationStep2, creationStep3, creationStep4 } = toRefs(creationSteps)
+  const { creationPhase1, creationPhase2, creationPhase3, creationPhase4 } = toRefs(creationPhases)
   const { safeId } = toRefs(safeDetail)
 
   const contractArgs = [
@@ -33,10 +33,10 @@ export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
   const signerSdk = await getUniversalStamp()
 
   const contractInstance = await signerSdk.getContractInstance({ source: multisigContract })
-  creationStep1.value = true
+  creationPhase1.value = true
 
   await contractInstance.compile()
-  creationStep2.value = true
+  creationPhase2.value = true
 
   const attachTX = await signerSdk.gaAttachTx({
     ownerId: safeKeyPair.publicKey,
@@ -48,7 +48,7 @@ export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
       innerTx: true,
     },
   })
-  creationStep3.value = true
+  creationPhase3.value = true
 
   const { rawTx } = await signerSdk.send(attachTX.tx, {
     innerTx: true,
@@ -56,7 +56,7 @@ export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
   })
 
   await aeWallet.sdk.payForTransaction(rawTx)
-  creationStep4.value = true
+  creationPhase4.value = true
 
   const contractAccount = await signerSdk.getAccount(safeKeyPair.publicKey)
   safeId.value = contractAccount.contractId

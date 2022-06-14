@@ -1,7 +1,6 @@
 <template>
   <div class="container">
-    <!--    todo componentize-->
-    <!--todo mobile firest-->
+    <!--todo mobile first-->
     <the-header class="header"/>
 
     <aside v-if="route.name !== 'landing'">
@@ -13,21 +12,21 @@
         <router-view/>
       </article>
     </main>
+
   </div>
 </template>
 
 <script setup>
 import { onMounted, toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
-import { app, hydrateApp, loadSafeDetail, safeDetail, transactionDetail } from "./store"
+import { app, hydrateApp, loadSafeDetail, safeDetail } from "./store"
 import { useRoute, useRouter } from "vue-router"
 
 import TheHeader from "./components/TheHeader"
 import TheSidebar from "./components/TheSidebar"
 
-const { walletStatus, address } = toRefs(aeWallet)
-const { safeKeyPair, balance, safeId } = toRefs(safeDetail)
-const { gaKeyPair } = toRefs(transactionDetail)
+const { walletStatus } = toRefs(aeWallet)
+const { safeId } = toRefs(safeDetail)
 const { mySafes } = toRefs(app)
 
 const route = useRoute()
@@ -50,7 +49,6 @@ watch(walletStatus,
 </script>
 
 <style scoped>
-
 .container {
   display: grid;
   grid-template-areas:
@@ -85,22 +83,18 @@ main {
 
 article {
   border: 0;
-
 }
-
-h1 {
-  color: #de3f6b;
-  font-size: 24px;
-  margin-left: 20px;
-}
-
 </style>
 
 
 <style>
-
 body {
-//grid-template-columns: 1fr min(100rem, 100%) 1fr; display: block !important; font-family: Avenir, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; padding: 0;
+  grid-template-columns: 1fr min(100rem, 100%) 1fr;
+  display: block !important;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
 }
 
 
@@ -122,6 +116,4 @@ small {
   pointer-events: none;
   transition: 0.5s;
 }
-
 </style>
-

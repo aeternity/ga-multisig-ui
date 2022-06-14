@@ -1,21 +1,24 @@
 import { reactive, toRefs } from 'vue'
 
-const getInitialCreationSteps = () => ({
-  creationStep1: false,
-  creationStep2: false,
-  creationStep3: false,
-  creationStep4: false,
+const getInitialcreationPhases = () => ({
+  creationPhase1: false,
+  creationPhase2: false,
+  creationPhase3: false,
+  creationPhase4: false,
 })
 
-export const creationSteps = reactive(getInitialCreationSteps())
+export const creationPhases = reactive(getInitialcreationPhases())
 
-// todo function
-export const clearCreationSteps = () => {
-  Object.assign(creationSteps, getInitialCreationSteps())
+export function clearCreationSteps () {
+  Object.assign(creationPhases, getInitialcreationPhases())
 }
 
-export const hasCreationStarted = () => {
-  const { creationStep1, creationStep2, creationStep3, creationStep4 } = toRefs(creationSteps)
-  return creationStep1 || creationStep2 || creationStep3 || creationStep4
+export const isCreating = () => {
+  const { creationPhase1, creationPhase2, creationPhase3, creationPhase4 } = toRefs(creationPhases)
+  return creationPhase1.value || creationPhase2.value || creationPhase3.value || creationPhase4.value
+}
+export const isCreated = () => {
+  const { creationPhase1, creationPhase2, creationPhase3, creationPhase4 } = toRefs(creationPhases)
+  return creationPhase1.value && creationPhase2.value && creationPhase3.value && creationPhase4.value
 }
 
