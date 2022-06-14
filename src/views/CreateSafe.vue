@@ -4,22 +4,7 @@
   <!--  todo fix condition-->
 
   <div v-if="creationStep1">
-    <!--    todo componentize-->
-    <h3>Safe creation process</h3>
-    <div>
-      <br>
-      {{ creationStep1 ? '&#9989;' : '&#9312;' }} preparing multisig safe
-      <br>
-      {{ creationStep2 ? '&#9989;' : '&#9313;' }} compiling smart contract
-      <br>
-      {{ creationStep3 ? '&#9989;' : '&#9314;' }} deploying smart contract
-      <br>
-      {{ creationStep4 ? '&#9989;' : '&#9315;' }} creating safe account
-
-      <div v-if="creationStep4">
-        <h3>Success Multisig safe created!</h3>
-      </div>
-    </div>
+    <creation-loader/>
     <button @click="getStarted" :disabled="!creationStep4">Get Started</button>
   </div>
 
@@ -29,6 +14,7 @@
       <button @click="connect">Connect</button>
       <br>
       Connected user: {{ address }}
+      <!--      todo componentize-->
       <div class="controls">
         <router-link to="/index">Cancel</router-link>
         <button
@@ -85,7 +71,8 @@
         determined
         by your wallet.
         Approximate creation time: 5 mins
-      </p><br>
+      </p>
+      <br>
 
       <div class="controls">
         <button
@@ -106,6 +93,7 @@ import { ref, toRefs } from 'vue'
 import { aeInitWallet, aeWallet } from '../utils/aeternity'
 import { clearCreationSteps, creationSteps, initSafe, loadSafeDetail, safeDetail, storeSafeToDB } from "../store"
 import { useRouter } from "vue-router"
+import CreationLoader from "../components/CreationLoader"
 
 const {
   creationStep1,

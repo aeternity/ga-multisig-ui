@@ -2,82 +2,10 @@
   <div class="container">
     <!--    todo componentize-->
     <!--todo mobile firest-->
-    <header>
-      <!--      todo layout-->
-      <router-link to="/landing" class="home-link">
-        <img alt="Aeternity" src="./assets/logo.svg" width="60"/>
-        <h1> Multisig Safe</h1>
-      </router-link>
-      <div>
-        <div v-if="address" class="wallet">
-          <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="40">
-          <div class="address"> {{ address }}
-            <br>
-            Chain name
-            <!--          todo chain name-->
-          </div>
-        </div>
-        <div v-else>
-
-          <button @click="connect">
-            Connect
-          </button>
-        </div>
-      </div>
-    </header>
+    <the-header class="header"/>
 
     <aside v-if="route.name !== 'landing'">
-      <div class="sidebar" v-if="safeKeyPair">
-        My safes
-        <select :value="safeId">
-          <option
-            v-for="safe in mySafes"
-            @click="selectSafe(safe.contractId)"
-            :value="safe.contractId">
-            {{ safe.contractId }}
-          </option>
-        </select>
-        <br>
-        <router-link to="/create-safe">
-          <button>
-            New Safe
-          </button>
-        </router-link>
-        <hr>
-        <ul>
-          <li class="user">
-
-            <img :src="`https://avatars.z52da5wt.xyz/${safeKeyPair.publicKey}`" alt="" width="100">
-            <div class="address"> {{ safeKeyPair.publicKey || 'not connected' }}</div>
-            <!--          todo disconnect-->
-          </li>
-
-          <li>
-            Balance
-            <br>
-            {{ balance }}
-            <br>
-            <router-link to="/top-up">
-              top up
-            </router-link>
-            <hr>
-          </li>
-          <li>
-            <router-link :to="`/dashboard/${safeId}`">
-              <button>
-                Home
-              </button>
-            </router-link>
-          </li>
-          <li>
-            <a target="_blank" :href="`https://explorer.testnet.aeternity.io/account/${safeKeyPair.publicKey}`">
-              <button>
-                History
-              </button>
-            </a>
-          </li>
-        </ul>
-      </div>
+      <the-sidebar/>
     </aside>
 
     <main>
@@ -91,16 +19,11 @@
 <script setup>
 import { onMounted, toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
-import {
-  app,
-  clearTransactionDetail,
-  hydrateApp,
-  loadSafeDetail,
-  loadTransactionDetail,
-  safeDetail,
-  transactionDetail,
-} from "./store"
+import { app, hydrateApp, loadSafeDetail, safeDetail, transactionDetail } from "./store"
 import { useRoute, useRouter } from "vue-router"
+
+import TheHeader from "./components/TheHeader"
+import TheSidebar from "./components/TheSidebar"
 
 const { walletStatus, address } = toRefs(aeWallet)
 const { safeKeyPair, balance, safeId } = toRefs(safeDetail)
@@ -113,20 +36,6 @@ const router = useRouter()
 onMounted(async () => {
   await aeInitWallet()
 })
-
-async function connect () {
-  await aeInitWallet()
-}
-
-async function selectSafe (safeId) {
-  // todo unite functions
-  await router.push({ path: `/dashboard/${safeId}` })
-  await clearTransactionDetail()
-
-  // todo check if needed. Feed with props?
-  gaKeyPair.value = safeKeyPair.value
-  await loadTransactionDetail()
-}
 
 watch(walletStatus,
   async (newStatus) => {
@@ -151,7 +60,7 @@ watch(walletStatus,
   grid-template-columns: 200px auto;
 }
 
-header {
+.header {
   grid-area: header;
   display: flex;
   justify-content: space-between;
@@ -177,22 +86,6 @@ main {
 article {
   border: 0;
 
-}
-
-.wallet {
-  display: flex;
-  width: 280px;
-}
-
-.user {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.sidebar {
-  padding: 8px;
 }
 
 h1 {
@@ -230,16 +123,5 @@ small {
   transition: 0.5s;
 }
 
-.home-link {
-  display: flex;
-  text-decoration: none;
-}
-
-.address {
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 </style>
 

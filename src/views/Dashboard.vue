@@ -1,7 +1,6 @@
 <template>
   <div class="detail" v-if="safeKeyPair">
     <h2>Safe Detail</h2>
-
     <signers-list
       :contract-id="safeId"
       :ga-public-key="safeKeyPair.publicKey"
@@ -9,12 +8,7 @@
       :nonce="nonce"/>
 
     <h2>Transaction</h2>
-
     <transaction/>
-
-    <br>
-
-    <!--  <loader-image v-else/>-->
   </div>
 </template>
 
@@ -52,7 +46,6 @@ const {
 onMounted(async () => {
   // clearTransactionDetail()
 
-  //when going directly to detail page from pasted url
   if (!isAppHydrated.value) {
     await hydrateApp()
   }
@@ -64,7 +57,6 @@ onMounted(async () => {
 
   // todo check if needed. Feed with props?
   gaKeyPair.value = safeKeyPair.value
-
   await loadTransactionDetail()
 })
 </script>
