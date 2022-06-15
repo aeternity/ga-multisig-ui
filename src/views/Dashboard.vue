@@ -8,7 +8,17 @@
       :nonce="nonce"/>
 
     <h2>Transaction</h2>
-    <transaction/>
+    <div class="transaction" v-if="gaKeyPair && signers">
+      <!--todo rename this component to two words-->
+
+      <transaction-form/>
+
+      <div class="transaction-status">
+        <strong>Status</strong>
+        <transaction-status/>
+      </div>
+    </div>
+    <loader-image v-else/>
   </div>
 </template>
 
@@ -28,11 +38,13 @@ import SignersList from "../components/SignersList"
 import { onMounted, toRefs } from "vue"
 import { useRoute } from "vue-router"
 import { aeWallet } from "../utils/aeternity"
-import Transaction from "../components/Transaction"
+import TransactionForm from "../components/TransactionForm"
+import TransactionStatus from "../components/TransactionStatus"
+import LoaderImage from "../components/LoaderImage"
 
 const { isAppHydrated } = toRefs(app)
 const { address } = toRefs(aeWallet)
-const { gaKeyPair } = toRefs(transactionDetail)
+const { gaKeyPair, signers } = toRefs(transactionDetail)
 
 const route = useRoute()
 
@@ -55,4 +67,17 @@ onMounted(async () => {
   gaKeyPair.value = safeKeyPair.value
   await loadTransactionDetail()
 })
+
+
 </script>
+
+<style scoped>
+.transaction {
+  display: flex;
+}
+
+.transaction-status {
+  width: 200px;
+}
+</style>
+

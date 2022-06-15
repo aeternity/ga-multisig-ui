@@ -1,160 +1,115 @@
-<template>
-  <div class="transaction" v-if="gaKeyPair && signers">
-    <!--todo rename this component to two words-->
+<!--<template>-->
+<!--  <div class="transaction" v-if="gaKeyPair && signers">-->
+<!--    &lt;!&ndash;todo rename this component to two words&ndash;&gt;-->
 
-    <div class="transaction-detail">
-      <!--      todo rename these components-->
-      <propose-form
-        v-if="!hasProposedTx  && !(revokedBy || sentBy)"
-        v-model:recipient-address="recipientAddress"
-        v-model:proposed-amount="proposedAmount"
-        @propose-clicked="propose"/>
+<!--    <transaction-form/>-->
 
-      <propose-list
-        v-else
-        :proposed-amount="proposedAmount"
-        :recipientAddress="recipientAddress"/>
+<!--    <div class="transaction-status">-->
+<!--      <strong>Status</strong>-->
+<!--      <transaction-status/>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <loader-image v-else/>-->
+<!--</template>-->
 
-      <confirm-form
-        v-if="!hasConsensus && !(revokedBy || sentBy)"
-        :is-confirm-hidden="isConfirmedByCurrentUser"
-        :class="[{'disabled': !hasProposedTx}]"
-      />
+<!--<script setup>-->
+<!--import {-->
+<!--  app,-->
+<!--  clearTransactionDetail,-->
+<!--  getSafeByAddress,-->
+<!--  getSpendTx,-->
+<!--  getTransactionByDBIndex,-->
+<!--  hydrateApp,-->
+<!--  loadTransactionDetail,-->
+<!--  proposeTx,-->
+<!--  safeDetail,-->
+<!--  storeTransactionToDB,-->
+<!--  transactionDetail,-->
+<!--  updateProposeTx,-->
+<!--} from '../store'-->
 
-      <send-form
-        v-if="!(revokedBy || sentBy)"
-        :class="[{'disabled': !hasConsensus}]"
-        :has-consensus="hasConsensus"
-        :is-multisig-account-charged="isMultisigAccountCharged"
-      />
-      <h5 v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</h5>
-      <h5 v-if="sentBy">
-        The transaction has been sent by user <i>{{ sentBy }}</i> to account
-        <a :href="`https://explorer.testnet.aeternity.io/account/${recipientAddress}`"
-           target="_blank">
-          {{ recipientAddress }}
-        </a>
-      </h5>
-      <div v-if="revokedBy || sentBy">
-        <button @click="resetTransaction">New Transaction</button>
-      </div>
-    </div>
+<!--import { onMounted, toRefs } from "vue"-->
+<!--import { useRoute } from "vue-router"-->
+<!--import LoaderImage from "../components/LoaderImage"-->
 
-    <div class="transaction-status">
-      <strong>Status</strong>
-      <transaction-status/>
-    </div>
-  </div>
-  <loader-image v-else/>
-</template>
+<!--import { aeWallet } from "../utils/aeternity"-->
+<!--import TransactionStatus from "./TransactionStatus"-->
+<!--import TransactionForm from "./TransactionForm"-->
 
-<script setup>
-import {
-  app,
-  clearTransactionDetail,
-  getSafeByAddress,
-  getSpendTx,
-  getTransactionByDBIndex,
-  hydrateApp,
-  loadTransactionDetail,
-  proposeTx,
-  safeDetail,
-  storeTransactionToDB,
-  transactionDetail,
-  updateProposeTx,
-} from '../store'
+<!--const {-->
+<!--  gaKeyPair,-->
+<!--  isMultisigAccountCharged,-->
+<!--  contractId,-->
+<!--  contractAccount,-->
+<!--  contractInstance,-->
+<!--  hasProposedTx,-->
+<!--  hasConsensus,-->
+<!--  revokedBy,-->
+<!--  sentBy,-->
+<!--  isConfirmedByCurrentUser,-->
+<!--  isCurrentUserSigner,-->
+<!--  signers,-->
+<!--  proposedAmount,-->
+<!--  recipientAddress,-->
+<!--  confirmations,-->
+<!--  confirmationsRequired,-->
+<!--  spendTx,-->
+<!--  txHash,-->
+<!--  version,-->
+<!--  nonce,-->
+<!--} = toRefs(transactionDetail)-->
 
-import { onMounted, toRefs } from "vue"
-import { useRoute } from "vue-router"
+<!--const { safeId, safeKeyPair } = toRefs(safeDetail)-->
+<!--const { address } = toRefs(aeWallet)-->
+<!--const { isAppHydrated } = toRefs(app)-->
+<!--const route = useRoute()-->
 
-import ProposeForm from "../components/ProposeForm"
-import ConfirmForm from "../components/ConfirmForm"
-import SendForm from "../components/SendForm"
-import LoaderImage from "../components/LoaderImage"
-import ProposeList from "../components/ProposeList"
+<!--onMounted(async () => {-->
+<!--  clearTransactionDetail()-->
 
-import { aeWallet } from "../utils/aeternity"
-import TransactionStatus from "./TransactionStatus"
+<!--  //when going directly to detail page from pasted url-->
+<!--  if (!isAppHydrated.value) {-->
+<!--    await hydrateApp()-->
+<!--  }-->
 
-const {
-  gaKeyPair,
-  isMultisigAccountCharged,
-  contractId,
-  contractAccount,
-  contractInstance,
-  hasProposedTx,
-  hasConsensus,
-  revokedBy,
-  sentBy,
-  isConfirmedByCurrentUser,
-  isCurrentUserSigner,
-  signers,
-  proposedAmount,
-  recipientAddress,
-  confirmations,
-  confirmationsRequired,
-  spendTx,
-  txHash,
-  version,
-  nonce,
-} = toRefs(transactionDetail)
+<!--  await initTransaction()-->
+<!--  // todo move conditions here-->
+<!--})-->
 
-const { safeId, safeKeyPair } = toRefs(safeDetail)
-const { address } = toRefs(aeWallet)
-const { isAppHydrated } = toRefs(app)
-const route = useRoute()
+<!--async function initTransaction () {-->
+<!--  gaKeyPair.value = safeKeyPair.value-->
 
-onMounted(async () => {
-  clearTransactionDetail()
+<!--  // todo check if needed. Feed with props?-->
+<!--  const safe = getSafeByAddress(gaKeyPair.value.publicKey)-->
+<!--  const transaction = getTransactionByDBIndex(safe.currentTransactionId)-->
 
-  //when going directly to detail page from pasted url
-  if (!isAppHydrated.value) {
-    await hydrateApp()
-  }
+<!--  const hasAttachedTransaction = safe.currentTransactionId !== undefined-->
+<!--  const isTransactionTerminated = !!transaction?.sentBy || !!transaction?.revokedBy-->
+<!--  if (!hasAttachedTransaction || isTransactionTerminated) {-->
+<!--    await storeTransactionToDB(safeId.value)-->
+<!--  }-->
+<!--  await loadTransactionDetail()-->
+<!--}-->
 
-  await initTransaction()
-  // todo move conditions here
-})
+<!--async function resetTransaction () {-->
+<!--  await clearTransactionDetail()-->
+<!--  await initTransaction()-->
+<!--}-->
 
-async function initTransaction () {
-  gaKeyPair.value = safeKeyPair.value
+<!--async function propose () {-->
+<!--  const txToPropose = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)-->
+<!--  await proposeTx(txToPropose, safeId.value)-->
+<!--  await updateProposeTx(safeId.value, recipientAddress.value, proposedAmount.value)-->
+<!--  await loadTransactionDetail()-->
+<!--}-->
+<!--</script>-->
 
-  // todo check if needed. Feed with props?
-  const safe = getSafeByAddress(gaKeyPair.value.publicKey)
-  const transaction = getTransactionByDBIndex(safe.currentTransactionId)
+<!--<style scoped>-->
+<!--.transaction {-->
+<!--  display: flex;-->
+<!--}-->
 
-  const hasAttachedTransaction = safe.currentTransactionId !== undefined
-  const isTransactionTerminated = !!transaction?.sentBy || !!transaction?.revokedBy
-  if (!hasAttachedTransaction || isTransactionTerminated) {
-    await storeTransactionToDB(safeId.value)
-  }
-  await loadTransactionDetail()
-}
-
-async function resetTransaction () {
-  await clearTransactionDetail()
-  await initTransaction()
-}
-
-async function propose () {
-  const txToPropose = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-  await proposeTx(txToPropose, safeId.value)
-  await updateProposeTx(safeId.value, recipientAddress.value, proposedAmount.value)
-  await loadTransactionDetail()
-}
-</script>
-
-<style scoped>
-.transaction {
-  display: flex;
-}
-
-.transaction-detail {
-  width: 500px;
-  margin-right: 15px;
-}
-
-.transaction-status {
-  width: 200px;
-}
-</style>
+<!--.transaction-status {-->
+<!--  width: 200px;-->
+<!--}-->
+<!--</style>-->
