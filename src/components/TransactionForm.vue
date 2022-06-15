@@ -108,6 +108,8 @@ async function propose () {
 }
 
 onMounted(async () => {
+  console.log('mounted transactionForm')
+
   clearTransactionDetail()
 
   //when going directly to detail page from pasted url
@@ -115,9 +117,12 @@ onMounted(async () => {
     await hydrateApp()
   }
 
+
   await initTransaction()
-  // todo move conditions here
 })
+
+// todo move conditions here
+
 
 </script>
 

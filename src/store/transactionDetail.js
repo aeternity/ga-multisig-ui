@@ -61,6 +61,7 @@ export const loadTransactionDetail = async () => {
   const signerSdk = await getUniversalStamp()
   const { address } = toRefs(aeWallet)
   const contractAccount = await signerSdk.getAccount(gaKeyPair.value.publicKey)
+  console.log('gaKeyPair.value.publicKey', gaKeyPair.value.publicKey)
 
   contractId.value = contractAccount.contractId
 
@@ -88,7 +89,6 @@ export const loadTransactionDetail = async () => {
   console.log('address.value', address.value)
 
   isCurrentUserSigner.value = signers.value.includes(address.value)
-  console.log('isCurrentUserSigner.value', isCurrentUserSigner.value)
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
   proposedAmount.value = offChainTransactionData?.proposedAmount

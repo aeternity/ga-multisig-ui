@@ -11,7 +11,7 @@
 <script setup>
 import { toRefs } from 'vue'
 import { aeWallet } from '../utils/aeternity'
-import { clearCreationSteps, isCreated, isCreating, safeDetail } from "../store"
+import { clearCreationSteps, isCreated, isCreating, loadSafeDetail, safeDetail } from "../store"
 import { useRouter } from "vue-router"
 import CreationPhaseLoader from "../components/CreationPhaseLoader"
 import CreateSafeForm from "../components/CreateSafeForm"
@@ -22,7 +22,7 @@ const { safeId } = toRefs(safeDetail)
 const router = useRouter()
 
 async function getStarted () {
-  // await loadSafeDetail(safeId.value) //todo is this neccessary?
+  await loadSafeDetail(safeId.value) //todo is this neccessary?
   await router.push({ path: `/app/${safeId.value}` })
   clearCreationSteps()
 }

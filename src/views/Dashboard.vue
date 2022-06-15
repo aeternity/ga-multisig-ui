@@ -8,9 +8,8 @@
       :nonce="nonce"/>
 
     <h2>Transaction</h2>
-    <div class="transaction" v-if="gaKeyPair && signers">
-      <!--todo rename this component to two words-->
-
+    <!--    <div class="transaction" v-if="gaKeyPair && signers">-->
+    <div class="transaction" v-if="gaKeyPair">
       <transaction-form/>
 
       <div class="transaction-status">
@@ -23,15 +22,7 @@
 </template>
 
 <script setup>
-import {
-  app,
-  clearTransactionDetail,
-  hydrateApp,
-  loadSafeDetail,
-  loadTransactionDetail,
-  safeDetail,
-  transactionDetail,
-} from '../store'
+import { app, hydrateApp, loadSafeDetail, safeDetail, transactionDetail } from '../store'
 
 import SignersList from "../components/SignersList"
 
@@ -56,16 +47,18 @@ const {
 } = toRefs(safeDetail)
 
 onMounted(async () => {
+  console.log('mounted Dashboard')
   if (!isAppHydrated.value) {
     await hydrateApp()
   }
-
+  console.log('route.params.id', route.params.id)
+  console.log('safeId.value', safeId.value)
   await loadSafeDetail(route.params.id || safeId.value)
-  await clearTransactionDetail()
+  // await clearTransactionDetail()
 
   // todo check if needed. Feed with props?
   gaKeyPair.value = safeKeyPair.value
-  await loadTransactionDetail()
+  // await loadTransactionDetail()
 })
 
 
