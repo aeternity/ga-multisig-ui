@@ -10,8 +10,8 @@
 </template>
 <script setup>
 import { toRefs } from "vue"
-import { app, clearTransactionDetail, loadTransactionDetail, safeDetail, transactionDetail } from "../store"
 import { useRouter } from "vue-router"
+import { app, clearTransactionDetail, loadTransactionDetail, safeDetail, transactionDetail } from "../store"
 
 const { safeKeyPair, safeId } = toRefs(safeDetail)
 const { gaKeyPair } = toRefs(transactionDetail)
@@ -21,7 +21,7 @@ const router = useRouter()
 
 async function selectSafe (safeId) {
   // todo unite functions
-  await router.push({ path: `/dashboard/${safeId}` })
+  await router.push({ path: `/app/${safeId}` })
   await clearTransactionDetail()
 
   // todo check if needed. Feed with props?

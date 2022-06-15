@@ -8,7 +8,7 @@
 
       Gnosis Safe is the most trusted platform to manage digital assets.
       Here is how to get started:</p>
-    <router-link to="/create-safe">
+    <router-link to="/app/open">
       <button>
         New Safe
       </button>

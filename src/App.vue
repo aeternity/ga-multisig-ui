@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <!--todo mobile first-->
     <the-header class="header"/>
 
     <aside v-if="route.name !== 'landing'">

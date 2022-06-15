@@ -84,7 +84,11 @@ export const loadTransactionDetail = async () => {
   confirmedBy.value = consensus.confirmed_by
 
   hasProposedTx.value = confirmations.value && confirmationsRequired.value
+  console.log('signers.value', signers.value)
+  console.log('address.value', address.value)
+
   isCurrentUserSigner.value = signers.value.includes(address.value)
+  console.log('isCurrentUserSigner.value', isCurrentUserSigner.value)
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
   proposedAmount.value = offChainTransactionData?.proposedAmount

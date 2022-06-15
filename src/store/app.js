@@ -53,4 +53,11 @@ export const getSafeByAddress = (gaAddress) => {
   )
 }
 
+export const getSafeDBIndex = async (contractId) => {
+  const safes = await restoreSafesFromDB()
+  return safes.find(safe =>
+    safe.contractId === contractId,
+  )
+}
+
 

@@ -5,7 +5,7 @@
         My safes
         <safe-select/>
         <br>
-        <router-link to="/create-safe">
+        <router-link to="/app/open">
           <button>
             New Safe
           </button>
@@ -23,14 +23,14 @@
         <br>
         {{ balance }}
         <br>
-        <router-link to="/top-up">
+        <router-link to="/app/top-up">
           Top up
         </router-link>
         <hr>
       </li>
 
       <li>
-        <router-link :to="`/dashboard/${safeId}`">
+        <router-link :to="`/app/${safeId}`">
           <button>
             Home
           </button>

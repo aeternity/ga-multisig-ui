@@ -5,33 +5,32 @@ import Landing from "../views/Landing"
 import Index from "../views/Index"
 import TopUp from "../views/TopUp"
 
-// todo fix routing - copu gnosis route names
+// todo route welcome
 
 const routes = [
   {
     path: '/',
-    alias: '/landing',
     name: 'landing',
     component: Landing,
   },
   {
-    alias: '/index',
-    name: 'index',
+    path: '/app',
+    name: 'app',
     component: Index,
   },
   {
-    alias: '/top-up',
+    path: '/app/top-up',
     name: 'top-up',
     component: TopUp,
   },
   {
-    path: '/create-safe',
-    name: 'create-safe',
+    path: '/app/open',
+    name: 'open',
     component: CreateSafe,
   },
   {
-    path: '/dashboard/:id',
-    name: 'dashboard',
+    path: '/app/:id',
+    name: 'detail',
     component: Dashboard,
   },
 ]

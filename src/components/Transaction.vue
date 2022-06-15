@@ -1,6 +1,6 @@
 <template>
   <div class="transaction" v-if="gaKeyPair && signers">
-<!--todo rename this component to two words-->
+    <!--todo rename this component to two words-->
 
     <div class="transaction-detail">
       <!--      todo rename these components-->
@@ -64,21 +64,17 @@ import {
   updateProposeTx,
 } from '../store'
 
+import { onMounted, toRefs } from "vue"
+import { useRoute } from "vue-router"
+
 import ProposeForm from "../components/ProposeForm"
 import ConfirmForm from "../components/ConfirmForm"
 import SendForm from "../components/SendForm"
 import LoaderImage from "../components/LoaderImage"
 import ProposeList from "../components/ProposeList"
 
-import { onMounted, toRefs } from "vue"
-import { useRoute } from "vue-router"
 import { aeWallet } from "../utils/aeternity"
 import TransactionStatus from "./TransactionStatus"
-
-
-const {
-  address,
-} = toRefs(aeWallet)
 
 const {
   gaKeyPair,
@@ -103,13 +99,9 @@ const {
   nonce,
 } = toRefs(transactionDetail)
 
-const {
-  safeId,
-  safeKeyPair,
-} = toRefs(safeDetail)
-
+const { safeId, safeKeyPair } = toRefs(safeDetail)
+const { address } = toRefs(aeWallet)
 const { isAppHydrated } = toRefs(app)
-
 const route = useRoute()
 
 onMounted(async () => {
@@ -146,7 +138,6 @@ async function resetTransaction () {
 
 async function propose () {
   const txToPropose = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-
   await proposeTx(txToPropose, safeId.value)
   await updateProposeTx(safeId.value, recipientAddress.value, proposedAmount.value)
   await loadTransactionDetail()

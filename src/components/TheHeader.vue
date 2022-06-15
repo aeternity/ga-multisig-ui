@@ -1,6 +1,6 @@
 <template>
   <header>
-    <router-link to="/landing" class="home-link">
+    <router-link to="/" class="home-link">
       <img alt="Aeternity" src="../assets/logo.svg" width="60"/>
       <h1> Multisig Safe</h1>
     </router-link>

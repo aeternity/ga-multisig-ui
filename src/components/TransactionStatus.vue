@@ -22,7 +22,7 @@
       <button v-if="hasProposedTx && hasConsensus && isMultisigAccountCharged" @click="send">Send Tx</button>
       <button v-if="hasProposedTx" @click="revoke">Revoke Tx</button>
       <div v-if="hasConsensus && !isMultisigAccountCharged">
-        <router-link to="/top-up">Top up</router-link>
+        <router-link to="/app/top-up">Top up</router-link>
         your account to be able to Send Tx
       </div>
     </li>

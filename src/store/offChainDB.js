@@ -1,15 +1,8 @@
 import axios from "axios"
-import { hydrateApp } from './app'
+import { getSafeDBIndex, hydrateApp } from './app'
 
 const safeUrl = "http://localhost:3001/safes"
 const transactionUrl = "http://localhost:3001/transactions"
-
-export const getSafeDBIndex = async (contractId) => {
-  const safes = await restoreSafesFromDB()
-  return safes.find(safe =>
-    safe.contractId === contractId,
-  )
-}
 
 export const storeSafeToDB = async (contractId, safeKeyPair, signers) => {
   try {
@@ -29,7 +22,7 @@ export const storeTransactionToDB = async (contractId) => {
   try {
     const createdTransaction = await axios.post(transactionUrl,
       {
-        contractId, //todo this is not needed
+        // contractId, //todo this is not needed
         recipientAddress: null,
         proposedAmount: null,
       })
@@ -45,7 +38,7 @@ export const linkTransactionToSafe = async (contractId, transactionId) => {
   const safe = await getSafeDBIndex(contractId)
 
   try {
-    const linkedResult = await axios.patch(`${safeUrl}/${safe.id}`, {
+    await axios.patch(`${safeUrl}/${safe.id}`, {
       currentTransactionId: transactionId,
     })
     await hydrateApp()
@@ -89,7 +82,6 @@ export const updateProposeTx = async (contractId, recipientAddress, proposedAmou
 }
 export const updateRevokedBy = async (contractId, revokedBy) => {
   const safe = await getSafeDBIndex(contractId)
-
   try {
     await axios.patch(`${transactionUrl}/${safe.currentTransactionId}`, {
       revokedBy,

@@ -344,6 +344,17 @@
       "recipientAddress": null,
       "proposedAmount": null,
       "id": 57
+    },
+    {
+      "contractId": "ct_vNRr6Hq6YBhey3aebbEsLHuVoEHppB1mzNS2J1K5HQJkqkYuG",
+      "recipientAddress": null,
+      "proposedAmount": null,
+      "id": 58
+    },
+    {
+      "recipientAddress": null,
+      "proposedAmount": null,
+      "id": 59
     }
   ],
   "safes": [
@@ -437,6 +448,68 @@
       ],
       "id": 7,
       "currentTransactionId": 57
+    },
+    {
+      "contractId": "ct_3aN5ioDVgRRsJjNGmCMcxZPodQCAh8xdpp4zNPTohn67fd53z",
+      "safeKeyPair": {
+        "publicKey": "ak_nASgnKsRNDzXBXpPGJ4LQnC7MAtt8FaXTaV15GUw1WuXdjrgJ",
+        "secretKey": "8525f19ccfb66ffe3e8ab919f0217685713dcdb79601c93c3ea5c1186f8b56e8668c34c6f5d3886f8859dd252890439ee64988f577ee711cd789f747efc10c17"
+      },
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+      ],
+      "id": 8
+    },
+    {
+      "contractId": "ct_2khahteXLbNcvRFKD7qD948VwvG1Z6UhecTQaAAZj7DHr8yekP",
+      "safeKeyPair": {
+        "publicKey": "ak_rYcNjBhZB3gRBjCu3hAeNTfKTvvibVmjrKBR5ktsUWsFMKzAi",
+        "secretKey": "1ae6e53b9d231e201277845f88c8d481c4a06510e5f4f7d79b3c9029fd83f3c6707f7b9b88a186f5d3dbc17c9a4e30b40213a175759113cde2077a763f2e414c"
+      },
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+      ],
+      "id": 9
+    },
+    {
+      "contractId": "ct_vNRr6Hq6YBhey3aebbEsLHuVoEHppB1mzNS2J1K5HQJkqkYuG",
+      "safeKeyPair": {
+        "publicKey": "ak_KbDsxhRQt24GkztkWJpP17pfAxjnnExGiCKjdDw714KVjbzvq",
+        "secretKey": "1582f8dce97490eb4f47a33ab2d2aca9833236dd3f4a2cbc36a7c79694e088ee2a3600c4fa6f7430d64aea2cda895a1586840439d386c2233cc56c681009d47f"
+      },
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+      ],
+      "id": 10,
+      "currentTransactionId": 58
+    },
+    {
+      "contractId": "ct_pmdVaFXhsruZuZt8nw8dYLMeAEuA7e9P4j1kQhavTiFVGDHQD",
+      "safeKeyPair": {
+        "publicKey": "ak_2BBkbp4sH4H7xUrjdFhzvfTgLvfCXVKfdBQ6KQX8AW3qzXV2Hn",
+        "secretKey": "2aa64596e28ab8b9f4f64e6d7483681c7008ccc291795e4632780d04ce7eefbe9ad2bf7d0fbb90465a65e283b8250da3c7de1f7645bcfde9da054a38d2ca16dc"
+      },
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+      ],
+      "id": 11,
+      "currentTransactionId": 59
+    },
+    {
+      "contractId": "ct_PDqsbRw81yAvBtKri6TnTjqiidaTNbZ5ijZP1giBCWJEGEs7W",
+      "safeKeyPair": {
+        "publicKey": "ak_22X4AYogusdezjLMz1Ab1uPifKwappVPfwXm8TfDy8BS1kHX2N",
+        "secretKey": "8debead2236a023dadc93bfaec37d549f3b54d21ddfaf603e642828fb17cd7928724b031feed45acc0ecdcd8930597914ba9ae505785b6720507cbca48e21302"
+      },
+      "signers": [
+        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
+        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
+      ],
+      "id": 12
     }
   ]
 }
