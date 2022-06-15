@@ -41,7 +41,12 @@ watch(walletStatus,
       // wait for wallet connection because wallet =address is needed to filter My Contracts
       // this should be done in mounted hook
       await hydrateApp()
-      await loadSafeDetail(safeId.value || mySafes.value[0].contractId)
+      if (mySafes.value.length > 0) {
+        await loadSafeDetail(safeId.value || mySafes.value[0].contractId)
+        await router.push({ path: `/app/${safeId.value}` })
+      } else {
+        await router.push({ path: '/app' })
+      }
     }
   },
 )

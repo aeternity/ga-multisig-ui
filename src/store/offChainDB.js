@@ -70,7 +70,7 @@ export const updateProposeTx = async (contractId, recipientAddress, proposedAmou
   const safe = await getSafeDBIndex(contractId)
 
   try {
-    const changedTransaction = await axios.patch(`${transactionUrl}/${safe.currentTransactionId}`, {
+    await axios.patch(`${transactionUrl}/${safe.currentTransactionId}`, {
       recipientAddress,
       proposedAmount,
     })
@@ -95,6 +95,7 @@ export const updateRevokedBy = async (contractId, revokedBy) => {
 
 export const updateSentBy = async (contractId, sentBy) => {
   const safe = await getSafeDBIndex(contractId)
+  console.log('safe', safe)
   try {
     await axios.patch(`${transactionUrl}/${safe.currentTransactionId}`, {
       sentBy,
