@@ -1,4 +1,4 @@
-import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
+import multisigContract from 'ga-multisig-contract/contracts/SimpleGAMultiSig.aes'
 import { reactive, toRefs } from 'vue'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
 import { getGaAccountIdByContractId, getTransactionByContractId } from "./app"

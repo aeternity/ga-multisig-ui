@@ -31,10 +31,11 @@ const router = useRouter()
 
 onMounted(async () => {
   const hasAnySafes = mySafes.value.length > 0
-  const lastSafeId = mySafes.value[mySafes.value.length - 1].contractId
-  const selectedContractId = route.params.id || lastSafeId
 
   if (hasAnySafes) {
+    const lastSafeId = mySafes.value[mySafes.value.length - 1].contractId
+    const selectedContractId = route.params.id || lastSafeId
+
     await router.push({ path: `/app/${selectedContractId}` })
   } else {
     await router.push({ path: '/app' })
