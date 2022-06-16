@@ -41,21 +41,18 @@ import SendForm from "./SendForm"
 import { onMounted, toRefs } from "vue"
 import {
   app,
-  clearTransactionDetail,
-  getSafeByAddress,
+  clearContractDetail,
+  clearTransactionData,
+  contractDetail,
   getSpendTx,
-  getTransactionByDBIndex,
   hydrateApp,
-  loadTransactionDetail,
+  loadContractDetail,
   proposeTx,
-  safeDetail,
-  storeTransactionToDB,
-  transactionDetail,
   updateProposeTx,
 } from "../store"
 
 const {
-  gaKeyPair,
+  account,
   isMultisigAccountCharged,
   contractId,
   contractAccount,
@@ -75,42 +72,41 @@ const {
   txHash,
   version,
   nonce,
-} = toRefs(transactionDetail)
+} = toRefs(contractDetail)
 
 const { isAppHydrated } = toRefs(app)
-const { safeId, safeKeyPair } = toRefs(safeDetail)
 
 async function resetTransaction () {
-  await clearTransactionDetail()
+  await clearTransactionData(contractId.value)
+  await clearContractDetail()
   await initTransaction()
 }
 
 async function initTransaction () {
-  gaKeyPair.value = safeKeyPair.value
 
-  // todo check if needed. Feed with props?
-  const safe = getSafeByAddress(gaKeyPair.value.publicKey)
-  const transaction = getTransactionByDBIndex(safe.currentTransactionId)
-
-  const hasAttachedTransaction = safe.currentTransactionId !== undefined
-  const isTransactionTerminated = !!transaction?.sentBy || !!transaction?.revokedBy
-  if (!hasAttachedTransaction || isTransactionTerminated) {
-    await storeTransactionToDB(safeId.value)
-  }
-  await loadTransactionDetail()
+  const hasAttachedTransaction = !!proposedAmount.value //todo better condition
+  console.log('ZZZ hasAttachedTransaction', hasAttachedTransaction)
+  const isTransactionTerminated = !!sentBy.value || !!revokedBy.value
+  console.log('ZZZ isTransactionTerminated', isTransactionTerminated)
+  console.log('ZZZ condition', !hasAttachedTransaction || isTransactionTerminated)
+  // todo ressurect this with better conditions
+  // if (!hasAttachedTransaction || isTransactionTerminated) {
+  //   await storeTransactionToDB(contractId.value, account.value)
+  // }
+  await loadContractDetail(contractId.value)
 }
 
 async function propose () {
-  const txToPropose = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
-  await proposeTx(txToPropose, safeId.value)
-  await updateProposeTx(safeId.value, recipientAddress.value, proposedAmount.value)
-  await loadTransactionDetail()
+  const txToPropose = await getSpendTx(account.value.publicKey, recipientAddress.value, proposedAmount.value)
+  console.log('txToPropose', txToPropose)
+  await proposeTx(txToPropose, contractId.value)
+  await updateProposeTx(contractId.value, recipientAddress.value, proposedAmount.value)
+  await loadContractDetail(contractId.value)
 }
 
 onMounted(async () => {
-  console.log('mounted transactionForm')
 
-  clearTransactionDetail()
+  // clearContractDetail()
 
   //when going directly to detail page from pasted url
   if (!isAppHydrated.value) {

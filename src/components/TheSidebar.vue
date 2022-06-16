@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar" v-if="safeKeyPair">
+  <div class="sidebar" v-if="account">
     <ul>
       <li>
         My safes
@@ -14,8 +14,8 @@
       </li>
 
       <li class="user">
-        <img :src="`https://avatars.z52da5wt.xyz/${safeKeyPair.publicKey}`" alt="" width="100">
-        <div class="address"> {{ safeKeyPair.publicKey || 'not connected' }}</div>
+        <img :src="`https://avatars.z52da5wt.xyz/${account.publicKey}`" alt="" width="100">
+        <div class="address"> {{ account.publicKey || 'not connected' }}</div>
       </li>
 
       <li>
@@ -30,7 +30,7 @@
       </li>
 
       <li>
-        <router-link :to="`/app/${safeId}`">
+        <router-link :to="`/app/${contractId}`">
           <button>
             Home
           </button>
@@ -38,7 +38,7 @@
       </li>
 
       <li>
-        <a target="_blank" :href="`https://explorer.testnet.aeternity.io/account/${safeKeyPair.publicKey}`">
+        <a target="_blank" :href="`https://explorer.testnet.aeternity.io/account/${account.publicKey}`">
           <button>
             History
           </button>
@@ -47,23 +47,22 @@
     </ul>
   </div>
 </template>
+
 <script setup>
 import { toRefs } from "vue"
 import { aeWallet } from "../utils/aeternity"
-import { app, safeDetail, transactionDetail } from "../store"
+import { app, contractDetail } from "../store"
 import { useRoute, useRouter } from "vue-router"
 import SafeSelect from "./SafeSelect"
 
-
 const { walletStatus, address } = toRefs(aeWallet)
-const { safeKeyPair, balance, safeId } = toRefs(safeDetail)
-const { gaKeyPair } = toRefs(transactionDetail)
+const { account, balance, contractId } = toRefs(contractDetail)
 const { mySafes } = toRefs(app)
 
 const route = useRoute()
 const router = useRouter()
-
 </script>
+
 <style scoped>
 .user {
   width: 100%;

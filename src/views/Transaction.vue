@@ -1,15 +1,15 @@
 <template>
-  <div class="detail" v-if="safeKeyPair">
+  <div class="detail" v-if="account">
     <h2>Safe Detail</h2>
     <signers-list
-      :contract-id="safeId"
-      :ga-public-key="safeKeyPair.publicKey"
+      :contract-id="contractId"
+      :ga-public-key="account.publicKey"
       :version="version"
       :nonce="nonce"/>
 
     <h2>Transaction</h2>
-    <!--    <div class="transaction" v-if="gaKeyPair && signers">-->
-    <div class="transaction" v-if="gaKeyPair">
+
+    <div class="transaction" v-if="account">
       <transaction-form/>
 
       <div class="transaction-status">
@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { app, hydrateApp, loadSafeDetail, safeDetail, transactionDetail } from '../store'
+import { app, contractDetail, hydrateApp, loadContractDetail } from '../store'
 
 import SignersList from "../components/SignersList"
 
@@ -35,30 +35,25 @@ import LoaderImage from "../components/LoaderImage"
 
 const { isAppHydrated } = toRefs(app)
 const { address } = toRefs(aeWallet)
-const { gaKeyPair, signers } = toRefs(transactionDetail)
+const {
+  account,
+  signers,
+  contractId,
+  version,
+  nonce,
+} = toRefs(contractDetail)
 
 const route = useRoute()
 
-const {
-  safeKeyPair,
-  safeId,
-  version,
-  nonce,
-} = toRefs(safeDetail)
-
 onMounted(async () => {
-  console.log('mounted Dashboard')
   if (!isAppHydrated.value) {
     await hydrateApp()
   }
-  console.log('route.params.id', route.params.id)
-  console.log('safeId.value', safeId.value)
-  await loadSafeDetail(route.params.id || safeId.value)
-  // await clearTransactionDetail()
+  await loadContractDetail(route.params.id || contractId.value)
+  // await clearContractDetail()
 
   // todo check if needed. Feed with props?
-  gaKeyPair.value = safeKeyPair.value
-  // await loadTransactionDetail()
+  // await loadContractDetail(route.params.id || contractId.value)
 })
 
 

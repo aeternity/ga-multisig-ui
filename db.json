@@ -1,24 +1,46 @@
 {
   "transactions": [
     {
+      "keyPair": {
+        "publicKey": "ak_SKP7c8TDhoiFx9qEJvyfDh1Atgp3BMvTfRzLZ5Qyg3vGDFTty",
+        "secretKey": "184776f86795a7a0d427ec68e72f920a04a60a8c99c983f77cfc8c2c26a2ceb9397c337bfb5d85b9dbf8afdc9465fe877b21f87a67aa984ef76d45899cfad3d0"
+      },
+      "contractId": "ct_zq9PGMYXx9TdbxFMjc6U5FcPzVBYeZqDjdZbJUxt1WTamNhYt",
       "recipientAddress": null,
       "proposedAmount": null,
-      "id": 1
-    }
-  ],
-  "safes": [
+      "id": 25
+    },
     {
-      "contractId": "ct_2NouSa1bNM187objRHmuE3kQVjhTf7YGFKkVmaRKGAXy9X4gUL",
-      "safeKeyPair": {
-        "publicKey": "ak_2LcwNCwvLwfDpabfLL826jywhnYYBViQPahLTi7wS7xwewYn8j",
-        "secretKey": "87bc107c6f70d79b9c6f301b39c1f32d8e989e3e3f1b4aa89a7a3e236e9d1eafb03eac69bea48e5b43c7e0161bec1e1ff6b89ecdeb7954ebe953853eb131d373"
+      "keyPair": {
+        "publicKey": "ak_5TEufZngW4A6YVR75mH3eiiG8ijpGxCf8B44f9KUByMW3fxhi",
+        "secretKey": "414a926d6de76deb8d649eb0a5ae45d9aae96fcbf593e93c1a16cfad0b9d62270a1c180f02392df1b92b3207f7efc5d64eb8d781ca4a39d5b86f014197875134"
       },
-      "signers": [
-        "ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7",
-        "ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU"
-      ],
-      "id": 1,
-      "currentTransactionId": 1
+      "contractId": "ct_6Ftdx33P64Hs4D8DfBwm1AM8iQPwnUo3LCybuBHC8CUWkFZ2K",
+      "recipientAddress": null,
+      "proposedAmount": null,
+      "id": 26
+    },
+    {
+      "keyPair": {
+        "publicKey": "ak_2FtWfUPpQSCL6KhprpJ1mkVHtYrevYiL9rcCQ56aSyGHWJfH9Q",
+        "secretKey": "2a40991bd5dfe69a881d986775f6584334fa150cfbfb50e59b15cc570854f4b3a5805c850b07b1b068b547368c680d67fb16a080df25af1ad98261fc077e1f26"
+      },
+      "contractId": "ct_q4SxCJLTro8qrxnMWAM9YzU5B1KhWunnQwfBjpwMzbbiTp4TR",
+      "recipientAddress": null,
+      "proposedAmount": null,
+      "id": 27
+    },
+    {
+      "keyPair": {
+        "publicKey": "ak_6LzAwYE8J4Lj6jJFGDDQZ2VEeLPaZgcG1zfSQE2AtzsKFRynn",
+        "secretKey": "4a26e60a0fa5929169fa9f97b73b3c0f8226b8ec52e33e66336cc065246688350c22b1ce0d653afe429d14b17770de47ba8ea585b8fb3027b7b5d0be6790a5fe"
+      },
+      "contractId": "ct_2X8WxjebmH8XwPGquCaFYuRaRAqdaK3kFuVDJ5jW5aJFsYUr2t",
+      "recipientAddress": null,
+      "proposedAmount": null,
+      "id": 28,
+      "revokedBy": null,
+      "sentBy": null
     }
   ]
 }

@@ -1,5 +1,5 @@
 <template>
-  <select :value="safeId">
+  <select :value="contractId">
     <option
       v-for="safe in mySafes"
       @click="selectSafe(safe.contractId)"
@@ -11,21 +11,19 @@
 <script setup>
 import { toRefs } from "vue"
 import { useRouter } from "vue-router"
-import { app, clearTransactionDetail, loadTransactionDetail, safeDetail, transactionDetail } from "../store"
+import { app, clearContractDetail, contractDetail, loadContractDetail } from "../store"
 
-const { safeKeyPair, safeId } = toRefs(safeDetail)
-const { gaKeyPair } = toRefs(transactionDetail)
+const { contractId } = toRefs(contractDetail)
 const { mySafes } = toRefs(app)
 
 const router = useRouter()
 
-async function selectSafe (safeId) {
+async function selectSafe (contractId) {
   // todo unite functions
-  await router.push({ path: `/app/${safeId}` })
-  await clearTransactionDetail()
+  await router.push({ path: `/app/${contractId}` })
+  await clearContractDetail()
 
-  // todo check if needed. Feed with props?
-  gaKeyPair.value = safeKeyPair.value
-  await loadTransactionDetail()
+  // todo check if needed.
+  await loadContractDetail(contractId)
 }
 </script>

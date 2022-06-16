@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CreateSafe from "../views/CreateSafe"
-import Dashboard from "../views/Dashboard"
+import Transaction from "../views/Transaction"
 import Landing from "../views/Landing"
 import Index from "../views/Index"
 import TopUp from "../views/TopUp"
@@ -31,7 +31,7 @@ const routes = [
   {
     path: '/app/:id',
     name: 'detail',
-    component: Dashboard,
+    component: Transaction,
   },
 ]
 

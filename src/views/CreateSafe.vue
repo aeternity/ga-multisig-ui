@@ -11,19 +11,20 @@
 <script setup>
 import { toRefs } from 'vue'
 import { aeWallet } from '../utils/aeternity'
-import { clearCreationSteps, isCreated, isCreating, loadSafeDetail, safeDetail } from "../store"
+import { clearCreationSteps, contractDetail, hydrateApp, isCreated, isCreating, loadContractDetail } from "../store"
 import { useRouter } from "vue-router"
 import CreationPhaseLoader from "../components/CreationPhaseLoader"
 import CreateSafeForm from "../components/CreateSafeForm"
 
 const { address } = toRefs(aeWallet)
-const { safeId } = toRefs(safeDetail)
+const { contractId } = toRefs(contractDetail)
 
 const router = useRouter()
 
 async function getStarted () {
-  await loadSafeDetail(safeId.value) //todo is this neccessary?
-  await router.push({ path: `/app/${safeId.value}` })
+  await loadContractDetail(contractId.value) //todo is this neccessary?
+  await router.push({ path: `/app/${contractId.value}` })
+  await hydrateApp()
   clearCreationSteps()
 }
 </script>

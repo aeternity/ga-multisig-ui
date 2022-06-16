@@ -1,6 +1,6 @@
 import { reactive, toRefs } from "vue"
 import { hydrateApp } from "./app"
-import { loadtransactionDetail } from "./transactionDetail"
+import { loadContractDetail } from "./transactionDetail"
 
 export const webSocket = reactive({
   socket: null,
@@ -18,7 +18,7 @@ export async function initWebSocket () {
   socket.value.onmessage = async (e) => {
     const message = JSON.parse(e.data)
     await hydrateApp()
-    await loadtransactionDetail()
+    await loadContractDetail()
   }
 }
 

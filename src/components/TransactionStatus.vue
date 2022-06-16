@@ -32,12 +32,10 @@
 // todo remove unused
 import {
   confirmTx,
-  loadSafeDetail,
-  loadTransactionDetail,
+  contractDetail,
+  loadContractDetail,
   revokeTx,
-  safeDetail,
   sendTx,
-  transactionDetail,
   updateRevokedBy,
   updateSentBy,
 } from '../store'
@@ -73,28 +71,25 @@ const {
   txHash,
   version,
   nonce,
-} = toRefs(transactionDetail)
+} = toRefs(contractDetail)
 
-const { safeId } = toRefs(safeDetail)
 
 const route = useRoute()
 
 async function confirm () {
-  await confirmTx(safeId.value, txHash.value)
-  await loadTransactionDetail()
+  await confirmTx(contractId.value, txHash.value)
+  await loadContractDetail(contractId.value)
 }
 
 async function send () {
-  console.log('send', gaKeyPair.value, spendTx.value, nonce.value)
   await sendTx(gaKeyPair.value, spendTx.value, nonce.value)
-  await updateSentBy(safeId.value, address.value)
-  await loadTransactionDetail()
-  await loadSafeDetail()
+  await updateSentBy(contractId.value, address.value)
+  await loadContractDetail(contractId.value)
 }
 
 async function revoke () {
-  const revokedBy = await revokeTx(spendTx.value, safeId.value)
-  await updateRevokedBy(safeId.value, revokedBy)
-  await loadTransactionDetail()
+  const revokedBy = await revokeTx(spendTx.value, contractId.value)
+  await updateRevokedBy(contractId.value, revokedBy)
+  await loadContractDetail(contractId.value)
 }
 </script>

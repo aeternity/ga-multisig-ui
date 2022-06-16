@@ -1,12 +1,14 @@
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { reactive, toRefs } from 'vue'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
-import { getSafeByContractId, getTransactionByDBIndex } from "./app"
+import { getTransactionByContractId } from "./app"
 import { getSpendTx } from "./contractActions"
 import { resolveChainName } from "./chainNames"
+import { creationPhases } from "./safeCreation"
+import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 
-const getInitialTransactionDetail = () => ({
-  gaKeyPair: null,
+const getInitialContractDetail = () => ({
+  account: null,
   isMultisigAccountCharged: false,
   contractId: null,
 
@@ -26,19 +28,63 @@ const getInitialTransactionDetail = () => ({
   confirmedBy: null,
   spendTx: null,
   txHash: null,
+  balance: null,
+  version: null,
   nonce: null, //todo reduce refs
   // todo where to store nonce
 })
 
-export const transactionDetail = reactive(getInitialTransactionDetail())
+export const contractDetail = reactive(getInitialContractDetail())
 
-export const clearTransactionDetail = () => {
-  Object.assign(transactionDetail, getInitialTransactionDetail())
+export const clearContractDetail = () => {
+  Object.assign(contractDetail, getInitialContractDetail())
 }
 
-export const loadTransactionDetail = async () => {
+// todo rename
+export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
+  const { creationPhase1, creationPhase2, creationPhase3, creationPhase4 } = toRefs(creationPhases)
+  console.log('safeKeyPair', safeKeyPair)
+  const contractArgs = [
+    confirmationsRequired,
+    signers,
+  ]
+  const signerSdk = await getUniversalStamp()
+
+  const contractInstance = await signerSdk.getContractInstance({ source: multisigContract })
+  creationPhase1.value = true
+
+  await contractInstance.compile()
+  creationPhase2.value = true
+
+  const attachTX = await signerSdk.gaAttachTx({
+    ownerId: safeKeyPair.publicKey,
+    code: contractInstance.bytecode,
+    callData: contractInstance.calldata.encode(contractInstance._name, 'init', contractArgs),
+    authFun: hash('authorize'),
+    gas: await contractInstance._estimateGas('init', contractArgs),
+    options: {
+      innerTx: true,
+    },
+  })
+  creationPhase3.value = true
+
+  const { rawTx } = await signerSdk.send(attachTX.tx, {
+    innerTx: true,
+    onAccount: safeKeyPair,
+  })
+
+  await aeWallet.sdk.payForTransaction(rawTx)
+  creationPhase4.value = true
+
+  const contractAccount = await signerSdk.getAccount(safeKeyPair.publicKey)
+
+  return contractAccount.contractId
+}
+
+
+export const loadContractDetail = async (cid) => {
   const {
-    gaKeyPair,
+    account,
     isMultisigAccountCharged,
     contractId,
     hasProposedTx,
@@ -57,26 +103,28 @@ export const loadTransactionDetail = async () => {
     spendTx,
     txHash,
     nonce,
-  } = toRefs(transactionDetail)
+    balance,
+    version,
+  } = toRefs(contractDetail)
   const signerSdk = await getUniversalStamp()
   const { address } = toRefs(aeWallet)
-  const contractAccount = await signerSdk.getAccount(gaKeyPair.value.publicKey)
-  console.log('gaKeyPair.value.publicKey', gaKeyPair.value.publicKey)
+  contractId.value = cid
 
-  contractId.value = contractAccount.contractId
-
-  const offChainSafeData = getSafeByContractId(contractId.value)
-  const offChainTransactionData = getTransactionByDBIndex(offChainSafeData.currentTransactionId)
+  const offChainTransactionData = getTransactionByContractId(contractId.value)
+  console.log('offChainTransactionData', offChainTransactionData)
+  account.value = offChainTransactionData.keyPair
 
   const contractInstance = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,
   })
-
-  isMultisigAccountCharged.value = await signerSdk.getBalance(gaKeyPair.value.publicKey) > 0 // todo better check
+  balance.value = (await signerSdk.getAccount(contractId.value)).balance // todo get from contract instance?
+  isMultisigAccountCharged.value = account.value.balance > 0 // todo better check
   nonce.value = (await contractInstance.methods.get_nonce()).decodedResult
   signers.value = (await contractInstance.methods.get_signers()).decodedResult
   const consensus = (await contractInstance.methods.get_consensus_info()).decodedResult
+  version.value = (await contractInstance.methods.get_version()).decodedResult
+
 
   confirmations.value = consensus.confirmed_by.length
   confirmationsRequired.value = Number(consensus.confirmations_required)
@@ -85,8 +133,6 @@ export const loadTransactionDetail = async () => {
   confirmedBy.value = consensus.confirmed_by
 
   hasProposedTx.value = confirmations.value && confirmationsRequired.value
-  console.log('signers.value', signers.value)
-  console.log('address.value', address.value)
 
   isCurrentUserSigner.value = signers.value.includes(address.value)
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
@@ -98,7 +144,7 @@ export const loadTransactionDetail = async () => {
     confirmationsMap.value = await getConfirmationMap(signers.value, confirmedBy.value)
   }
   if (recipientAddress.value && proposedAmount.value) {
-    spendTx.value = await getSpendTx(gaKeyPair.value.publicKey, recipientAddress.value, proposedAmount.value)
+    spendTx.value = await getSpendTx(account.value.publicKey, recipientAddress.value, proposedAmount.value)
   }
 
   revokedBy.value = offChainTransactionData?.revokedBy

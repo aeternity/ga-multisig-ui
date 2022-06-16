@@ -10,18 +10,19 @@
 import { aeWallet } from "../utils/aeternity"
 import { AE_AMOUNT_FORMATS } from '@aeternity/aepp-sdk/es/utils/amount-formatter'
 import { ref, toRefs } from "vue"
-import { loadSafeDetail, safeDetail } from "../store"
+import { contractDetail, loadContractDetail } from "../store"
 
-const { safeKeyPair, balance, safeId } = toRefs(safeDetail)
+const { account, balance, contractId } = toRefs(contractDetail)
 
 const amount = ref(0)
 const { sdk } = toRefs(aeWallet)
 
-
 const topUp = async function () {
-  await sdk.value.spend(amount.value, safeKeyPair.value.publicKey, {
+  console.log('account.value.publicKey', account.value.publicKey)
+  console.log('amount.value', amount.value)
+  await sdk.value.spend(amount.value, account.value.publicKey, {
     denomination: AE_AMOUNT_FORMATS.AE,
   })
-  await loadSafeDetail(safeId.value)
+  await loadContractDetail(contractId.value)
 }
 </script>
