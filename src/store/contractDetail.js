@@ -1,14 +1,14 @@
 import multisigContract from '../utils/aeternity/contracts/SimpleGAMultiSig.aes'
 import { reactive, toRefs } from 'vue'
 import { aeWallet, getUniversalStamp } from "../utils/aeternity"
-import { getTransactionByContractId } from "./app"
+import { getGaAccountIdByContractId, getTransactionByContractId } from "./app"
 import { getSpendTx } from "./contractActions"
 import { resolveChainName } from "./chainNames"
 import { creationPhases } from "./safeCreation"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 
 const getInitialContractDetail = () => ({
-  account: null,
+  accountId: null,
   isMultisigAccountCharged: false,
   contractId: null,
 
@@ -84,7 +84,7 @@ export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
 
 export const loadContractDetail = async (cid) => {
   const {
-    account,
+    accountId,
     isMultisigAccountCharged,
     contractId,
     hasProposedTx,
@@ -110,16 +110,17 @@ export const loadContractDetail = async (cid) => {
   const { address } = toRefs(aeWallet)
   contractId.value = cid
 
+  accountId.value = getGaAccountIdByContractId(contractId.value)
+
   const offChainTransactionData = getTransactionByContractId(contractId.value)
-  console.log('offChainTransactionData', offChainTransactionData)
-  account.value = offChainTransactionData.keyPair
 
   const contractInstance = await signerSdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,
   })
+
   balance.value = (await signerSdk.getAccount(contractId.value)).balance // todo get from contract instance?
-  isMultisigAccountCharged.value = account.value.balance > 0 // todo better check
+  isMultisigAccountCharged.value = balance.value > 0 // todo better check
   nonce.value = (await contractInstance.methods.get_nonce()).decodedResult
   signers.value = (await contractInstance.methods.get_signers()).decodedResult
   const consensus = (await contractInstance.methods.get_consensus_info()).decodedResult
@@ -144,7 +145,7 @@ export const loadContractDetail = async (cid) => {
     confirmationsMap.value = await getConfirmationMap(signers.value, confirmedBy.value)
   }
   if (recipientAddress.value && proposedAmount.value) {
-    spendTx.value = await getSpendTx(account.value.publicKey, recipientAddress.value, proposedAmount.value)
+    spendTx.value = await getSpendTx(accountId.value, recipientAddress.value, proposedAmount.value)
   }
 
   revokedBy.value = offChainTransactionData?.revokedBy

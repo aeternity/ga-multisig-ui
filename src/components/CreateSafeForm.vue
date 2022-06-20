@@ -96,7 +96,7 @@ const isSignerFormFilled = computed(() => initSigners.value[1].length && initCon
 async function createSafe () {
   initSafeKeyPair.value = Crypto.generateKeyPair()
   const createdContractId = await initSafe(initSigners.value, initConfirmationsRequired.value, initSafeKeyPair.value)
-  await storeTransactionToDB(createdContractId, initSafeKeyPair.value) // todo do this seamless
+  await storeTransactionToDB(createdContractId) // todo do this seamless
 // await loadContractDetail(createdcontractId)
 }
 

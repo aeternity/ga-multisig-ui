@@ -14,7 +14,6 @@ export const hydrateApp = async () => {
 
   transactions.value = await restoreTransactionsFromDB()
   mySafes.value = await getSignersContracts(address.value)
-
   isAppHydrated.value = true
 }
 
@@ -23,4 +22,12 @@ export const getTransactionByContractId = (contractId) => {
   return transactions.value.find(transaction =>
     transaction.contractId === contractId,
   )
+}
+
+export const getGaAccountIdByContractId = (contractId) => {
+  const { mySafes } = toRefs(app)
+  const safe = mySafes.value.find(safe =>
+    safe.contractId === contractId,
+  )
+  return safe.gaAccountId
 }

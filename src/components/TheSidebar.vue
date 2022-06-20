@@ -14,8 +14,8 @@
       </li>
 
       <li class="user">
-        <img :src="`https://avatars.z52da5wt.xyz/${account.publicKey}`" alt="" width="100">
-        <div class="address"> {{ account.publicKey || 'not connected' }}</div>
+        <img :src="`https://avatars.z52da5wt.xyz/${accountId}`" alt="" width="100">
+        <div class="address"> {{ accountId || 'not connected' }}</div>
       </li>
 
       <li>
@@ -38,7 +38,7 @@
       </li>
 
       <li>
-        <a target="_blank" :href="`https://explorer.testnet.aeternity.io/account/${account.publicKey}`">
+        <a target="_blank" :href="`https://explorer.testnet.aeternity.io/account/${accountId}`">
           <button>
             History
           </button>
@@ -56,7 +56,7 @@ import { useRoute, useRouter } from "vue-router"
 import SafeSelect from "./SafeSelect"
 
 const { walletStatus, address } = toRefs(aeWallet)
-const { account, balance, contractId } = toRefs(contractDetail)
+const { accountId, balance, contractId } = toRefs(contractDetail)
 const { mySafes } = toRefs(app)
 
 const route = useRoute()

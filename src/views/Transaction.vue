@@ -1,15 +1,15 @@
 <template>
-  <div class="detail" v-if="account">
+  <div class="detail" v-if="accountId">
     <h2>Safe Detail</h2>
     <signers-list
       :contract-id="contractId"
-      :ga-public-key="account.publicKey"
+      :ga-public-key="accountId"
       :version="version"
       :nonce="nonce"/>
 
     <h2>Transaction</h2>
 
-    <div class="transaction" v-if="account">
+    <div class="transaction" v-if="accountId">
       <transaction-form/>
 
       <div class="transaction-status">
@@ -36,7 +36,7 @@ import LoaderImage from "../components/LoaderImage"
 const { isAppHydrated } = toRefs(app)
 const { address } = toRefs(aeWallet)
 const {
-  account,
+  accountId,
   signers,
   contractId,
   version,

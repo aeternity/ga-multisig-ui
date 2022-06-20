@@ -43,9 +43,7 @@ watch(walletStatus,
       await hydrateApp()
       // console.log('contractId.value', contractId.value)
       const lastestCreatedSafeId = mySafes.value[mySafes.value.length - 1].contractId
-      console.log('lastestCreatedSafeId', lastestCreatedSafeId)
       const selectedcontractId = route.params.id || lastestCreatedSafeId
-      console.log('selectedcontractId', selectedcontractId)
       // todo fix here
 
       if (mySafes.value.length > 0) {

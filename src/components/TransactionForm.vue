@@ -52,7 +52,7 @@ import {
 } from "../store"
 
 const {
-  account,
+  accountId,
   isMultisigAccountCharged,
   contractId,
   contractAccount,
@@ -97,7 +97,7 @@ async function initTransaction () {
 }
 
 async function propose () {
-  const txToPropose = await getSpendTx(account.value.publicKey, recipientAddress.value, proposedAmount.value)
+  const txToPropose = await getSpendTx(accountId.value, recipientAddress.value, proposedAmount.value)
   console.log('txToPropose', txToPropose)
   await proposeTx(txToPropose, contractId.value)
   await updateProposeTx(contractId.value, recipientAddress.value, proposedAmount.value)
