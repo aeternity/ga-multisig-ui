@@ -30,8 +30,7 @@ const getInitialContractDetail = () => ({
   txHash: null,
   balance: null,
   version: null,
-  nonce: null, //todo reduce refs
-  // todo where to store nonce
+  nonce: null,
 })
 
 export const contractDetail = reactive(getInitialContractDetail())
@@ -40,14 +39,17 @@ export const clearContractDetail = () => {
   Object.assign(contractDetail, getInitialContractDetail())
 }
 
-// todo rename
-export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
+// todo unite functions ins tores
+
+export const initContract = async (signers, confirmationsRequired, safeKeyPair) => {
   const { creationPhase1, creationPhase2, creationPhase3, creationPhase4 } = toRefs(creationPhases)
-  console.log('safeKeyPair', safeKeyPair)
+  const { sdk } = toRefs(aeWallet)
+
   const contractArgs = [
     confirmationsRequired,
     signers,
   ]
+
   const signerSdk = await getUniversalStamp()
 
   const contractInstance = await signerSdk.getContractInstance({ source: multisigContract })
@@ -73,7 +75,7 @@ export const initSafe = async (signers, confirmationsRequired, safeKeyPair) => {
     onAccount: safeKeyPair,
   })
 
-  await aeWallet.sdk.payForTransaction(rawTx)
+  await sdk.value.payForTransaction(rawTx)
   creationPhase4.value = true
 
   const contractAccount = await signerSdk.getAccount(safeKeyPair.publicKey)
@@ -106,21 +108,20 @@ export const loadContractDetail = async (cid) => {
     balance,
     version,
   } = toRefs(contractDetail)
-  const signerSdk = await getUniversalStamp()
-  const { address } = toRefs(aeWallet)
+  const { address, sdk } = toRefs(aeWallet)
   contractId.value = cid
 
   accountId.value = getGaAccountIdByContractId(contractId.value)
 
   const offChainTransactionData = getTransactionByContractId(contractId.value)
 
-  const contractInstance = await signerSdk.getContractInstance({
+  const contractInstance = await sdk.value.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,
   })
 
-  balance.value = (await signerSdk.getAccount(contractId.value)).balance // todo get from contract instance?
-  isMultisigAccountCharged.value = balance.value > 0 // todo better check
+  balance.value = await sdk.value.getBalance(accountId.value)
+  isMultisigAccountCharged.value = balance.value > 0
   nonce.value = (await contractInstance.methods.get_nonce()).decodedResult
   signers.value = (await contractInstance.methods.get_signers()).decodedResult
   const consensus = (await contractInstance.methods.get_consensus_info()).decodedResult

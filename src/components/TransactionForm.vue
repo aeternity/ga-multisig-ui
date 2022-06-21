@@ -1,7 +1,7 @@
 <template>
   <div class="transaction-detail">
     <propose-form
-      v-if="!hasProposedTx  && !(revokedBy || sentBy)"
+      v-if="isProposeFormDisplayed"
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="propose"/>
@@ -10,12 +10,12 @@
       :proposed-amount="proposedAmount"
       :recipientAddress="recipientAddress"/>
     <confirm-form
-      v-if="!hasConsensus && !(revokedBy || sentBy)"
-      :is-confirm-hidden="isConfirmedByCurrentUser"
+      v-if="isConfirmFormDisplayed"
       :class="[{'disabled': !hasProposedTx}]"
+      :is-confirm-hidden="isConfirmedByCurrentUser"
     />
     <send-form
-      v-if="!(revokedBy || sentBy)"
+      v-if="isSendFormDisplayed"
       :class="[{'disabled': !hasConsensus}]"
       :has-consensus="hasConsensus"
       :is-multisig-account-charged="isMultisigAccountCharged"
@@ -28,7 +28,7 @@
         {{ recipientAddress }}
       </a>
     </h5>
-    <div v-if="revokedBy || sentBy">
+    <div v-if="isRestartTransactionDisplayed">
       <button @click="resetTransaction">New Transaction</button>
     </div>
   </div>
@@ -38,7 +38,7 @@ import ProposeForm from "./ProposeForm"
 import ProposeList from "./ProposeList"
 import ConfirmForm from "./ConfirmForm"
 import SendForm from "./SendForm"
-import { onMounted, toRefs } from "vue"
+import { computed, onMounted, toRefs } from "vue"
 import {
   app,
   clearContractDetail,
@@ -55,26 +55,21 @@ const {
   accountId,
   isMultisigAccountCharged,
   contractId,
-  contractAccount,
-  contractInstance,
   hasProposedTx,
   hasConsensus,
   revokedBy,
   sentBy,
   isConfirmedByCurrentUser,
-  isCurrentUserSigner,
-  signers,
   proposedAmount,
   recipientAddress,
-  confirmations,
-  confirmationsRequired,
-  spendTx,
-  txHash,
-  version,
-  nonce,
 } = toRefs(contractDetail)
 
 const { isAppHydrated } = toRefs(app)
+
+const isProposeFormDisplayed = computed(() => !hasProposedTx.value && !(revokedBy.value || sentBy.value))
+const isConfirmFormDisplayed = computed(() => !hasConsensus.value && !(revokedBy.value || sentBy.value))
+const isSendFormDisplayed = computed(() => !(revokedBy.value || sentBy.value))
+const isRestartTransactionDisplayed = computed(() => revokedBy.value || sentBy.value)
 
 async function resetTransaction () {
   await clearTransactionData(contractId.value)
@@ -84,11 +79,8 @@ async function resetTransaction () {
 
 async function initTransaction () {
 
-  const hasAttachedTransaction = !!proposedAmount.value //todo better condition
-  console.log('ZZZ hasAttachedTransaction', hasAttachedTransaction)
+  const hasAttachedTransaction = !!proposedAmount.value
   const isTransactionTerminated = !!sentBy.value || !!revokedBy.value
-  console.log('ZZZ isTransactionTerminated', isTransactionTerminated)
-  console.log('ZZZ condition', !hasAttachedTransaction || isTransactionTerminated)
   // todo ressurect this with better conditions
   // if (!hasAttachedTransaction || isTransactionTerminated) {
   //   await storeTransactionToDB(contractId.value, account.value)
@@ -98,26 +90,18 @@ async function initTransaction () {
 
 async function propose () {
   const txToPropose = await getSpendTx(accountId.value, recipientAddress.value, proposedAmount.value)
-  console.log('txToPropose', txToPropose)
   await proposeTx(txToPropose, contractId.value)
-  await updateProposeTx(contractId.value, recipientAddress.value, proposedAmount.value)
+  await updateProposeTx(contractId.value, recipientAddress.value, proposedAmount.value) // todo store bac
   await loadContractDetail(contractId.value)
 }
 
 onMounted(async () => {
-
-  // clearContractDetail()
-
-  //when going directly to detail page from pasted url
   if (!isAppHydrated.value) {
     await hydrateApp()
   }
 
-
   await initTransaction()
 })
-
-// todo move conditions here
 
 
 </script>

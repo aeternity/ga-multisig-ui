@@ -5,7 +5,6 @@
       <div class="address"> {{ address }}
         <br>
         Chain name
-        <!--          todo chain name-->
       </div>
     </div>
     <div v-else>

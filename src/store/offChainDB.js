@@ -3,16 +3,6 @@ import { getTransactionByContractId, hydrateApp } from './app'
 
 const transactionUrl = "http://localhost:3001/transactions"
 
-export const getSignersContracts = async (signerAddress) => {
-  console.log('signerAddress', signerAddress)
-  try {
-    let { data } = await axios.get(`https://multisig-backend.aeternity.art/${signerAddress}?fromHeight=618542`)
-    return data
-
-  } catch (e) {
-    console.error(e)
-  }
-}
 
 export const storeTransactionToDB = async (contractId) => {
   try {
@@ -38,10 +28,8 @@ export const restoreTransactionsFromDB = async () => {
   }
 }
 
-// todo come up with better naming
 export const clearTransactionData = async (contractId) => {
   const transaction = await getTransactionByContractId(contractId)
-  console.log('transaction', transaction)
   try {
     await axios.patch(`${transactionUrl}/${transaction.id}`, {
       sentBy: null,
@@ -55,7 +43,6 @@ export const clearTransactionData = async (contractId) => {
     console.error(e)
   }
 }
-
 
 export const updateProposeTx = async (contractId, recipientAddress, proposedAmount) => {
   const transaction = await getTransactionByContractId(contractId)

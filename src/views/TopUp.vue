@@ -17,8 +17,7 @@ const { accountId, balance, contractId } = toRefs(contractDetail)
 const amount = ref(0)
 const { sdk } = toRefs(aeWallet)
 
-const topUp = async function () {
-
+async function topUp () {
   await sdk.value.spend(amount.value, accountId.value, {
     denomination: AE_AMOUNT_FORMATS.AE,
   })

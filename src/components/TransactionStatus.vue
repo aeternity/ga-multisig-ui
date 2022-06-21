@@ -11,17 +11,17 @@
       </strong>
       <br>
       <confirmation-list
-        :class="[{'disabled': signers && !confirmedBy}]"
+        :class="[{'disabled': isConfirmationListDisabled}]"
         :confirmations-map="confirmationsMap"/>
     </li>
     <li>
       {{ !!sentBy ? '&#x2705;' : '&#x274C' }}
       <strong> Sent</strong>
       <hr>
-      <button v-if="hasProposedTx && !isConfirmedByCurrentUser" @click="confirm">Confirm Tx</button>
-      <button v-if="hasProposedTx && hasConsensus && isMultisigAccountCharged" @click="send">Send Tx</button>
+      <button v-if="isConfirmActionDisplayed" @click="confirm">Confirm Tx</button>
+      <button v-if="isSendActionDisplayed" @click="send">Send Tx</button>
       <button v-if="hasProposedTx" @click="revoke">Revoke Tx</button>
-      <div v-if="hasConsensus && !isMultisigAccountCharged">
+      <div v-if="isTopUpPromptDisplayed">
         <router-link to="/app/top-up">Top up</router-link>
         your account to be able to Send Tx
       </div>
@@ -29,7 +29,6 @@
   </ul>
 </template>
 <script setup>
-// todo remove unused
 import {
   confirmTx,
   contractDetail,
@@ -42,39 +41,38 @@ import {
 
 import ConfirmationList from "../components/ConfirmationList"
 
-import { toRefs } from "vue"
+import { computed, toRefs } from "vue"
 import { useRoute } from "vue-router"
 import { aeWallet } from "../utils/aeternity"
 
 const { address } = toRefs(aeWallet)
 
 const {
-  gaKeyPair,
+  accountId,
   isMultisigAccountCharged,
   contractId,
-  contractAccount,
-  contractInstance,
   hasProposedTx,
   hasConsensus,
   revokedBy,
   sentBy,
   isConfirmedByCurrentUser,
-  isCurrentUserSigner,
   signers,
-  proposedAmount,
-  recipientAddress,
   confirmations,
   confirmationsRequired,
   confirmationsMap,
   confirmedBy,
   spendTx,
   txHash,
-  version,
   nonce,
 } = toRefs(contractDetail)
 
-
 const route = useRoute()
+
+const isSendActionDisplayed = computed(() => hasProposedTx.value && hasConsensus.value && isMultisigAccountCharged.value)
+const isTopUpPromptDisplayed = computed(() => hasConsensus.value && !isMultisigAccountCharged.value)
+const isConfirmActionDisplayed = computed(() => hasProposedTx.value && !isConfirmedByCurrentUser.value)
+const isConfirmationListDisabled = computed(() => signers.value && !confirmedBy.value)
+
 
 async function confirm () {
   await confirmTx(contractId.value, txHash.value)
@@ -82,7 +80,7 @@ async function confirm () {
 }
 
 async function send () {
-  await sendTx(gaKeyPair.value, spendTx.value, nonce.value)
+  await sendTx(accountId.value, spendTx.value, nonce.value)
   await updateSentBy(contractId.value, address.value)
   await loadContractDetail(contractId.value)
 }

@@ -80,7 +80,7 @@ import { Crypto } from '@aeternity/aepp-sdk'
 
 import { computed, ref, toRefs } from 'vue'
 import { aeInitWallet, aeWallet } from '../utils/aeternity'
-import { initSafe, storeTransactionToDB } from "../store"
+import { storeTransactionToDB } from "../store"
 import SignersForm from "./SignersForm"
 
 const { address } = toRefs(aeWallet)
@@ -96,8 +96,7 @@ const isSignerFormFilled = computed(() => initSigners.value[1].length && initCon
 async function createSafe () {
   initSafeKeyPair.value = Crypto.generateKeyPair()
   const createdContractId = await initSafe(initSigners.value, initConfirmationsRequired.value, initSafeKeyPair.value)
-  await storeTransactionToDB(createdContractId) // todo do this seamless
-// await loadContractDetail(createdcontractId)
+  await storeTransactionToDB(createdContractId)
 }
 
 async function connect () {

@@ -19,7 +19,6 @@ const { mySafes } = toRefs(app)
 const router = useRouter()
 
 async function selectSafe (contractId) {
-  // todo unite functions
   await router.push({ path: `/app/${contractId}` })
   await clearContractDetail()
 

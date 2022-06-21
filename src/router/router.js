@@ -5,8 +5,6 @@ import Landing from "../views/Landing"
 import Index from "../views/Index"
 import TopUp from "../views/TopUp"
 
-// todo route welcome
-
 const routes = [
   {
     path: '/',

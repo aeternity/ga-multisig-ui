@@ -50,10 +50,6 @@ onMounted(async () => {
     await hydrateApp()
   }
   await loadContractDetail(route.params.id || contractId.value)
-  // await clearContractDetail()
-
-  // todo check if needed. Feed with props?
-  // await loadContractDetail(route.params.id || contractId.value)
 })
 
 

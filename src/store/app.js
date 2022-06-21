@@ -1,6 +1,7 @@
 import { reactive, toRefs } from "vue"
 import { aeWallet } from "../utils/aeternity"
-import { getSignersContracts, restoreTransactionsFromDB } from "./offChainDB"
+import { restoreTransactionsFromDB } from "./offChainDB"
+import axios from "axios"
 
 export const app = reactive({
   mySafes: null,
@@ -12,8 +13,9 @@ export const hydrateApp = async () => {
   const { isAppHydrated, mySafes, transactions } = toRefs(app)
   const { address } = toRefs(aeWallet)
 
-  transactions.value = await restoreTransactionsFromDB()
   mySafes.value = await getSignersContracts(address.value)
+
+  transactions.value = await restoreTransactionsFromDB()
   isAppHydrated.value = true
 }
 
@@ -30,4 +32,14 @@ export const getGaAccountIdByContractId = (contractId) => {
     safe.contractId === contractId,
   )
   return safe.gaAccountId
+}
+
+export const getSignersContracts = async (signerAddress) => {
+  try {
+    let { data } = await axios.get(`https://multisig-backend.aeternity.art/${signerAddress}?fromHeight=618542`)
+    return data
+
+  } catch (e) {
+    console.error(e)
+  }
 }

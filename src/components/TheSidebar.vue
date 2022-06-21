@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar" v-if="account">
+  <div class="sidebar" v-if="accountId">
     <ul>
       <li>
         My safes

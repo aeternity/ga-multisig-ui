@@ -16,7 +16,9 @@
       "contractId": "ct_q4SxCJLTro8qrxnMWAM9YzU5B1KhWunnQwfBjpwMzbbiTp4TR",
       "recipientAddress": null,
       "proposedAmount": null,
-      "id": 27
+      "id": 27,
+      "revokedBy": null,
+      "sentBy": null
     },
     {
       "contractId": "ct_2X8WxjebmH8XwPGquCaFYuRaRAqdaK3kFuVDJ5jW5aJFsYUr2t",
@@ -25,6 +27,12 @@
       "id": 28,
       "revokedBy": null,
       "sentBy": null
+    },
+    {
+      "contractId": "ct_225dLsXCh3QBNtsNkhKkrBqeimxpRSonPSnLxopehwt9iujyMk",
+      "recipientAddress": null,
+      "proposedAmount": null,
+      "id": 29
     }
   ]
 }
