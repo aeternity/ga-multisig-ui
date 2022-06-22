@@ -50,6 +50,8 @@ onMounted(async () => {
     // when coming directly to transaction detail by url
     await hydrateApp()
   }
+  console.log('loadContractDetail Transaction')
+
   await loadContractDetail(route.params.id || contractId.value)
 })
 

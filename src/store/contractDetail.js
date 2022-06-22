@@ -6,9 +6,11 @@ import { getSpendTx } from "./contractActions"
 import { resolveChainName } from "./chainNames"
 import { creationPhases } from "./safeCreation"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
+import { Crypto } from '@aeternity/aepp-sdk'
 
 const getInitialContractDetail = () => ({
   accountId: null,
+  createdAccount: null,
   isMultisigAccountCharged: false,
   contractId: null,
 
@@ -41,7 +43,11 @@ export const clearContractDetail = () => {
 
 // todo unite functions ins tores
 
-export const initContract = async (signers, confirmationsRequired, safeKeyPair) => {
+export const initContract = async (signers, confirmationsRequired) => {
+  const {
+    createdAccount,
+  } = toRefs(contractDetail)
+  createdAccount.value = Crypto.generateKeyPair()
   const { creationPhase1, creationPhase2, creationPhase3, creationPhase4 } = toRefs(creationPhases)
   const { sdk } = toRefs(aeWallet)
 
@@ -59,7 +65,7 @@ export const initContract = async (signers, confirmationsRequired, safeKeyPair) 
   creationPhase2.value = true
 
   const attachTX = await signerSdk.gaAttachTx({
-    ownerId: safeKeyPair.publicKey,
+    ownerId: createdAccount.value.publicKey,
     code: contractInstance.bytecode,
     callData: contractInstance.calldata.encode(contractInstance._name, 'init', contractArgs),
     authFun: hash('authorize'),
@@ -69,20 +75,19 @@ export const initContract = async (signers, confirmationsRequired, safeKeyPair) 
     },
   })
   creationPhase3.value = true
-
+  console.log('attachTX', attachTX)
   const { rawTx } = await signerSdk.send(attachTX.tx, {
     innerTx: true,
-    onAccount: safeKeyPair,
+    onAccount: createdAccount.value,
   })
 
   await sdk.value.payForTransaction(rawTx)
   creationPhase4.value = true
 
-  const contractAccount = await signerSdk.getAccount(safeKeyPair.publicKey)
+  const contractAccount = await signerSdk.getAccount(createdAccount.value.publicKey)
 
   return contractAccount.contractId
 }
-
 
 export const loadContractDetail = async (cid) => {
   const {
@@ -119,6 +124,7 @@ export const loadContractDetail = async (cid) => {
     source: multisigContract,
     contractAddress: contractId.value,
   })
+  console.log('contractInstance', contractInstance)
 
   balance.value = await sdk.value.getBalance(accountId.value)
   isMultisigAccountCharged.value = balance.value > 0

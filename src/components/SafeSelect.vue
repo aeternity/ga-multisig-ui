@@ -23,6 +23,7 @@ async function selectSafe (contractId) {
   await clearContractDetail()
 
   // todo check if needed.
+  console.log('loadContractDetail from SafeSelect')
   await loadContractDetail(contractId)
 }
 </script>

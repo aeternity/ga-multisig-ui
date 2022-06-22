@@ -21,6 +21,7 @@ async function topUp () {
   await sdk.value.spend(amount.value, accountId.value, {
     denomination: AE_AMOUNT_FORMATS.AE,
   })
+
   await loadContractDetail(contractId.value)
 }
 </script>

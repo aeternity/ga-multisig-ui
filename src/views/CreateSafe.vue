@@ -11,27 +11,33 @@
 <script setup>
 import { toRefs } from 'vue'
 import { aeWallet } from '../utils/aeternity'
-import { clearCreationSteps, contractDetail, hydrateApp, isCreated, isCreating, loadContractDetail } from "../store"
+import { app, clearCreationSteps, contractDetail, hydrateApp, isCreated, isCreating } from "../store"
 import { useRouter } from "vue-router"
 import CreationPhaseLoader from "../components/CreationPhaseLoader"
 import CreateSafeForm from "../components/CreateSafeForm"
 
 const { address } = toRefs(aeWallet)
-const { contractId } = toRefs(contractDetail)
+const { contractId, createdAccount } = toRefs(contractDetail)
+const { mySafes, transactions } = toRefs(app)
 
 const router = useRouter()
 
 async function getStarted () {
-  await loadContractDetail(contractId.value) //todo is this neccessary?
-  await router.push({ path: `/app/${contractId.value}` })
   await hydrateApp()
+
+  const createdContractId = transactions.value[transactions.value.length - 1].contractId
+
+  // push created safe to local state because take spme time to update backend entires
+  const createdSafe = {
+    contractId: createdContractId,
+    gaAccountId: createdAccount.value.publicKey,
+    signerId: address.value,
+  }
+  mySafes.value.push(createdSafe)
+
+  await router.push({ path: `/app/${createdContractId}` })
+
+
   clearCreationSteps()
 }
 </script>
-
-
-<style>
-.hidden {
-  display: none;
-}
-</style>

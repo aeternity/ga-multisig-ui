@@ -99,7 +99,6 @@ body {
   padding: 0;
 }
 
-
 li {
   list-style: none;
 }
@@ -117,5 +116,9 @@ small {
   filter: blur(1px);
   pointer-events: none;
   transition: 0.5s;
+}
+
+.hidden {
+  display: none;
 }
 </style>
