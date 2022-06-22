@@ -47,6 +47,7 @@ const route = useRoute()
 
 onMounted(async () => {
   if (!isAppHydrated.value) {
+    // when coming directly to transaction detail by url
     await hydrateApp()
   }
   await loadContractDetail(route.params.id || contractId.value)

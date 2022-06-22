@@ -1,6 +1,6 @@
 <template>
   <div class="create-safe">
-    <h2>Welcome to Multisg</h2>
+    <h2>Welcome to Multisig</h2>
     <p>
       Create a new Safe that is controlled by one or multiple owners.
 
@@ -15,6 +15,36 @@
     </router-link>
   </div>
 </template>
+
+<script setup>
+import { aeWallet } from "../utils/aeternity"
+import { onMounted, toRefs } from "vue"
+import { app, contractDetail, hydrateApp, loadContractDetail } from "../store"
+import { useRoute, useRouter } from "vue-router"
+
+const { walletStatus, address } = toRefs(aeWallet)
+const { contractId } = toRefs(contractDetail)
+const { mySafes } = toRefs(app)
+
+const route = useRoute()
+const router = useRouter()
+onMounted(async () => {
+  // wait for wallet connection because wallet =address is needed to filter My Contracts
+  // this should be done in mounted hook
+  await hydrateApp()
+  // console.log('contractId.value', contractId.value)
+  const lastestCreatedSafeId = mySafes.value[mySafes.value.length - 1].contractId
+  const selectedcontractId = route.params.id || lastestCreatedSafeId
+  // todo fix here
+
+  if (mySafes.value.length > 0) {
+    await loadContractDetail(selectedcontractId)
+    await router.push({ path: `/app/${selectedcontractId}` })
+  } else {
+    await router.push({ path: '/app' })
+  }
+})
+</script>
 
 
 <style scoped>

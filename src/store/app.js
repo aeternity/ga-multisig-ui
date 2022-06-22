@@ -14,7 +14,6 @@ export const hydrateApp = async () => {
   const { address } = toRefs(aeWallet)
 
   mySafes.value = await getSignersContracts(address.value)
-
   transactions.value = await restoreTransactionsFromDB()
   isAppHydrated.value = true
 }

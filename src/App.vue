@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="isAppHydrated">
     <the-header class="header"/>
 
     <aside v-if="route.name !== 'landing'">
@@ -13,20 +13,24 @@
     </main>
 
   </div>
+  <loader-image v-else/>
 </template>
 
 <script setup>
 import { onMounted, toRefs, watch } from 'vue'
 import { aeInitWallet, aeWallet } from './utils/aeternity'
-import { app, contractDetail, hydrateApp, loadContractDetail } from "./store"
+import { app, contractDetail, hydrateApp } from "./store"
 import { useRoute, useRouter } from "vue-router"
 
 import TheHeader from "./components/TheHeader"
 import TheSidebar from "./components/TheSidebar"
+import LoaderImage from "./components/LoaderImage"
 
 const { walletStatus, address } = toRefs(aeWallet)
 const { contractId } = toRefs(contractDetail)
 const { mySafes } = toRefs(app)
+const { isAppHydrated } = toRefs(app)
+
 
 const route = useRoute()
 const router = useRouter()
@@ -41,17 +45,6 @@ watch(walletStatus,
       // wait for wallet connection because wallet =address is needed to filter My Contracts
       // this should be done in mounted hook
       await hydrateApp()
-      // console.log('contractId.value', contractId.value)
-      const lastestCreatedSafeId = mySafes.value[mySafes.value.length - 1].contractId
-      const selectedcontractId = route.params.id || lastestCreatedSafeId
-      // todo fix here
-
-      if (mySafes.value.length > 0) {
-        await loadContractDetail(selectedcontractId)
-        await router.push({ path: `/app/${selectedcontractId}` })
-      } else {
-        await router.push({ path: '/app' })
-      }
     }
   },
 )
