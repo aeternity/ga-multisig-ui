@@ -41,9 +41,7 @@ export const clearContractDetail = () => {
   Object.assign(contractDetail, getInitialContractDetail())
 }
 
-// todo unite functions ins tores
-
-export const initContract = async (signers, confirmationsRequired) => {
+export async function initContract (signers, confirmationsRequired) {
   const {
     createdAccount,
   } = toRefs(contractDetail)
@@ -75,7 +73,6 @@ export const initContract = async (signers, confirmationsRequired) => {
     },
   })
   creationPhase3.value = true
-  console.log('attachTX', attachTX)
   const { rawTx } = await signerSdk.send(attachTX.tx, {
     innerTx: true,
     onAccount: createdAccount.value,
@@ -89,7 +86,7 @@ export const initContract = async (signers, confirmationsRequired) => {
   return contractAccount.contractId
 }
 
-export const loadContractDetail = async (cid) => {
+export async function loadContractDetail (cid) {
   const {
     accountId,
     isMultisigAccountCharged,
@@ -117,14 +114,12 @@ export const loadContractDetail = async (cid) => {
   contractId.value = cid
 
   accountId.value = getGaAccountIdByContractId(contractId.value)
-
   const offChainTransactionData = getTransactionByContractId(contractId.value)
 
   const contractInstance = await sdk.value.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,
   })
-  console.log('contractInstance', contractInstance)
 
   balance.value = await sdk.value.getBalance(accountId.value)
   isMultisigAccountCharged.value = balance.value > 0
@@ -159,7 +154,7 @@ export const loadContractDetail = async (cid) => {
   sentBy.value = offChainTransactionData?.sentBy
 }
 
-export const getConfirmationMap = async (signers, confirmedBy) => {
+export async function getConfirmationMap (signers, confirmedBy) {
   return await Promise.all(
     signers.map(async signer => {
         return {

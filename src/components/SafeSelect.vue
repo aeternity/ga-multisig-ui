@@ -21,9 +21,6 @@ const router = useRouter()
 async function selectSafe (contractId) {
   await router.push({ path: `/app/${contractId}` })
   await clearContractDetail()
-
-  // todo check if needed.
-  console.log('loadContractDetail from SafeSelect')
   await loadContractDetail(contractId)
 }
 </script>

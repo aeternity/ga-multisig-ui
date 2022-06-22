@@ -27,20 +27,16 @@ export const getTransactionByContractId = (contractId) => {
 
 export const getGaAccountIdByContractId = (contractId) => {
   const { mySafes } = toRefs(app)
-  const safe = mySafes.value.find(safe => {
-      console.log('safe.contractId', safe.contractId)
-      console.log('contractId', contractId)
-      return safe.contractId === contractId
-    },
+
+  const safe = mySafes.value.find(safe =>
+    safe.contractId === contractId,
   )
-  console.log('safe', safe)
   return safe.gaAccountId
 }
 
 export const getSignersContracts = async (signerAddress) => {
   try {
     let { data } = await axios.get(`https://multisig-backend.aeternity.art/${signerAddress}?fromHeight=618542`)
-    console.log('data', data)
     return data
 
   } catch (e) {

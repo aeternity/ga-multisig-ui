@@ -40,7 +40,6 @@ import ConfirmForm from "./ConfirmForm"
 import SendForm from "./SendForm"
 import { computed, toRefs } from "vue"
 import {
-  app,
   clearContractDetail,
   clearTransactionData,
   contractDetail,
@@ -63,8 +62,6 @@ const {
   recipientAddress,
 } = toRefs(contractDetail)
 
-const { isAppHydrated } = toRefs(app)
-
 const isProposeFormDisplayed = computed(() => !hasProposedTx.value && !(revokedBy.value || sentBy.value))
 const isConfirmFormDisplayed = computed(() => !hasConsensus.value && !(revokedBy.value || sentBy.value))
 const isSendFormDisplayed = computed(() => !(revokedBy.value || sentBy.value))
@@ -76,36 +73,12 @@ async function resetTransaction () {
   await loadContractDetail(contractId.value)
 }
 
-// async function initTransaction () {
-//
-//   const hasAttachedTransaction = !!proposedAmount.value
-//   const isTransactionTerminated = !!sentBy.value || !!revokedBy.value
-//   // todo ressurect this with better conditions
-//   // if (!hasAttachedTransaction || isTransactionTerminated) {
-//   //   await storeTransactionToDB(contractId.value, account.value)
-//   // }
-//   console.log('loadContractDetail from initTransaction')
-//
-//   await loadContractDetail(contractId.value)
-// }
-
 async function propose () {
   const txToPropose = await getSpendTx(accountId.value, recipientAddress.value, proposedAmount.value)
   await proposeTx(txToPropose, contractId.value)
-  await updateProposeTx(contractId.value, recipientAddress.value, proposedAmount.value) // todo store bac
-  console.log('loadContractDetail from after propose')
-
+  await updateProposeTx(contractId.value, recipientAddress.value, proposedAmount.value)
   await loadContractDetail(contractId.value)
 }
-
-// onMounted(async () => {
-//   if (!isAppHydrated.value) {
-//     await hydrateApp()
-//   }
-//
-//   await initTransaction()
-// })
-//
 
 </script>
 

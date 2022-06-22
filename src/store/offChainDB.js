@@ -1,10 +1,11 @@
 import axios from "axios"
-import { getTransactionByContractId, hydrateApp } from './app'
+import { app, getTransactionByContractId, hydrateApp } from './app'
+import { toRefs } from "vue"
 
 const transactionUrl = "http://localhost:3001/transactions"
+const { transactions } = toRefs(app)
 
-
-export const storeTransactionToDB = async (contractId) => {
+export async function storeTransactionToDB (contractId) {
   try {
     await axios.post(transactionUrl,
       {
@@ -13,13 +14,13 @@ export const storeTransactionToDB = async (contractId) => {
         proposedAmount: null,
       })
 
-    await hydrateApp()
+    transactions.value = await restoreTransactionsFromDB()
   } catch (e) {
     console.error(e)
   }
 }
 
-export const restoreTransactionsFromDB = async () => {
+export async function restoreTransactionsFromDB () {
   try {
     const res = await axios.get(transactionUrl)
     return res.data
@@ -28,8 +29,9 @@ export const restoreTransactionsFromDB = async () => {
   }
 }
 
-export const clearTransactionData = async (contractId) => {
+export async function clearTransactionData (contractId) {
   const transaction = await getTransactionByContractId(contractId)
+
   try {
     await axios.patch(`${transactionUrl}/${transaction.id}`, {
       sentBy: null,
@@ -37,14 +39,14 @@ export const clearTransactionData = async (contractId) => {
       recipientAddress: null,
       proposedAmount: null,
     })
-    await hydrateApp()
+    transactions.value = await restoreTransactionsFromDB()
 
   } catch (e) {
     console.error(e)
   }
 }
 
-export const updateProposeTx = async (contractId, recipientAddress, proposedAmount) => {
+export async function updateProposeTx (contractId, recipientAddress, proposedAmount) {
   const transaction = await getTransactionByContractId(contractId)
 
   try {
@@ -52,21 +54,21 @@ export const updateProposeTx = async (contractId, recipientAddress, proposedAmou
       recipientAddress,
       proposedAmount,
     })
-    await hydrateApp()
+    transactions.value = await restoreTransactionsFromDB()
 
   } catch (e) {
     console.error(e)
   }
 }
 
-export const updateRevokedBy = async (contractId, revokedBy) => {
+export async function updateRevokedBy (contractId, revokedBy) {
   const transaction = await getTransactionByContractId(contractId)
 
   try {
     await axios.patch(`${transactionUrl}/${transaction.id}`, {
       revokedBy,
     })
-    await hydrateApp()
+    transactions.value = await restoreTransactionsFromDB()
 
   } catch (e) {
     console.error(e)

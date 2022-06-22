@@ -76,8 +76,6 @@ const isConfirmationListDisabled = computed(() => signers.value && !confirmedBy.
 
 async function confirm () {
   await confirmTx(contractId.value, txHash.value)
-  console.log('loadContractDetail after confirm')
-
   await loadContractDetail(contractId.value)
 }
 
@@ -90,8 +88,6 @@ async function send () {
 async function revoke () {
   const revokedBy = await revokeTx(spendTx.value, contractId.value)
   await updateRevokedBy(contractId.value, revokedBy)
-  console.log('loadContractDetail after revoke')
-
   await loadContractDetail(contractId.value)
 }
 </script>

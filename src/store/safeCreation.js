@@ -17,7 +17,7 @@ export const isCreating = () => {
   const { creationPhase1, creationPhase2, creationPhase3, creationPhase4 } = toRefs(creationPhases)
   return creationPhase1.value || creationPhase2.value || creationPhase3.value || creationPhase4.value
 }
-// todo asi reactive?
+
 export const isCreated = () => {
   const { creationPhase1, creationPhase2, creationPhase3, creationPhase4 } = toRefs(creationPhases)
   return creationPhase1.value && creationPhase2.value && creationPhase3.value && creationPhase4.value

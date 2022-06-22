@@ -28,29 +28,17 @@ const { mySafes } = toRefs(app)
 
 const route = useRoute()
 const router = useRouter()
+
 onMounted(async () => {
-  // wait for wallet connection because wallet =address is needed to filter My Contracts
-  // this should be done in mounted hook
-  // await hydrateApp()
-  // console.log('contractId.value', contractId.value)
-  const lastestCreatedSafeId = mySafes.value[mySafes.value.length - 1].contractId
-  const selectedcontractId = route.params.id || lastestCreatedSafeId
-  // todo fix here
+  const hasAnySafes = mySafes.value.length > 0
+  const lastSafeId = mySafes.value[mySafes.value.length - 1].contractId
+  const selectedContractId = route.params.id || lastSafeId
 
-  if (mySafes.value.length > 0) {
-    console.log('loadContractDetail from Index')
-
-    // await loadContractDetail(selectedcontractId)
-    await router.push({ path: `/app/${selectedcontractId}` })
+  if (hasAnySafes) {
+    await router.push({ path: `/app/${selectedContractId}` })
   } else {
     await router.push({ path: '/app' })
   }
 })
 </script>
 
-
-<style scoped>
-.create-safe {
-
-}
-</style>
