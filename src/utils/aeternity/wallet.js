@@ -1,15 +1,18 @@
 import {
-  RpcAepp,
-  Node,
-  BrowserWindowMessageConnection,
-  WalletDetector,
   AmountFormatter,
+  BrowserWindowMessageConnection,
+  Crypto,
+  MemoryAccount,
+  Node,
+  RpcAepp,
+  TxBuilderHelper,
   Universal,
-  MemoryAccount
+  WalletDetector,
 } from '@aeternity/aepp-sdk'
 
 import { reactive, toRefs } from 'vue'
 import { COMPILER_URL, NETWORKS } from './configs'
+import { Buffer } from "buffer"
 
 export const aeWallet = reactive({
   sdk: null,
@@ -17,7 +20,7 @@ export const aeWallet = reactive({
   address: null,
   balance: null,
   walletStatus: null,
-  isStatic: false
+  isStatic: false,
 })
 
 export const aeInitWallet = async () => {
@@ -28,7 +31,7 @@ export const aeInitWallet = async () => {
   for (const { type, url } of NETWORKS) {
     nodes.push({
       name: type,
-      instance: await Node({ url })
+      instance: await Node({ url }),
     })
   }
 
@@ -39,13 +42,13 @@ export const aeInitWallet = async () => {
     // connect to static Wallet
     if (VUE_APP_WALLET_SECRET_KEY && VUE_APP_WALLET_PUBLIC_KEY) {
       const account = MemoryAccount({
-        keypair: { secretKey: VUE_APP_WALLET_SECRET_KEY, publicKey: VUE_APP_WALLET_PUBLIC_KEY }
+        keypair: { secretKey: VUE_APP_WALLET_SECRET_KEY, publicKey: VUE_APP_WALLET_PUBLIC_KEY },
       })
 
       const client = await Universal({
         compilerUrl: COMPILER_URL,
         nodes,
-        accounts: [account]
+        accounts: [account],
       })
       sdk.value = client
 
@@ -64,9 +67,10 @@ export const aeInitWallet = async () => {
         onAddressChange (addresses) {
           console.info('onAddressChange :: ', addresses)
           aeFetchWalletInfo(sdk.value)
-        }
+        },
       })
       walletStatus.value = 'connected'
+
       await aeScanForWallets()
     }
   } catch (error) {
@@ -76,13 +80,14 @@ export const aeInitWallet = async () => {
   return true
 }
 
+
 export const aeScanForWallets = async () => {
   const { sdk, walletStatus, activeWallet } = toRefs(aeWallet)
 
   walletStatus.value = 'scanning'
 
   const scannerConnection = await BrowserWindowMessageConnection({
-    connectionInfo: { id: 'spy' }
+    connectionInfo: { id: 'spy' },
   })
   const detector = await WalletDetector({ connection: scannerConnection })
 
@@ -93,7 +98,7 @@ export const aeScanForWallets = async () => {
     activeWallet.value = newWallet
 
     const connected = await sdk.value.connectToWallet(
-      await newWallet.getConnection()
+      await newWallet.getConnection(),
     )
     sdk.value.selectNode(connected.networkId) // connected.networkId needs to be defined as node in RpcAepp
     await sdk.value.subscribeAddress('subscribe', 'current')
@@ -106,7 +111,8 @@ export const aeScanForWallets = async () => {
   return Object.values(detector.wallets).length
 }
 
-export const aeFetchWalletInfo = async (sdk)  => {
+
+export const aeFetchWalletInfo = async (sdk) => {
   const { address, balance, walletStatus } = toRefs(aeWallet)
 
   walletStatus.value = 'fetching_info'
@@ -115,7 +121,7 @@ export const aeFetchWalletInfo = async (sdk)  => {
     address.value = await sdk.address()
 
     balance.value = await sdk.getBalance(address.value, {
-      format: AmountFormatter.AE_AMOUNT_FORMATS.AE
+      format: AmountFormatter.AE_AMOUNT_FORMATS.AE,
     })
 
     walletStatus.value = null
@@ -126,3 +132,33 @@ export const aeFetchWalletInfo = async (sdk)  => {
     return false
   }
 }
+
+export const buildAuthTxHash = async (rlpTransaction) => {
+  const { sdk } = toRefs(aeWallet)
+
+  const decoded = TxBuilderHelper.decode(rlpTransaction, 'tx')
+  const networkId = Buffer.from(sdk.value.getNetworkId())
+
+  return new Uint8Array(
+    Crypto.hash(
+      Buffer.concat([
+        networkId,
+        decoded,
+      ]),
+    ),
+  )
+}
+
+export const getUniversalStamp = async () => {
+  const node = await Node({ url: 'https://testnet.aeternity.io' })
+
+  return await Universal({
+    nodes: [{
+      name: 'testnet',
+      instance: node,
+    }],
+    compilerUrl: COMPILER_URL,
+  })
+}
+
+
