@@ -28,13 +28,13 @@ import SignersList from "../components/SignersList"
 
 import { onMounted, toRefs } from "vue"
 import { useRoute } from "vue-router"
-import { aeWallet } from "../utils/aeternity"
+import { wallet } from "../utils/aeternity"
 import TransactionForm from "../components/TransactionForm"
 import TransactionStatus from "../components/TransactionStatus"
 import LoaderImage from "../components/LoaderImage"
 
 const { isAppHydrated } = toRefs(app)
-const { address } = toRefs(aeWallet)
+const { address } = toRefs(wallet)
 const {
   accountId,
   signers,

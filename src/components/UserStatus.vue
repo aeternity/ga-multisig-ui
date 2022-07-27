@@ -15,13 +15,13 @@
   </div>
 </template>
 <script setup>
-import { aeInitWallet, aeWallet } from "../utils/aeternity"
+import { initWallet, wallet } from "../utils/aeternity"
 import { toRefs } from "vue"
 
-const { address } = toRefs(aeWallet)
+const { address } = toRefs(wallet)
 
 async function connect () {
-  await aeInitWallet()
+  await initWallet()
 }
 </script>
 <style scoped>

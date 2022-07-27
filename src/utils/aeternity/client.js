@@ -1,10 +1,11 @@
-import { Node, Universal } from '@aeternity/aepp-sdk'
+import { Node, AeSdk } from '@aeternity/aepp-sdk'
 import { reactive, toRefs } from 'vue'
 import { COMPILER_URL, NETWORKS } from './configs'
 import identity from './contracts/Idenitity.aes'
 
-export const aeClient = reactive({
-  sdk: null,
+export let clientSdk = null
+
+export const client = reactive({
   isConnecting: false,
   isConnected: false,
   isStatic: false,
@@ -19,8 +20,8 @@ export const aeClient = reactive({
  * This client can not sign transactions that require funds (everything except static contract calls)
  * @returns {Promise<boolean>}
  */
-export const aeInitClient = async () => {
-  const { sdk, isConnected, isConnecting, isStatic } = toRefs(aeClient)
+export const initClient = async () => {
+  const { isConnected, isConnecting, isStatic } = toRefs(client)
 
   isConnecting.value = true
 
@@ -29,12 +30,14 @@ export const aeInitClient = async () => {
   for (const { name, url } of NETWORKS) {
     nodes.push({
       name,
-      instance: await Node({ url })
+      instance: new Node( url )
     })
   }
-
-  sdk.value = await Universal({
-    nodes: nodes,
+  clientSdk = new AeSdk({
+    nodes: [
+      { name: 'ae_uat', instance: new Node('https://testnet.aeternity.io') },
+      { name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
+    ],
     compilerUrl: COMPILER_URL
   })
 
@@ -42,7 +45,7 @@ export const aeInitClient = async () => {
   isConnected.value = true
   isConnecting.value = false
 
-  return await aeInitProvider()
+  return await initProvider()
 }
 
 /**
@@ -50,13 +53,13 @@ export const aeInitClient = async () => {
  * basic values from the wallet.
  * @returns {Promise<boolean>}
  */
-export const aeInitProvider = async () => {
-  const { sdk, networkId, contract, contractAddress } = toRefs(aeClient)
+export const initProvider = async () => {
+  const { networkId, contract, contractAddress } = toRefs(client)
   try {
-    networkId.value = (await sdk.value.getNodeInfo()).nodeNetworkId
+    networkId.value = (await clientSdk.getNodeInfo()).nodeNetworkId
 
     if (contractAddress.value) {
-      contract.value = await sdk.value.getContractInstance(identity, {
+      contract.value = await clientSdk.getContractInstance(identity, {
         contractAddress: contractAddress.value
       })
     }

@@ -77,11 +77,11 @@
 
 <script setup>
 import { computed, ref, toRefs } from 'vue'
-import { aeInitWallet, aeWallet } from '@/utils/aeternity'
+import { initWallet, wallet } from '@/utils/aeternity'
 import { initSafe } from "@/store"
 import SignersForm from "./SignersForm"
 
-const { address, safes } = toRefs(aeWallet)
+const { address, safes } = toRefs(wallet)
 
 const step = ref(1)
 
@@ -96,7 +96,7 @@ async function createSafe () {
 }
 
 async function connect () {
-  await aeInitWallet()
+  await initWallet()
 }
 
 async function goToStep (index) {

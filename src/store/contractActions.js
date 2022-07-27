@@ -1,10 +1,10 @@
 import { Buffer } from "buffer";
-import { aeWallet, buildAuthTxHash, getUniversalStamp } from "@/utils/aeternity"
-import { MemoryAccount } from '@aeternity/aepp-sdk'
+import { wallet,  getUniversalStamp } from "@/utils/aeternity"
+import { MemoryAccount, buildAuthTxHash } from '@aeternity/aepp-sdk'
 import multisigContract from 'ga-multisig-contract/SimpleGAMultiSig.aes'
 
 export async function getSpendTx (senderAddress, recipientAddress, proposedAmount) {
-  return await aeWallet.sdk.spendTx({
+  return await wallet.sdk.spendTx({
     senderId: senderAddress,
     recipientId: recipientAddress,
     amount: proposedAmount,
@@ -17,7 +17,7 @@ export async function proposeTx (spendTx, contractId) {
 
   const spendTxHash = await buildAuthTxHash(spendTx)
 
-  const gaContractRpc = await aeWallet.sdk.getContractInstance({
+  const gaContractRpc = await wallet.sdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId,
   })
@@ -30,7 +30,7 @@ export async function confirmTx (contractId, spendTxHash) {
   const signerSdk = await getUniversalStamp()
   const expirationHeight = await signerSdk.height() + 50
 
-  const gaContractRpc = await aeWallet.sdk.getContractInstance({
+  const gaContractRpc = await wallet.sdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId,
   })
@@ -49,7 +49,7 @@ export async function sendTx (accountId, spendTx, nonce) {
 }
 
 export async function revokeTx (spendTxHash, contractId) {
-  const gaContractRpc = await aeWallet.sdk.getContractInstance({
+  const gaContractRpc = await wallet.sdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId,
   })

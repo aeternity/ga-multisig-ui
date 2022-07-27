@@ -1,13 +1,12 @@
 import { Buffer } from "buffer";
 import multisigContract from 'ga-multisig-contract/contracts/SimpleGAMultiSig.aes'
 import { reactive, toRefs } from 'vue'
-import { aeWallet, getUniversalStamp } from "@/utils/aeternity"
+import { getUniversalStamp, wallet } from "@/utils/aeternity"
 import { getGaAccountIdByContractId } from "./app"
-import { getSpendTx } from "./contractActions"
 import { resolveChainName } from "./chainNames"
 import { creationPhases } from "./safeCreation"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
-import { Crypto } from '@aeternity/aepp-sdk'
+import { generateKeyPair } from '@aeternity/aepp-sdk'
 import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
 import { getTransactionByHash } from "@/store/backend";
 
@@ -49,9 +48,9 @@ export async function initSafe (signers, confirmationsRequired) {
   const {
     createdAccount,
   } = toRefs(contractDetail)
-  createdAccount.value = Crypto.generateKeyPair()
+  createdAccount.value = generateKeyPair()
   const { creationPhase1, creationPhase2, creationPhase3, creationPhase4 } = toRefs(creationPhases)
-  const { sdk } = toRefs(aeWallet)
+  const { sdk } = toRefs(wallet)
 
   const contractArgs = [
     confirmationsRequired,
@@ -115,7 +114,7 @@ export async function loadContractDetail (cid) {
     balance,
     version,
   } = toRefs(contractDetail)
-  const { address, sdk } = toRefs(aeWallet)
+  const { address, sdk } = toRefs(wallet)
   contractId.value = cid
 
   accountId.value = getGaAccountIdByContractId(contractId.value)

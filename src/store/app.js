@@ -1,5 +1,5 @@
 import { reactive, toRefs } from "vue"
-import { aeWallet } from "@/utils/aeternity"
+import { wallet } from "@/utils/aeternity"
 import { getSignerContracts } from "@/store/backend";
 
 export const app = reactive({
@@ -9,7 +9,7 @@ export const app = reactive({
 
 export const hydrateApp = async () => {
   const { isAppHydrated, safes } = toRefs(app)
-  const { address } = toRefs(aeWallet)
+  const { address } = toRefs(wallet)
 
   safes.value = await getSignerContracts(address.value)
   isAppHydrated.value = true

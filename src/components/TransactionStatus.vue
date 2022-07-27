@@ -39,9 +39,9 @@ import {
 import ConfirmationList from "../components/ConfirmationList"
 
 import { computed, toRefs } from "vue"
-import { aeWallet } from "@/utils/aeternity"
+import { wallet } from "@/utils/aeternity"
 
-const { address } = toRefs(aeWallet)
+const { address } = toRefs(wallet)
 
 const {
   accountId,

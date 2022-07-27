@@ -50,12 +50,12 @@
 
 <script setup>
 import { toRefs } from "vue"
-import { aeWallet } from "@/utils/aeternity"
+import { wallet } from "@/utils/aeternity"
 import { app, contractDetail } from "@/store"
 import { useRoute, useRouter } from "vue-router"
 import SafeSelect from "./SafeSelect"
 
-const { walletStatus, address } = toRefs(aeWallet)
+const { walletStatus, address } = toRefs(wallet)
 const { accountId, balance, contractId } = toRefs(contractDetail)
 
 const route = useRoute()

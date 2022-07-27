@@ -10,13 +10,13 @@
 
 <script setup>
 import { toRefs } from 'vue'
-import { aeWallet } from '@/utils/aeternity'
+import { wallet } from '@/utils/aeternity'
 import { app, clearCreationSteps, contractDetail, hydrateApp, isCreated, isCreating } from "@/store"
 import { useRouter } from "vue-router"
 import CreationPhaseLoader from "../components/CreationPhaseLoader"
 import CreateSafeForm from "../components/CreateSafeForm"
 
-const { address } = toRefs(aeWallet)
+const { address } = toRefs(wallet)
 const { contractId } = toRefs(contractDetail)
 const { safes } = toRefs(app)
 

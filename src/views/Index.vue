@@ -17,12 +17,12 @@
 </template>
 
 <script setup>
-import { aeWallet } from "../utils/aeternity"
+import { wallet } from "../utils/aeternity"
 import { onMounted, toRefs } from "vue"
 import { app, contractDetail } from "../store"
 import { useRoute, useRouter } from "vue-router"
 
-const { walletStatus, address } = toRefs(aeWallet)
+const { walletStatus, address } = toRefs(wallet)
 const { contractId } = toRefs(contractDetail)
 const { safes } = toRefs(app)
 
