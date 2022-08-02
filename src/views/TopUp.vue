@@ -7,18 +7,17 @@
   </div>
 </template>
 <script setup>
-import { wallet } from "../utils/aeternity"
+import { sdk } from "../utils/aeternity"
 import { AE_AMOUNT_FORMATS } from '@aeternity/aepp-sdk/es/utils/amount-formatter'
 import { ref, toRefs } from "vue"
 import { contractDetail, loadContractDetail } from "../store"
 
-const { accountId, balance, contractId } = toRefs(contractDetail)
+const { accountId, contractId } = toRefs(contractDetail)
 
 const amount = ref(0)
-const { sdk } = toRefs(wallet)
 
 async function topUp () {
-  await sdk.value.spend(amount.value, accountId.value, {
+  await sdk.spend(amount.value, accountId.value, {
     denomination: AE_AMOUNT_FORMATS.AE,
   })
 

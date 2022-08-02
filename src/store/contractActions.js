@@ -1,10 +1,11 @@
 import { Buffer } from "buffer";
-import { wallet,  getUniversalStamp } from "@/utils/aeternity"
-import { MemoryAccount, buildAuthTxHash } from '@aeternity/aepp-sdk'
+import { sdk, getUniversalStamp } from "@/utils/aeternity"
+import { MemoryAccount, buildAuthTxHash, TX_TYPE, Node } from '@aeternity/aepp-sdk'
 import multisigContract from 'ga-multisig-contract/SimpleGAMultiSig.aes'
 
 export async function getSpendTx (senderAddress, recipientAddress, proposedAmount) {
-  return await wallet.sdk.spendTx({
+  return await sdk.buildTx(TX_TYPE.spend, {
+
     senderId: senderAddress,
     recipientId: recipientAddress,
     amount: proposedAmount,
@@ -13,15 +14,22 @@ export async function getSpendTx (senderAddress, recipientAddress, proposedAmoun
 
 export async function proposeTx (spendTx, contractId) {
   const signerSdk = await getUniversalStamp()
+  console.log('signerSdk', signerSdk)
   const expirationHeight = await signerSdk.height() + 50
+  console.log('signerSdk.selectedNodeName', signerSdk.selectedNodeName)
+  const spendTxHash = await buildAuthTxHash(spendTx, {
+    onNode: {
+      name: 'ae_uat',
+      instance: new Node('https://testnet.aeternity.io'),
+    },
+  })
+  console.log('spendTxHash', spendTxHash)
 
-  const spendTxHash = await buildAuthTxHash(spendTx)
-
-  const gaContractRpc = await wallet.sdk.getContractInstance({
+  const gaContractRpc = await sdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId,
   })
-
+  console.log('gaContractRpc', gaContractRpc)
   await gaContractRpc.methods.propose.send(spendTxHash, { FixedTTL: [expirationHeight] })
   return Buffer.from(spendTxHash).toString('hex');
 }
@@ -30,11 +38,11 @@ export async function confirmTx (contractId, spendTxHash) {
   const signerSdk = await getUniversalStamp()
   const expirationHeight = await signerSdk.height() + 50
 
-  const gaContractRpc = await wallet.sdk.getContractInstance({
+  const gaContractRpc = await sdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId,
   })
-
+  console.log('confirmTx gaContractRpc', gaContractRpc)
   await gaContractRpc.methods.confirm.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
@@ -49,7 +57,7 @@ export async function sendTx (accountId, spendTx, nonce) {
 }
 
 export async function revokeTx (spendTxHash, contractId) {
-  const gaContractRpc = await wallet.sdk.getContractInstance({
+  const gaContractRpc = await sdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId,
   })
