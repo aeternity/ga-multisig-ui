@@ -36,12 +36,12 @@ export async function confirmTx (contractId, spendTxHash) {
   await gaContractRpc.methods.confirm.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 
-export async function sendTx (gaKeyPair, spendTx, nonce) {
+export async function sendTx (accountId, spendTx, nonce) {
   const signerSdk = await getUniversalStamp()
+  await signerSdk.addAccount(MemoryAccount({ gaId: accountId }), { select: true })
   await signerSdk.send(
     spendTx,
     {
-      onAccount: MemoryAccount({ keypair: gaKeyPair }),
       authData: { source: multisigContract, args: [nonce] },
     })
 }
