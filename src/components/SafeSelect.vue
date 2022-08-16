@@ -1,7 +1,7 @@
 <template>
   <select :value="contractId">
     <option
-      v-for="safe in mySafes"
+      v-for="safe in safes"
       @click="selectSafe(safe.contractId)"
       :value="safe.contractId">
       {{ safe.contractId }}
@@ -11,10 +11,10 @@
 <script setup>
 import { toRefs } from "vue"
 import { useRouter } from "vue-router"
-import { app, clearContractDetail, contractDetail, loadContractDetail } from "../store"
+import { app, clearContractDetail, contractDetail, loadContractDetail } from "@/store"
 
 const { contractId } = toRefs(contractDetail)
-const { mySafes } = toRefs(app)
+const { safes } = toRefs(app)
 
 const router = useRouter()
 

@@ -1,12 +1,15 @@
+import { Buffer } from "buffer";
 import multisigContract from 'ga-multisig-contract/contracts/SimpleGAMultiSig.aes'
 import { reactive, toRefs } from 'vue'
-import { aeWallet, getUniversalStamp } from "../utils/aeternity"
-import { getGaAccountIdByContractId, getTransactionByContractId } from "./app"
+import { aeWallet, getUniversalStamp } from "@/utils/aeternity"
+import { getGaAccountIdByContractId } from "./app"
 import { getSpendTx } from "./contractActions"
 import { resolveChainName } from "./chainNames"
 import { creationPhases } from "./safeCreation"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { Crypto } from '@aeternity/aepp-sdk'
+import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
+import { getTransactionByHash } from "@/store/backend";
 
 const getInitialContractDetail = () => ({
   accountId: null,
@@ -23,6 +26,7 @@ const getInitialContractDetail = () => ({
 
   signers: null,
   proposedAmount: null,
+  proposedFee: null,
   recipientAddress: null,
   confirmations: null,
   confirmationsRequired: null,
@@ -41,7 +45,7 @@ export const clearContractDetail = () => {
   Object.assign(contractDetail, getInitialContractDetail())
 }
 
-export async function initContract (signers, confirmationsRequired) {
+export async function initSafe (signers, confirmationsRequired) {
   const {
     createdAccount,
   } = toRefs(contractDetail)
@@ -83,7 +87,7 @@ export async function initContract (signers, confirmationsRequired) {
 
   const contractAccount = await signerSdk.getAccount(createdAccount.value.publicKey)
 
-  return contractAccount.contractId
+  return { contractId: contractAccount.contractId, gaAccountId: createdAccount.value.publicKey }
 }
 
 export async function loadContractDetail (cid) {
@@ -99,6 +103,7 @@ export async function loadContractDetail (cid) {
     isCurrentUserSigner,
     signers,
     proposedAmount,
+    proposedFee,
     recipientAddress,
     confirmations,
     confirmationsRequired,
@@ -114,7 +119,6 @@ export async function loadContractDetail (cid) {
   contractId.value = cid
 
   accountId.value = getGaAccountIdByContractId(contractId.value)
-  const offChainTransactionData = getTransactionByContractId(contractId.value)
 
   const contractInstance = await sdk.value.getContractInstance({
     source: multisigContract,
@@ -131,7 +135,7 @@ export async function loadContractDetail (cid) {
 
   confirmations.value = consensus.confirmed_by.length
   confirmationsRequired.value = Number(consensus.confirmations_required)
-  txHash.value = consensus.tx_hash
+  txHash.value = consensus.tx_hash ? Buffer.from(consensus.tx_hash).toString('hex') : null
   hasConsensus.value = consensus.has_consensus
   confirmedBy.value = consensus.confirmed_by
 
@@ -140,14 +144,15 @@ export async function loadContractDetail (cid) {
   isCurrentUserSigner.value = signers.value.includes(address.value)
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
-  proposedAmount.value = offChainTransactionData?.proposedAmount
-  recipientAddress.value = offChainTransactionData?.recipientAddress
+  spendTx.value = txHash.value ? await getTransactionByHash(txHash.value).then(({data}) => data) : null;
+  const offChainTransactionData = spendTx.value ? unpackTx(spendTx.value) : null
+
+  proposedAmount.value = offChainTransactionData?.tx?.amount
+  proposedFee.value = offChainTransactionData?.tx?.fee
+  recipientAddress.value = offChainTransactionData?.tx?.recipientId
 
   if (confirmedBy.value) {
     confirmationsMap.value = await getConfirmationMap(signers.value, confirmedBy.value)
-  }
-  if (recipientAddress.value && proposedAmount.value) {
-    spendTx.value = await getSpendTx(accountId.value, recipientAddress.value, proposedAmount.value)
   }
 
   revokedBy.value = offChainTransactionData?.revokedBy

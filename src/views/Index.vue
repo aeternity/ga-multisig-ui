@@ -24,16 +24,16 @@ import { useRoute, useRouter } from "vue-router"
 
 const { walletStatus, address } = toRefs(aeWallet)
 const { contractId } = toRefs(contractDetail)
-const { mySafes } = toRefs(app)
+const { safes } = toRefs(app)
 
 const route = useRoute()
 const router = useRouter()
 
 onMounted(async () => {
-  const hasAnySafes = mySafes.value.length > 0
+  const hasAnySafes = safes.value.length > 0
 
   if (hasAnySafes) {
-    const lastSafeId = mySafes.value[mySafes.value.length - 1].contractId
+    const lastSafeId = safes.value[safes.value.length - 1].contractId
     const selectedContractId = route.params.id || lastSafeId
 
     await router.push({ path: `/app/${selectedContractId}` })

@@ -15,7 +15,6 @@
         :confirmations-map="confirmationsMap"/>
     </li>
     <li>
-      {{ !!sentBy ? '&#x2705;' : '&#x274C' }}
       <strong> Sent</strong>
       <hr>
       <button v-if="isConfirmActionDisplayed" @click="confirm">Confirm Tx</button>
@@ -35,15 +34,12 @@ import {
   loadContractDetail,
   revokeTx,
   sendTx,
-  updateRevokedBy,
-  updateSentBy,
-} from '../store'
+} from '@/store'
 
 import ConfirmationList from "../components/ConfirmationList"
 
 import { computed, toRefs } from "vue"
-import { useRoute } from "vue-router"
-import { aeWallet } from "../utils/aeternity"
+import { aeWallet } from "@/utils/aeternity"
 
 const { address } = toRefs(aeWallet)
 
@@ -53,8 +49,6 @@ const {
   contractId,
   hasProposedTx,
   hasConsensus,
-  revokedBy,
-  sentBy,
   isConfirmedByCurrentUser,
   signers,
   confirmations,
@@ -65,8 +59,6 @@ const {
   txHash,
   nonce,
 } = toRefs(contractDetail)
-
-const route = useRoute()
 
 const isSendActionDisplayed = computed(() => hasProposedTx.value && hasConsensus.value && isMultisigAccountCharged.value)
 const isTopUpPromptDisplayed = computed(() => hasConsensus.value && !isMultisigAccountCharged.value)
@@ -81,13 +73,12 @@ async function confirm () {
 
 async function send () {
   await sendTx(accountId.value, spendTx.value, nonce.value)
-  await updateSentBy(contractId.value, address.value)
   await loadContractDetail(contractId.value)
 }
 
 async function revoke () {
-  const revokedBy = await revokeTx(spendTx.value, contractId.value)
-  await updateRevokedBy(contractId.value, revokedBy)
+  await revokeTx(txHash.value, contractId.value)
   await loadContractDetail(contractId.value)
+  // TODO why isn't the page reloading info?
 }
 </script>

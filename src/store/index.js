@@ -1,5 +1,5 @@
 export * from './contractActions'
-export * from './offChainDB'
+export * from './backend'
 export * from './chainNames'
 export * from './safeCreation'
 export * from './contractDetail'

@@ -8,6 +8,7 @@
     <propose-list
       v-else
       :proposed-amount="proposedAmount"
+      :proposed-fee="proposedFee"
       :recipientAddress="recipientAddress"/>
     <confirm-form
       v-if="isConfirmFormDisplayed"
@@ -20,14 +21,6 @@
       :has-consensus="hasConsensus"
       :is-multisig-account-charged="isMultisigAccountCharged"
     />
-    <h5 v-if="revokedBy">The transaction has been revoked by user {{ revokedBy }}</h5>
-    <h5 v-if="sentBy">
-      The transaction has been sent by user <i>{{ sentBy }}</i> to account
-      <a :href="`https://explorer.testnet.aeternity.io/account/${recipientAddress}`"
-         target="_blank">
-        {{ recipientAddress }}
-      </a>
-    </h5>
     <div v-if="isRestartTransactionDisplayed">
       <button @click="resetTransaction">New Transaction</button>
     </div>
@@ -41,13 +34,12 @@ import SendForm from "./SendForm"
 import { computed, toRefs } from "vue"
 import {
   clearContractDetail,
-  clearTransactionData,
   contractDetail,
   getSpendTx,
   loadContractDetail,
   proposeTx,
-  updateProposeTx,
-} from "../store"
+} from "@/store"
+import { storeTransaction } from "@/store/backend";
 
 const {
   accountId,
@@ -59,6 +51,7 @@ const {
   sentBy,
   isConfirmedByCurrentUser,
   proposedAmount,
+  proposedFee,
   recipientAddress,
 } = toRefs(contractDetail)
 
@@ -68,15 +61,15 @@ const isSendFormDisplayed = computed(() => !(revokedBy.value || sentBy.value))
 const isRestartTransactionDisplayed = computed(() => revokedBy.value || sentBy.value)
 
 async function resetTransaction () {
-  await clearTransactionData(contractId.value)
   await clearContractDetail()
   await loadContractDetail(contractId.value)
 }
 
 async function propose () {
   const txToPropose = await getSpendTx(accountId.value, recipientAddress.value, proposedAmount.value)
-  await proposeTx(txToPropose, contractId.value)
-  await updateProposeTx(contractId.value, recipientAddress.value, proposedAmount.value)
+  const txHash = await proposeTx(txToPropose, contractId.value)
+
+  await storeTransaction(txToPropose, txHash);
   await loadContractDetail(contractId.value)
 }
 

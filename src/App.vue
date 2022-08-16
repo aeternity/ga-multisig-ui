@@ -28,7 +28,6 @@ import LoaderImage from "./components/LoaderImage"
 
 const { walletStatus, address } = toRefs(aeWallet)
 const { contractId } = toRefs(contractDetail)
-const { mySafes } = toRefs(app)
 const { isAppHydrated } = toRefs(app)
 
 

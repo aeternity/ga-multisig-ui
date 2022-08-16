@@ -1,7 +1,7 @@
 <template>
   <div>
     <hr>
-    <strong> Send</strong> {{ proposedAmount }} Aettos to:
+    <strong> Send</strong> {{ proposedAmount }} Aettos (Fee: {{ proposedFee }} Aettos) to:
     <br>
     {{ recipientAddress }}
     <br>
@@ -10,6 +10,6 @@
 <script>
 export default {
   name: 'propose-list',
-  props: ['proposedAmount', 'recipientAddress'],
+  props: ['proposedAmount', 'proposedFee', 'recipientAddress'],
 }
 </script>

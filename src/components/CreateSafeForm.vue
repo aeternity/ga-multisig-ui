@@ -77,11 +77,11 @@
 
 <script setup>
 import { computed, ref, toRefs } from 'vue'
-import { aeInitWallet, aeWallet } from '../utils/aeternity'
-import { initContract, storeTransactionToDB } from "../store"
+import { aeInitWallet, aeWallet } from '@/utils/aeternity'
+import { initSafe } from "@/store"
 import SignersForm from "./SignersForm"
 
-const { address } = toRefs(aeWallet)
+const { address, safes } = toRefs(aeWallet)
 
 const step = ref(1)
 
@@ -91,8 +91,8 @@ const initConfirmationsRequired = ref('')
 const isSignerFormFilled = computed(() => initSigners.value[1].length && initConfirmationsRequired.value)
 
 async function createSafe () {
-  const createdContractId = await initContract(initSigners.value, initConfirmationsRequired.value)
-  await storeTransactionToDB(createdContractId)
+  const createdSafe = await initSafe(initSigners.value, initConfirmationsRequired.value)
+  safes.value.push(createdSafe)
 }
 
 async function connect () {
