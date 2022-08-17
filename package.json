@@ -1,13 +1,12 @@
 {
-  "name": "multisig-user-demo",
+  "name": "ga-multisig-ui",
   "version": "0.1.0",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e --mode e2e",
-    "lint": "vue-cli-service lint",
-    "reinstall": "rm -rf node_modules/ && yarn cache clean && yarn install && yarn serve"
+    "reinstall": "rm -rf node_modules/ && yarn cache clean && yarn install"
   },
   "dependencies": {
     "@aeternity/aepp-sdk": "^12.1.2",
