@@ -1,6 +1,6 @@
 import { Buffer } from "buffer";
 import { sdk, getUniversalStamp } from "@/utils/aeternity"
-import { MemoryAccount, buildAuthTxHash, Tag, Node } from '@aeternity/aepp-sdk'
+import { MemoryAccount, Tag } from '@aeternity/aepp-sdk'
 import multisigContract from 'ga-multisig-contract/SimpleGAMultiSig.aes'
 
 export async function getSpendTx (senderAddress, recipientAddress, proposedAmount) {
@@ -13,17 +13,14 @@ export async function getSpendTx (senderAddress, recipientAddress, proposedAmoun
 
 export async function proposeTx (spendTx, contractId) {
   const signerSdk = await getUniversalStamp()
-  console.log('signerSdk', signerSdk)
   const expirationHeight = await signerSdk.height() + 50
-  console.log('signerSdk.selectedNodeName', signerSdk.selectedNodeName)
   const spendTxHash = await signerSdk.buildAuthTxHash(spendTx)
-  console.log('spendTxHash', spendTxHash)
 
   const gaContractRpc = await sdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId,
   })
-  console.log('gaContractRpc', gaContractRpc)
+
   await gaContractRpc.methods.propose.send(spendTxHash, { FixedTTL: [expirationHeight] })
   return Buffer.from(spendTxHash).toString('hex');
 }
@@ -36,7 +33,7 @@ export async function confirmTx (contractId, spendTxHash) {
     source: multisigContract,
     contractAddress: contractId,
   })
-  console.log('confirmTx gaContractRpc', gaContractRpc)
+
   await gaContractRpc.methods.confirm.send(spendTxHash, { FixedTTL: [expirationHeight] })
 }
 

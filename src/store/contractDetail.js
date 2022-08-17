@@ -138,7 +138,6 @@ export async function loadContractDetail (cid) {
 
   spendTx.value = txHash.value ? await getTransactionByHash(txHash.value) : null;
   const offChainTransactionData = spendTx.value ? unpackTx(spendTx.value) : null
-  console.log(txHash.value, offChainTransactionData)
 
   proposedAmount.value = offChainTransactionData?.tx?.amount
   proposedFee.value = offChainTransactionData?.tx?.fee

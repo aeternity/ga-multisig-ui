@@ -14,7 +14,7 @@
     "axios": "^0.27.2",
     "buffer": "^6.0.3",
     "core-js": "^3.24.1",
-    "ga-multisig-contract": "github:aeternity/ga-multisig-contract",
+    "ga-multisig-contract": "github:aeternity/ga-multisig-contract#02831f1fe0818d4b5c6edb342aea252479df028b",
     "raw-loader": "^4.0.2",
     "simpledotcss": "^2.1.0",
     "vue": "^3.2.37",
