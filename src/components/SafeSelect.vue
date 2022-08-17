@@ -1,10 +1,8 @@
 <template>
-  <select :value="contractId">
-    <option
-      v-for="safe in safes"
-      @click="selectSafe(safe.contractId)"
-      :value="safe.contractId">
-      {{ safe.contractId }}
+  <select v-model="contractId"
+          @change="selectSafe(contractId)">
+    <option v-for="contractId in Object.keys(safes)" :value="contractId">
+      {{ contractId }}
     </option>
   </select>
 </template>

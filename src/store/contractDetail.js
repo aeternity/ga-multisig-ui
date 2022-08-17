@@ -144,7 +144,7 @@ export async function loadContractDetail (cid) {
   isCurrentUserSigner.value = signers.value.includes(address.value)
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value)
 
-  spendTx.value = txHash.value ? await getTransactionByHash(txHash.value).then(({data}) => data) : null;
+  spendTx.value = txHash.value ? await getTransactionByHash(txHash.value) : null;
   const offChainTransactionData = spendTx.value ? unpackTx(spendTx.value) : null
 
   proposedAmount.value = offChainTransactionData?.tx?.amount

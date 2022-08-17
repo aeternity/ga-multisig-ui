@@ -4,7 +4,7 @@ import { getSignerContracts } from "@/store/backend";
 
 export const app = reactive({
   isAppHydrated: false,
-  safes: []
+  safes: {}
 })
 
 export const hydrateApp = async () => {
@@ -17,8 +17,6 @@ export const hydrateApp = async () => {
 
 export const getGaAccountIdByContractId = (contractId) => {
   const { safes } = toRefs(app)
-
-  const safe = safes.value.find(safe => safe.contractId === contractId)
-  return safe.gaAccountId
+  return safes.value[contractId]
 }
 

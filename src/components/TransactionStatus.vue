@@ -60,9 +60,9 @@ const {
   nonce,
 } = toRefs(contractDetail)
 
-const isSendActionDisplayed = computed(() => hasProposedTx.value && hasConsensus.value && isMultisigAccountCharged.value)
+const isSendActionDisplayed = computed(() => hasProposedTx.value && hasConsensus.value && isMultisigAccountCharged.value && spendTx.value)
 const isTopUpPromptDisplayed = computed(() => hasConsensus.value && !isMultisigAccountCharged.value)
-const isConfirmActionDisplayed = computed(() => hasProposedTx.value && !isConfirmedByCurrentUser.value)
+const isConfirmActionDisplayed = computed(() => hasProposedTx.value && !isConfirmedByCurrentUser.value && spendTx.value)
 const isConfirmationListDisabled = computed(() => signers.value && !confirmedBy.value)
 
 

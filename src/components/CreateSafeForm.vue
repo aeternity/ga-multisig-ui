@@ -91,8 +91,8 @@ const initConfirmationsRequired = ref('')
 const isSignerFormFilled = computed(() => initSigners.value[1].length && initConfirmationsRequired.value)
 
 async function createSafe () {
-  const createdSafe = await initSafe(initSigners.value, initConfirmationsRequired.value)
-  safes.value.push(createdSafe)
+  const { contractId, gaAccountId } = await initSafe(initSigners.value, initConfirmationsRequired.value)
+  safes.value[contractId] = gaAccountId
 }
 
 async function connect () {

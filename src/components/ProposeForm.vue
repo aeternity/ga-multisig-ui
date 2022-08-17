@@ -2,11 +2,6 @@
   <div class="propose-form">
     <hr>
     <h3>Propose Tx</h3>
-    <small>
-      Recommended recipient <i>{{ recommendedRecipient.publicKey }}</i>
-    </small>
-    <br>
-    <br>
     <label>Recipient </label>
     <br>
     <input
@@ -28,13 +23,8 @@
 </template>
 
 <script>
-import { Crypto } from '@aeternity/aepp-sdk'
-
 export default {
   name: 'ProposeForm',
   props: ['recipientAddress', 'proposedAmount'],
-  data: () => ({
-    recommendedRecipient: Crypto.generateKeyPair(),
-  }),
 }
 </script>

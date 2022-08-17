@@ -5,11 +5,14 @@
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount="proposedAmount"
       @propose-clicked="propose"/>
-    <propose-list
-      v-else
-      :proposed-amount="proposedAmount"
-      :proposed-fee="proposedFee"
-      :recipientAddress="recipientAddress"/>
+    <div v-else>
+      <propose-list
+        v-if="spendTx"
+        :proposed-amount="proposedAmount"
+        :proposed-fee="proposedFee"
+        :recipientAddress="recipientAddress"/>
+      <span v-else>Transaction not available, it's recommended to manually add it (currently not possible) or revoke the transaction for safety.</span>
+    </div>
     <confirm-form
       v-if="isConfirmFormDisplayed"
       :class="[{'disabled': !hasProposedTx}]"
@@ -53,6 +56,7 @@ const {
   proposedAmount,
   proposedFee,
   recipientAddress,
+  spendTx,
 } = toRefs(contractDetail)
 
 const isProposeFormDisplayed = computed(() => !hasProposedTx.value && !(revokedBy.value || sentBy.value))
