@@ -3,7 +3,6 @@ import multisigContract from 'ga-multisig-contract/contracts/SimpleGAMultiSig.ae
 import { reactive, toRefs } from 'vue'
 import { getUniversalStamp, sdk, wallet } from "@/utils/aeternity"
 import { getGaAccountIdByContractId } from "./app"
-import { resolveChainName } from "./chainNames"
 import { creationPhases } from "./safeCreation"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { generateKeyPair, Tag, unpackTx } from '@aeternity/aepp-sdk'
@@ -144,19 +143,18 @@ export async function loadContractDetail (cid) {
   recipientAddress.value = offChainTransactionData?.tx?.recipientId
 
   if (confirmedBy.value) {
-    confirmationsMap.value = await getConfirmationMap(signers.value, confirmedBy.value)
+    confirmationsMap.value = getConfirmationMap(signers.value, confirmedBy.value)
+    console.log(confirmationsMap.value)
   }
 
   revokedBy.value = offChainTransactionData?.revokedBy
   sentBy.value = offChainTransactionData?.sentBy
 }
 
-export async function getConfirmationMap (signers, confirmedBy) {
-  return await Promise.all(signers.map(async signer => {
-    return {
-      'isConfirmed': confirmedBy.includes(signer), 'signer': signer, 'chainName': await resolveChainName(signer),
-    }
-  }))
+export function getConfirmationMap(signers, confirmedBy) {
+  return signers.map(signer => ({
+    'isConfirmed': confirmedBy.includes(signer), 'signer': signer,
+  }));
 }
 
 
