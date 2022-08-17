@@ -47,7 +47,7 @@ export const initWallet = async () => {
         compilerUrl: COMPILER_URL,
         nodes: [
           { name: 'ae_uat', instance: new Node('https://testnet.aeternity.io') },
-          { name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
+          //{ name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
         ],
         accounts: [account],
       })
@@ -62,7 +62,7 @@ export const initWallet = async () => {
         nodes: [
           // todo fix nodes
           { name: 'ae_uat', instance: new Node('https://testnet.aeternity.io') },
-          { name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
+          //{ name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
         ],
         compilerUrl: COMPILER_URL,
         onNetworkChange: async ({ networkId }) => {
@@ -129,7 +129,13 @@ export const fetchWalletInfo = async () => {
 export const connectToNode = async (selectedNetworkId) => {
   const { networkId } = toRefs(wallet)
   networkId.value = selectedNetworkId
-  sdk.selectNode(selectedNetworkId)
+  try {
+    sdk.selectNode(selectedNetworkId)
+  } catch (e) {
+    alert(`Currently only testnet wallets are supported, please select testnet as network in your wallet.`)
+    throw e;
+  }
+
   await fetchWalletInfo()
 }
 
@@ -139,7 +145,7 @@ export const getUniversalStamp = async () => {
   return new AeSdk({
     nodes: [
       { name: 'ae_uat', instance: new Node('https://testnet.aeternity.io') },
-      { name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
+      //{ name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
     ],
     compilerUrl: COMPILER_URL,
   })

@@ -4,13 +4,20 @@
       <img alt="Aeternity" src="../assets/logo.svg" width="60"/>
       <h1> Multisig Safe</h1>
     </router-link>
+    <div class="network">
+      Network: {{ walletNetwork }}
+    </div>
     <user-status/>
   </header>
 </template>
 
 <script setup>
-import UserStatus from "./UserStatus"</script>
+import UserStatus from "./UserStatus"
+import { wallet } from '@/utils/aeternity'
+import { computed } from "vue";
 
+const walletNetwork = computed(() => wallet.networkId)
+</script>
 <style scoped>
 
 h1 {
@@ -31,5 +38,13 @@ header {
 .home-link {
   display: flex;
   text-decoration: none;
+}
+
+.network {
+  font-size: 0.8rem;
+  border-radius: 4px;
+  padding: 4px 8px;
+  background-color: #de3f6b;
+  color: #fff;
 }
 </style>
