@@ -26,7 +26,7 @@ export const storeTransaction = async (tx, txHash) => {
 export const getTransactionByHash = async (txHash) => {
   try {
     const { data } = await axios.get(`${backendUrl}/tx/${txHash}`)
-    return data;
+    return data?.data;
   } catch (e) {
     console.error(e)
     return null;

@@ -6,8 +6,7 @@ import { getGaAccountIdByContractId } from "./app"
 import { resolveChainName } from "./chainNames"
 import { creationPhases } from "./safeCreation"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
-import { generateKeyPair, TX_TYPE } from '@aeternity/aepp-sdk'
-import { unpackTx } from '@aeternity/aepp-sdk/es/tx/builder'
+import { generateKeyPair, Tag, unpackTx } from '@aeternity/aepp-sdk'
 import { getTransactionByHash } from "@/store/backend";
 
 const getInitialContractDetail = () => ({
@@ -61,12 +60,12 @@ export async function initSafe (signers, confirmationsRequired) {
   await contractInstance.compile()
   creationPhase2.value = true
 
-  const attachTX = await signerSdk.buildTx(TX_TYPE.gaAttach, {
+  const attachTX = await signerSdk.buildTx(Tag.GaAttachTx, {
     ownerId: createdAccount.value.publicKey,
     code: contractInstance.bytecode,
     callData: contractInstance.calldata.encode(contractInstance._name, 'init', contractArgs),
     authFun: hash('authorize'),
-    gasLimit: await contractInstance._estimateGas('init', contractArgs),
+    gasLimit: await contractInstance._estimateGas('init', contractArgs, {}),
     options: {
       innerTx: true,
     },
@@ -113,7 +112,7 @@ export async function loadContractDetail (cid) {
 
   accountId.value = getGaAccountIdByContractId(contractId.value)
 
-  const contractInstance = await sdk.value.getContractInstance({
+  const contractInstance = await sdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,
   })
@@ -139,6 +138,7 @@ export async function loadContractDetail (cid) {
 
   spendTx.value = txHash.value ? await getTransactionByHash(txHash.value) : null;
   const offChainTransactionData = spendTx.value ? unpackTx(spendTx.value) : null
+  console.log(txHash.value, offChainTransactionData)
 
   proposedAmount.value = offChainTransactionData?.tx?.amount
   proposedFee.value = offChainTransactionData?.tx?.fee

@@ -4,6 +4,7 @@ import { getSignerContracts } from "@/store/backend";
 
 export const app = reactive({
   isAppHydrated: false,
+  currentSafeContractId: null,
   safes: {}
 })
 

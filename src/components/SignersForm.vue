@@ -1,10 +1,5 @@
 <template>
   <div class="signers-form">
-    <small>
-      My addres #1 <i>ak_2QwV57qAR1rPqWfX4smiTXTn6Gp3aRd2q7boGxJy74wEMn85N7</i>
-      <br>
-      My addres #2 <i>ak_2JUjxGNfpVCov7SGTZdPGWW5XUZmuPwqbZsD9LaReEceFusbhU</i>
-    </small>
     <ul>
       <li v-for="(signer, index ) in signersList"
           class="signers-item">
@@ -31,8 +26,7 @@
     <select
       :value="requiredSignersAmount"
       @input="$emit('update:requiredSignersAmount', $event.target.value)">
-      <option selected disabled value="">select</option>
-      <template v-for="( signer, index ) in signersList">
+      <template v-for="( _, index ) in signersList" :>
         <option v-if="index > 0" :value="index + 1">
           {{ index + 1 }}
         </option>
@@ -49,6 +43,7 @@ export default {
   methods: {
     addInput () {
       this.signersList.push('')
+      this.$emit('update:requiredSignersAmount', this.signersList.length)
     },
     removeInput (index) {
       this.signersList.splice(index, 1)

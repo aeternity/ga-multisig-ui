@@ -78,21 +78,23 @@
 <script setup>
 import { computed, ref, toRefs } from 'vue'
 import { initWallet, wallet } from '@/utils/aeternity'
-import { initSafe } from "@/store"
+import {app, initSafe} from "@/store"
 import SignersForm from "./SignersForm"
 
-const { address, safes } = toRefs(wallet)
+const { address } = toRefs(wallet)
+const { safes, currentSafeContractId } = toRefs(app)
 
 const step = ref(1)
 
 const initSigners = ref(['', ''])
-const initConfirmationsRequired = ref('')
+const initConfirmationsRequired = ref(2)
 
 const isSignerFormFilled = computed(() => initSigners.value[1].length && initConfirmationsRequired.value)
 
 async function createSafe () {
   const { contractId, gaAccountId } = await initSafe(initSigners.value, initConfirmationsRequired.value)
   safes.value[contractId] = gaAccountId
+  currentSafeContractId.value = contractId
 }
 
 async function connect () {

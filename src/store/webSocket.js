@@ -1,6 +1,6 @@
 import { reactive, toRefs } from "vue"
 import { hydrateApp } from "./app"
-import { loadContractDetail } from "./transactionDetail"
+import {loadContractDetail} from "@/store/contractDetail";
 
 export const webSocket = reactive({
   socket: null,
@@ -10,7 +10,7 @@ export const webSocket = reactive({
 export async function initWebSocket () {
   const { socket } = toRefs(webSocket)
 
-  socket.value = new WebSocket('wss://testnet.aeternity.art/mdw/websocket')
+  socket.value = new WebSocket('wss://testnet.aeternity.io/mdw/websocket')
   socket.value.onopen = (e) => {
     console.info('connected')
   }

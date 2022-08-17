@@ -17,12 +17,12 @@
 </template>
 
 <script setup>
-import { wallet } from "../utils/aeternity"
+import { wallet } from "@/utils/aeternity"
 import { onMounted, toRefs } from "vue"
-import { app, contractDetail } from "../store"
+import { app, contractDetail } from "@/store"
 import { useRoute, useRouter } from "vue-router"
 
-const { walletStatus, address } = toRefs(wallet)
+const { address } = toRefs(wallet)
 const { contractId } = toRefs(contractDetail)
 const { safes } = toRefs(app)
 
@@ -30,16 +30,15 @@ const route = useRoute()
 const router = useRouter()
 
 onMounted(async () => {
-  const hasAnySafes = safes.value.length > 0
+  const hasAnySafes = Object.keys(safes.value).length > 0
 
   if (hasAnySafes) {
-    if (hasAnySafes) {
-    const lastSafeId = safes.value[safes.value.length - 1].contractId
+    const lastSafeId = Object.keys(safes.value)[Object.keys(safes.value).length - 1]
     const selectedContractId = route.params.id || lastSafeId
     await router.push({ path: `/app/${selectedContractId}` })
   } else {
     await router.push({ path: '/app' })
   }
-})
+});
 </script>
 

@@ -1,11 +1,10 @@
 import { Buffer } from "buffer";
 import { sdk, getUniversalStamp } from "@/utils/aeternity"
-import { MemoryAccount, buildAuthTxHash, TX_TYPE, Node } from '@aeternity/aepp-sdk'
+import { MemoryAccount, buildAuthTxHash, Tag, Node } from '@aeternity/aepp-sdk'
 import multisigContract from 'ga-multisig-contract/SimpleGAMultiSig.aes'
 
 export async function getSpendTx (senderAddress, recipientAddress, proposedAmount) {
-  return await sdk.buildTx(TX_TYPE.spend, {
-
+  return await sdk.buildTx(Tag.SpendTx, {
     senderId: senderAddress,
     recipientId: recipientAddress,
     amount: proposedAmount,
@@ -17,12 +16,7 @@ export async function proposeTx (spendTx, contractId) {
   console.log('signerSdk', signerSdk)
   const expirationHeight = await signerSdk.height() + 50
   console.log('signerSdk.selectedNodeName', signerSdk.selectedNodeName)
-  const spendTxHash = await buildAuthTxHash(spendTx, {
-    onNode: {
-      name: 'ae_uat',
-      instance: new Node('https://testnet.aeternity.io'),
-    },
-  })
+  const spendTxHash = await signerSdk.buildAuthTxHash(spendTx)
   console.log('spendTxHash', spendTxHash)
 
   const gaContractRpc = await sdk.getContractInstance({
@@ -48,7 +42,7 @@ export async function confirmTx (contractId, spendTxHash) {
 
 export async function sendTx (accountId, spendTx, nonce) {
   const signerSdk = await getUniversalStamp()
-  await signerSdk.addAccount(MemoryAccount({ gaId: accountId }), { select: true })
+  await signerSdk.addAccount(new MemoryAccount({ gaId: accountId }), { select: true })
   await signerSdk.send(
     spendTx,
     {

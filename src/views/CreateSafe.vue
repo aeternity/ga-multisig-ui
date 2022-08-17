@@ -1,6 +1,6 @@
 <template>
   <h2>Create Safe</h2>
-  <create-safe-form v-if="!isCreating()"/>
+  <create-safe-form v-model="createdContractId" v-if="!isCreating()"/>
 
   <div v-else>
     <creation-phase-loader/>
@@ -18,17 +18,13 @@ import CreateSafeForm from "../components/CreateSafeForm"
 
 const { address } = toRefs(wallet)
 const { contractId } = toRefs(contractDetail)
-const { safes } = toRefs(app)
+const { currentSafeContractId } = toRefs(app)
 
 const router = useRouter()
 
 async function getStarted () {
   await hydrateApp()
-
-  const createdContractId = safes.value[safes.value.length - 1].contractId
-  await router.push({ path: `/app/${createdContractId}` })
-
-
+  await router.push({ path: `/app/${currentSafeContractId.value}` })
   clearCreationSteps()
 }
 </script>
