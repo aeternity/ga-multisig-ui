@@ -1,4 +1,4 @@
-name: Staging Dex UI Pipeline
+name: Staging GA Multisig UI Pipeline
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ env:
 jobs:
   main:
     runs-on: ubuntu-latest    
-    name: Web build docker
+    name: Staging GA Multisig UI Pipeline
     steps:
       - uses: actions/checkout@v2
         with:
