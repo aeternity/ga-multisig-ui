@@ -6,12 +6,13 @@ export const getSignerContracts = async (signerAddress) => {
   try {
     const { data } = await axios.get(`${backendUrl}/${signerAddress}?fromHeight=618542`)
     return data.reduce((acc, {contractId, gaAccountId}) => {
-      acc[contractId]=gaAccountId
+      acc[contractId] = {gaAccountId}
       return acc
     },{});
 
   } catch (e) {
     console.error(e)
+    return {}
   }
 }
 

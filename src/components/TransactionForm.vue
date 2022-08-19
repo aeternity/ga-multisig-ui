@@ -3,8 +3,9 @@
     <propose-form
       v-if="isProposeFormDisplayed"
       v-model:recipient-address="recipientAddress"
-      v-model:proposed-amount="proposedAmount"
-      @propose-clicked="propose"/>
+      v-model:proposed-amount-ae="proposedAmountAe"
+      @propose-clicked="propose"
+      @max-amount-clicked="maxAmount"/>
     <div v-else>
       <propose-list
         v-if="spendTx"
@@ -43,6 +44,7 @@ import {
   proposeTx,
 } from "@/store"
 import { storeTransaction } from "@/store/backend";
+import {AE_AMOUNT_FORMATS, formatAmount, generateKeyPair, unpackTx} from "@aeternity/aepp-sdk";
 
 const {
   accountId,
@@ -54,6 +56,7 @@ const {
   sentBy,
   isConfirmedByCurrentUser,
   proposedAmount,
+  proposedAmountAe,
   proposedFee,
   recipientAddress,
   spendTx,
@@ -70,11 +73,17 @@ async function resetTransaction () {
 }
 
 async function propose () {
-  const txToPropose = await getSpendTx(accountId.value, recipientAddress.value, proposedAmount.value)
+  const txToPropose = await getSpendTx(accountId.value, recipientAddress.value, formatAmount(proposedAmountAe.value, {denomination: AE_AMOUNT_FORMATS.AE, targetDenomination: AE_AMOUNT_FORMATS.AETTOS}))
   const txHash = await proposeTx(txToPropose, contractId.value)
 
   await storeTransaction(txToPropose, txHash);
   await loadContractDetail(contractId.value)
+}
+
+async function maxAmount() {
+  const { accountId, balance } = toRefs(contractDetail)
+  const tx = await getSpendTx(accountId.value, generateKeyPair().publicKey, balance.value).then(unpackTx)
+  proposedAmountAe.value = formatAmount(balance.value - tx.tx.fee, {denomination: AE_AMOUNT_FORMATS.AETTOS, targetDenomination: AE_AMOUNT_FORMATS.AE})
 }
 
 </script>

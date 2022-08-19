@@ -22,13 +22,13 @@
 </template>
 
 <script setup>
-import { app, contractDetail, hydrateApp, loadContractDetail } from '../store'
+import { app, contractDetail, hydrateApp, loadContractDetail } from '@/store'
 
 import SignersList from "../components/SignersList"
 
 import { onMounted, toRefs } from "vue"
 import { useRoute } from "vue-router"
-import { wallet } from "../utils/aeternity"
+import { wallet } from "@/utils/aeternity"
 import TransactionForm from "../components/TransactionForm"
 import TransactionStatus from "../components/TransactionStatus"
 import LoaderImage from "../components/LoaderImage"
@@ -37,7 +37,6 @@ const { isAppHydrated } = toRefs(app)
 const { address } = toRefs(wallet)
 const {
   accountId,
-  signers,
   contractId,
   version,
   nonce,

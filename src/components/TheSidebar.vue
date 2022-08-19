@@ -18,10 +18,10 @@
         <div class="address"> {{ accountId || 'not connected' }}</div>
       </li>
 
-      <li>
+      <li v-if="balance !== null">
         Balance
         <br>
-        {{ balance }}
+        {{ balanceAe }} ae
         <br>
         <router-link to="/app/top-up">
           Top up
@@ -49,14 +49,17 @@
 </template>
 
 <script setup>
-import { toRefs } from "vue"
+import { computed, toRefs } from "vue"
 import { wallet } from "@/utils/aeternity"
 import { app, contractDetail } from "@/store"
 import { useRoute, useRouter } from "vue-router"
 import SafeSelect from "./SafeSelect"
+import { formatAmount, AE_AMOUNT_FORMATS } from "@aeternity/aepp-sdk";
 
 const { walletStatus, address } = toRefs(wallet)
 const { accountId, balance, contractId } = toRefs(contractDetail)
+
+const balanceAe = computed(() => balance.value ? formatAmount(balance.value, {denomination: AE_AMOUNT_FORMATS.AETTOS, targetDenomination: AE_AMOUNT_FORMATS.AE}) : 0);
 
 const route = useRoute()
 const router = useRouter()

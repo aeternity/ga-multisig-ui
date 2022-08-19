@@ -14,9 +14,9 @@
     <br>
     <input
       type="text"
-      :value="proposedAmount"
-      @input="$emit('update:proposedAmount', $event.target.value)">
-    Aettos
+      :value="proposedAmountAe"
+      @input="$emit('update:proposedAmountAe', $event.target.value)">
+    ae <button @click="$emit('max-amount-clicked')">max</button>
     <br>
     <button @click="$emit('propose-clicked')">Propose & Confirm</button>
   </div>
@@ -25,6 +25,6 @@
 <script>
 export default {
   name: 'ProposeForm',
-  props: ['recipientAddress', 'proposedAmount'],
+  props: ['recipientAddress', 'proposedAmountAe'],
 }
 </script>

@@ -23,6 +23,7 @@ const getInitialContractDetail = () => ({
 
   signers: null,
   proposedAmount: null,
+  proposedAmountAe: null,
   proposedFee: null,
   recipientAddress: null,
   confirmations: null,
@@ -109,8 +110,7 @@ export async function loadContractDetail (cid) {
   const { address } = toRefs(wallet)
   contractId.value = cid
 
-  accountId.value = getGaAccountIdByContractId(contractId.value)
-
+  accountId.value = await getGaAccountIdByContractId(contractId.value)
   const contractInstance = await sdk.getContractInstance({
     source: multisigContract,
     contractAddress: contractId.value,
