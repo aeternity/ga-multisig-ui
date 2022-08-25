@@ -2,7 +2,7 @@
   <select v-model="contractId"
           @change="selectSafe(contractId)">
     <option v-for="[contractId, {balance}] in Object.entries(safes)" :value="contractId">
-     {{ contractId }}  {{balance ? `(${balance} ae)` : ""}}
+      {{ contractId }} {{ balance ? `(${toAe(balance)} ae)` : "" }}
     </option>
   </select>
 </template>
@@ -10,6 +10,7 @@
 import { toRefs } from "vue"
 import { useRouter } from "vue-router"
 import { app, clearContractDetail, contractDetail, loadContractDetail } from "@/store"
+import { toAe } from "@aeternity/aepp-sdk";
 
 const { contractId } = toRefs(contractDetail)
 const { safes } = toRefs(app)

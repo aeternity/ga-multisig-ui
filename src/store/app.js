@@ -26,7 +26,6 @@ const getSafesBalances = () => {
   const {safes} = toRefs(app)
   Object.entries(safes.value).reduce(async (accPromise, [contractId, {gaAccountId}]) => {
     await accPromise;
-    console.log("getSafesBalances", contractId, gaAccountId)
     safes.value[contractId].balance = await sdk.getBalance(gaAccountId, {});
   }, Promise.resolve())
 }

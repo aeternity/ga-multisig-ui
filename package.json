@@ -11,6 +11,7 @@
   "dependencies": {
     "@aeternity/aepp-sdk": "^12.1.2",
     "axios": "^0.27.2",
+    "bignumber.js": "^9.1.0",
     "buffer": "^6.0.3",
     "core-js": "^3.24.1",
     "ga-multisig-contract": "github:aeternity/ga-multisig-contract#02831f1fe0818d4b5c6edb342aea252479df028b",

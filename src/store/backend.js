@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const backendUrl = "https://ga-multisig-backend.dev.aepps.com"
+const backendUrl = "http://localhost:3000"
 
 export const getSignerContracts = async (signerAddress) => {
   try {

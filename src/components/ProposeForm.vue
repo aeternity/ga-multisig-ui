@@ -16,7 +16,7 @@
       type="text"
       :value="proposedAmountAe"
       @input="$emit('update:proposedAmountAe', $event.target.value)">
-    ae <button @click="$emit('max-amount-clicked')">max</button>
+    ae <button @click="$emit('max-amount-clicked')">~ max</button>
     <br>
     <button @click="$emit('propose-clicked')">Propose & Confirm</button>
   </div>

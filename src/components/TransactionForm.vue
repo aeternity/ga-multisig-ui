@@ -44,7 +44,9 @@ import {
   proposeTx,
 } from "@/store"
 import { storeTransaction } from "@/store/backend";
-import {AE_AMOUNT_FORMATS, formatAmount, generateKeyPair, unpackTx} from "@aeternity/aepp-sdk";
+import { generateKeyPair, toAe, toAettos, unpackTx } from "@aeternity/aepp-sdk";
+import { sdk } from "@/utils/aeternity";
+import BigNumber from "bignumber.js";
 
 const {
   accountId,
@@ -73,7 +75,7 @@ async function resetTransaction () {
 }
 
 async function propose () {
-  const txToPropose = await getSpendTx(accountId.value, recipientAddress.value, formatAmount(proposedAmountAe.value, {denomination: AE_AMOUNT_FORMATS.AE, targetDenomination: AE_AMOUNT_FORMATS.AETTOS}))
+  const txToPropose = await getSpendTx(accountId.value, recipientAddress.value, toAettos(proposedAmountAe.value))
   const txHash = await proposeTx(txToPropose, contractId.value)
 
   await storeTransaction(txToPropose, txHash);
@@ -81,9 +83,10 @@ async function propose () {
 }
 
 async function maxAmount() {
-  const { accountId, balance } = toRefs(contractDetail)
-  const tx = await getSpendTx(accountId.value, generateKeyPair().publicKey, balance.value).then(unpackTx)
-  proposedAmountAe.value = formatAmount(balance.value - tx.tx.fee, {denomination: AE_AMOUNT_FORMATS.AETTOS, targetDenomination: AE_AMOUNT_FORMATS.AE})
+  const { accountId } = toRefs(contractDetail)
+  const balance = await sdk.getBalance(accountId.value, {});
+  const tx = await getSpendTx(accountId.value, generateKeyPair().publicKey, balance).then(unpackTx)
+  proposedAmountAe.value = toAe(BigNumber(balance).minus(BigNumber(tx.tx.fee)).minus(BigNumber(88748000000000))) // todo figure out why actual fee is higher, figure out how to estimate correct ga fee
 }
 
 </script>

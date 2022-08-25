@@ -18,7 +18,7 @@
       <strong> Sent</strong>
       <hr>
       <button v-if="isConfirmActionDisplayed" @click="confirm">Confirm Tx</button>
-      <button v-if="isSendActionDisplayed" @click="send">Send Tx</button>
+      <button v-if="isSendActionDisplayed" @click="send" style="margin-right: 0.5rem">Send Tx</button>
       <button v-if="hasProposedTx" @click="revoke">Revoke Tx</button>
       <div v-if="isTopUpPromptDisplayed">
         <router-link to="/app/top-up">Top up</router-link>
@@ -64,7 +64,6 @@ const isSendActionDisplayed = computed(() => hasProposedTx.value && hasConsensus
 const isTopUpPromptDisplayed = computed(() => hasConsensus.value && !isMultisigAccountCharged.value)
 const isConfirmActionDisplayed = computed(() => hasProposedTx.value && !isConfirmedByCurrentUser.value && spendTx.value)
 const isConfirmationListDisabled = computed(() => signers.value && !confirmedBy.value)
-
 
 async function confirm () {
   await confirmTx(contractId.value, txHash.value)

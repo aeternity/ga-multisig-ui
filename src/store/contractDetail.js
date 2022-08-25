@@ -2,7 +2,7 @@ import { Buffer } from "buffer";
 import multisigContract from 'ga-multisig-contract/contracts/SimpleGAMultiSig.aes'
 import { reactive, toRefs } from 'vue'
 import { getUniversalStamp, sdk, wallet } from "@/utils/aeternity"
-import { getGaAccountIdByContractId } from "./app"
+import { app, getGaAccountIdByContractId } from "./app"
 import { creationPhases } from "./safeCreation"
 import { hash } from '@aeternity/aepp-sdk/es/utils/crypto'
 import { generateKeyPair, Tag, unpackTx } from '@aeternity/aepp-sdk'
@@ -108,6 +108,7 @@ export async function loadContractDetail (cid) {
     version,
   } = toRefs(contractDetail)
   const { address } = toRefs(wallet)
+  const { safes } = toRefs(app)
   contractId.value = cid
 
   accountId.value = await getGaAccountIdByContractId(contractId.value)
@@ -117,6 +118,7 @@ export async function loadContractDetail (cid) {
   })
 
   balance.value = await sdk.getBalance(accountId.value)
+  safes.value[contractId.value].balance = balance.value;
   isMultisigAccountCharged.value = balance.value > 0
   nonce.value = (await contractInstance.methods.get_nonce()).decodedResult
   signers.value = (await contractInstance.methods.get_signers()).decodedResult
@@ -144,7 +146,6 @@ export async function loadContractDetail (cid) {
 
   if (confirmedBy.value) {
     confirmationsMap.value = getConfirmationMap(signers.value, confirmedBy.value)
-    console.log(confirmationsMap.value)
   }
 
   revokedBy.value = offChainTransactionData?.revokedBy
