@@ -66,7 +66,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: aeternity/ga-multisig-ui
+          images: aeternitybot/ga-multisig-ui
           tags: |
             type=raw,value=latest,enable=${{ endsWith(GitHub.ref, 'master') }}
             type=raw,value=master,enable=${{ endsWith(GitHub.ref, 'master') }}
