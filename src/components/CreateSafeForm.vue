@@ -77,7 +77,7 @@
 
 <script setup>
 import { computed, ref, toRefs } from 'vue'
-import { initWallet, wallet } from '@/utils/aeternity'
+import {initWallet, sdk, wallet} from '@/utils/aeternity'
 import {app, initSafe} from "@/store"
 import SignersForm from "./SignersForm"
 
@@ -93,7 +93,7 @@ const isSignerFormFilled = computed(() => initSigners.value[1].length && initCon
 
 async function createSafe () {
   const { contractId, gaAccountId } = await initSafe(initSigners.value, initConfirmationsRequired.value)
-  safes.value[contractId] = gaAccountId
+  safes.value[contractId] = { gaAccountId, height: await sdk.getHeight() }
   currentSafeContractId.value = contractId
 }
 

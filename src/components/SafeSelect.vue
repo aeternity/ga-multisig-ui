@@ -1,8 +1,8 @@
 <template>
   <select v-model="contractId"
           @change="selectSafe(contractId)">
-    <option v-for="[contractId, {balance}] in Object.entries(safes)" :value="contractId">
-      {{ contractId }} {{ balance ? `(${toAe(balance)} ae)` : "" }}
+    <option v-for="[contractId, {gaAccountId, balance}] in Object.entries(safes)" :value="contractId">
+      {{ gaAccountId }} {{ balance ? `(${toAe(balance)} ae)` : "" }}
     </option>
   </select>
 </template>

@@ -1,6 +1,6 @@
-import { reactive, toRefs } from "vue"
-import { sdk, wallet } from "@/utils/aeternity"
-import { getSignerContracts } from "@/store/backend";
+import {reactive, toRefs} from "vue"
+import {sdk, wallet} from "@/utils/aeternity"
+import {getSignerContracts} from "@/store/backend";
 
 export const app = reactive({
   isAppHydrated: false,
@@ -9,16 +9,26 @@ export const app = reactive({
 })
 
 export const hydrateApp = async () => {
-  const { isAppHydrated, safes } = toRefs(app)
-  const { address } = toRefs(wallet)
+  const {isAppHydrated, safes,currentSafeContractId} = toRefs(app)
+  const {address} = toRefs(wallet)
 
   safes.value = await getSignerContracts(address.value)
+  currentSafeContractId.value = Object.entries(safes.value).reduce((acc, [contractId, {height}]) => {
+    if (height >= acc.maxHeight) {
+      acc.maxHeight = height
+      acc.latestContractId = contractId
+    }
+    return acc;
+  }, {
+    maxHeight: 0,
+    latestContractId: null
+  }).latestContractId
   getSafesBalances()
   isAppHydrated.value = true
 }
 
 export const getGaAccountIdByContractId = async (contractId) => {
-  const { ownerId } = await sdk.getContract(contractId)
+  const {ownerId} = await sdk.getContract(contractId)
   return ownerId;
 }
 

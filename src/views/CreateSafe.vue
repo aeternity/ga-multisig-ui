@@ -1,6 +1,6 @@
 <template>
   <h2>Create Safe</h2>
-  <create-safe-form v-model="createdContractId" v-if="!isCreating()"/>
+  <create-safe-form v-model="currentSafeContractId" v-if="!isCreating()"/>
 
   <div v-else>
     <creation-phase-loader/>
