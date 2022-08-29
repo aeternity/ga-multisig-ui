@@ -1,9 +1,9 @@
-import { Node, AeSdk } from '@aeternity/aepp-sdk'
-import { reactive, toRefs } from 'vue'
-import { COMPILER_URL, NETWORKS } from './configs'
-import identity from './contracts/Idenitity.aes'
+import { Node, AeSdk } from "@aeternity/aepp-sdk";
+import { reactive, toRefs } from "vue";
+import { COMPILER_URL, NETWORKS } from "./configs";
+import identity from "./contracts/Idenitity.aes";
 
-export let clientSdk = null
+export let clientSdk = null;
 
 export const client = reactive({
   isConnecting: false,
@@ -12,8 +12,8 @@ export const client = reactive({
   networkId: null,
 
   contract: null,
-  contractAddress: null
-})
+  contractAddress: null,
+});
 
 /**
  * Initialize a static client, mainnet or testnet
@@ -21,32 +21,32 @@ export const client = reactive({
  * @returns {Promise<boolean>}
  */
 export const initClient = async () => {
-  const { isConnected, isConnecting, isStatic } = toRefs(client)
+  const { isConnected, isConnecting, isStatic } = toRefs(client);
 
-  isConnecting.value = true
+  isConnecting.value = true;
 
-  const nodes = []
+  const nodes = [];
 
   for (const { name, url } of NETWORKS) {
     nodes.push({
       name,
-      instance: new Node( url )
-    })
+      instance: new Node(url),
+    });
   }
   clientSdk = new AeSdk({
     nodes: [
-      { name: 'ae_uat', instance: new Node('https://testnet.aeternity.io') },
+      { name: "ae_uat", instance: new Node("https://testnet.aeternity.io") },
       //{ name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
     ],
-    compilerUrl: COMPILER_URL
-  })
+    compilerUrl: COMPILER_URL,
+  });
 
-  isStatic.value = true
-  isConnected.value = true
-  isConnecting.value = false
+  isStatic.value = true;
+  isConnected.value = true;
+  isConnecting.value = false;
 
-  return await initProvider()
-}
+  return await initProvider();
+};
 
 /**
  * After finding a wallet this function is called to cache
@@ -54,18 +54,18 @@ export const initClient = async () => {
  * @returns {Promise<boolean>}
  */
 export const initProvider = async () => {
-  const { networkId, contract, contractAddress } = toRefs(client)
+  const { networkId, contract, contractAddress } = toRefs(client);
   try {
-    networkId.value = (await clientSdk.getNodeInfo()).nodeNetworkId
+    networkId.value = (await clientSdk.getNodeInfo()).nodeNetworkId;
 
     if (contractAddress.value) {
       contract.value = await clientSdk.getContractInstance(identity, {
-        contractAddress: contractAddress.value
-      })
+        contractAddress: contractAddress.value,
+      });
     }
 
-    return true
+    return true;
   } catch (error) {
-    return false
+    return false;
   }
-}
+};

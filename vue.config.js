@@ -1,13 +1,11 @@
 module.exports = {
-  transpileDependencies: [
-    '@aeternity'
-  ],
-  chainWebpack: config => {
+  transpileDependencies: ["@aeternity"],
+  chainWebpack: (config) => {
     config.module
-      .rule('aes')
+      .rule("aes")
       .test(/\.aes$/)
-      .use('raw-loader')
-      .loader('raw-loader')
-      .end()
+      .use("raw-loader")
+      .loader("raw-loader")
+      .end();
   },
-}
+};

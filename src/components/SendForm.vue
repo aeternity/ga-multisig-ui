@@ -1,15 +1,15 @@
 <template>
   <div class="send-form">
-    <hr>
+    <hr />
     <h3>Send TX</h3>
-    <br>
+    <br />
 
     <div>
       {{
         // todo improve condition
-        hasConsensus ?
-          'Send proposed and confirmed tx to recipient account' :
-          'Waiting for confirmations from other users'
+        hasConsensus
+          ? "Send proposed and confirmed tx to recipient account"
+          : "Waiting for confirmations from other users"
       }}
     </div>
   </div>
@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: 'SendForm',
-  props: ['hasConsensus'],
-}
+  name: "SendForm",
+  props: ["hasConsensus"],
+};
 </script>

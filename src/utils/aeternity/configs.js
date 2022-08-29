@@ -1,4 +1,4 @@
-export const COMPILER_URL = 'https://compiler.aepps.com'
+export const COMPILER_URL = "https://compiler.aepps.com";
 
 export const NETWORKS = [
   /*{
@@ -7,8 +7,8 @@ export const NETWORKS = [
     url: 'https://mainnet.aeternity.io'
   },*/
   {
-    type: 'ae_uat',
-    name: 'testnet',
-    url: 'https://testnet.aeternity.io'
-  }
-]
+    type: "ae_uat",
+    name: "testnet",
+    url: "https://testnet.aeternity.io",
+  },
+];

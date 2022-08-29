@@ -2,9 +2,10 @@
   <div class="confirmation-list">
     <ul>
       <li v-for="confirmation in confirmationsMap">
-        <strong>{{ confirmation.isConfirmed ? '&#x2705;' : '&#x274C' }}</strong><br>
+        <strong>{{ confirmation.isConfirmed ? "&#x2705;" : "&#x274C;" }}</strong
+        ><br />
         <Wallet :address="confirmation.signer" />
-        <br>
+        <br />
       </li>
     </ul>
   </div>
@@ -13,12 +14,12 @@
 import Wallet from "@/components/Wallet";
 
 export default {
-  name: 'confirmation-list',
-  components: {Wallet},
+  name: "confirmation-list",
+  components: { Wallet },
   props: {
     confirmationsMap: {},
   },
-}
+};
 </script>
 
 <style>

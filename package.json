@@ -29,6 +29,7 @@
     "@vue/compiler-sfc": "^3.2.37",
     "@vue/test-utils": "^2.0.2",
     "lint-staged": "^13.0.3",
+    "prettier": "2.7.1",
     "vue-jest": "^5.0.0-0"
   },
   "browserslist": [

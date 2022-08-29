@@ -1,16 +1,16 @@
 <template>
-    <div class="wallet">
-      <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="40">
-      <div class="address"> {{ address }}</div>
-    </div>
+  <div class="wallet">
+    <img :src="`https://avatars.z52da5wt.xyz/${address}`" alt="" width="40" />
+    <div class="address">{{ address }}</div>
+  </div>
 </template>
 
 <script>
 export default {
   props: {
     address: String,
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

@@ -5,23 +5,28 @@
       v-model:recipient-address="recipientAddress"
       v-model:proposed-amount-ae="proposedAmountAe"
       @propose-clicked="propose"
-      @max-amount-clicked="maxAmount"/>
+      @max-amount-clicked="maxAmount"
+    />
     <div v-else>
       <propose-list
         v-if="spendTx"
         :proposed-amount="proposedAmount"
         :proposed-fee="proposedFee"
-        :recipientAddress="recipientAddress"/>
-      <span v-else>Transaction not available, it's recommended to manually add it (currently not possible) or revoke the transaction for safety.</span>
+        :recipientAddress="recipientAddress"
+      />
+      <span v-else
+        >Transaction not available, it's recommended to manually add it
+        (currently not possible) or revoke the transaction for safety.</span
+      >
     </div>
     <confirm-form
       v-if="isConfirmFormDisplayed"
-      :class="[{'disabled': !hasProposedTx}]"
+      :class="[{ disabled: !hasProposedTx }]"
       :is-confirm-hidden="isConfirmedByCurrentUser"
     />
     <send-form
       v-if="isSendFormDisplayed"
-      :class="[{'disabled': !hasConsensus}]"
+      :class="[{ disabled: !hasConsensus }]"
       :has-consensus="hasConsensus"
       :is-multisig-account-charged="isMultisigAccountCharged"
     />
@@ -31,18 +36,18 @@
   </div>
 </template>
 <script setup>
-import ProposeForm from "./ProposeForm"
-import ProposeList from "./ProposeList"
-import ConfirmForm from "./ConfirmForm"
-import SendForm from "./SendForm"
-import { computed, toRefs } from "vue"
+import ProposeForm from "./ProposeForm";
+import ProposeList from "./ProposeList";
+import ConfirmForm from "./ConfirmForm";
+import SendForm from "./SendForm";
+import { computed, toRefs } from "vue";
 import {
   clearContractDetail,
   contractDetail,
   getSpendTx,
   loadContractDetail,
   proposeTx,
-} from "@/store"
+} from "@/store";
 import { storeTransaction } from "@/store/backend";
 import { generateKeyPair, toAe, toAettos, unpackTx } from "@aeternity/aepp-sdk";
 import { sdk } from "@/utils/aeternity";
@@ -62,33 +67,50 @@ const {
   proposedFee,
   recipientAddress,
   spendTx,
-} = toRefs(contractDetail)
+} = toRefs(contractDetail);
 
-const isProposeFormDisplayed = computed(() => !hasProposedTx.value && !(revokedBy.value || sentBy.value))
-const isConfirmFormDisplayed = computed(() => !hasConsensus.value && !(revokedBy.value || sentBy.value))
-const isSendFormDisplayed = computed(() => !(revokedBy.value || sentBy.value))
-const isRestartTransactionDisplayed = computed(() => revokedBy.value || sentBy.value)
+const isProposeFormDisplayed = computed(
+  () => !hasProposedTx.value && !(revokedBy.value || sentBy.value)
+);
+const isConfirmFormDisplayed = computed(
+  () => !hasConsensus.value && !(revokedBy.value || sentBy.value)
+);
+const isSendFormDisplayed = computed(() => !(revokedBy.value || sentBy.value));
+const isRestartTransactionDisplayed = computed(
+  () => revokedBy.value || sentBy.value
+);
 
-async function resetTransaction () {
-  await clearContractDetail()
-  await loadContractDetail(contractId.value)
+async function resetTransaction() {
+  await clearContractDetail();
+  await loadContractDetail(contractId.value);
 }
 
-async function propose () {
-  const txToPropose = await getSpendTx(accountId.value, recipientAddress.value, toAettos(proposedAmountAe.value))
-  const txHash = await proposeTx(txToPropose, contractId.value)
+async function propose() {
+  const txToPropose = await getSpendTx(
+    accountId.value,
+    recipientAddress.value,
+    toAettos(proposedAmountAe.value)
+  );
+  const txHash = await proposeTx(txToPropose, contractId.value);
 
   await storeTransaction(txToPropose, txHash);
-  await loadContractDetail(contractId.value)
+  await loadContractDetail(contractId.value);
 }
 
 async function maxAmount() {
-  const { accountId } = toRefs(contractDetail)
+  const { accountId } = toRefs(contractDetail);
   const balance = await sdk.getBalance(accountId.value, {});
-  const tx = await getSpendTx(accountId.value, generateKeyPair().publicKey, balance).then(unpackTx)
-  proposedAmountAe.value = toAe(BigNumber(balance).minus(BigNumber(tx.tx.fee)).minus(BigNumber(88748000000000))) // todo figure out why actual fee is higher, figure out how to estimate correct ga fee
+  const tx = await getSpendTx(
+    accountId.value,
+    generateKeyPair().publicKey,
+    balance
+  ).then(unpackTx);
+  proposedAmountAe.value = toAe(
+    BigNumber(balance)
+      .minus(BigNumber(tx.tx.fee))
+      .minus(BigNumber(88748000000000))
+  ); // todo figure out why actual fee is higher, figure out how to estimate correct ga fee
 }
-
 </script>
 
 <style scoped>

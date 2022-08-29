@@ -1,9 +1,6 @@
 <template>
   <div class="loader-image">
-    <img
-      src="../assets/loading_logo.svg"
-      width="100"
-    />
+    <img src="../assets/loading_logo.svg" width="100" />
   </div>
 </template>
 

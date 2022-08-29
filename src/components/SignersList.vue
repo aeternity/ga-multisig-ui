@@ -1,25 +1,25 @@
 <template>
   <div>
     <strong>Multisig account address: </strong>
-    <br>
+    <br />
     {{ gaPublicKey }}
-    <br>
+    <br />
     <strong>Contract id: </strong>
-    <br>
+    <br />
     {{ contractId }}
-    <br>
+    <br />
     <strong>Contract version: </strong>
-    <br>
+    <br />
     {{ version }}
-    <br>
+    <br />
     <strong>Current nonce: </strong>
-    <br>
+    <br />
     {{ nonce }}
   </div>
 </template>
 <script>
 export default {
-  name: 'signers-list',
-  props: ['gaPublicKey', 'contractId', 'version', 'nonce'],
-}
+  name: "signers-list",
+  props: ["gaPublicKey", "contractId", "version", "nonce"],
+};
 </script>

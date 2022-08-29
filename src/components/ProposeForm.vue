@@ -1,30 +1,32 @@
 <template>
   <div class="propose-form">
-    <hr>
+    <hr />
     <h3>Propose Tx</h3>
     <label>Recipient </label>
-    <br>
+    <br />
     <input
       type="text"
       :value="recipientAddress"
-      @input="$emit('update:recipientAddress', $event.target.value)">
-    <br>
-    <br>
+      @input="$emit('update:recipientAddress', $event.target.value)"
+    />
+    <br />
+    <br />
     <label>Propose amount </label>
-    <br>
+    <br />
     <input
       type="text"
       :value="proposedAmountAe"
-      @input="$emit('update:proposedAmountAe', $event.target.value)">
+      @input="$emit('update:proposedAmountAe', $event.target.value)"
+    />
     ae <button @click="$emit('max-amount-clicked')">~ max</button>
-    <br>
+    <br />
     <button @click="$emit('propose-clicked')">Propose & Confirm</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'ProposeForm',
-  props: ['recipientAddress', 'proposedAmountAe'],
-}
+  name: "ProposeForm",
+  props: ["recipientAddress", "proposedAmountAe"],
+};
 </script>

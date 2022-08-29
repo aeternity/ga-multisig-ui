@@ -1,25 +1,22 @@
 <template>
   <header>
     <router-link to="/" class="home-link">
-      <img alt="Aeternity" src="../assets/logo.svg" width="60"/>
-      <h1> Multisig Safe</h1>
+      <img alt="Aeternity" src="../assets/logo.svg" width="60" />
+      <h1>Multisig Safe</h1>
     </router-link>
-    <div class="network">
-      Network: {{ walletNetwork }}
-    </div>
-    <user-status/>
+    <div class="network">Network: {{ walletNetwork }}</div>
+    <user-status />
   </header>
 </template>
 
 <script setup>
-import UserStatus from "./UserStatus"
-import { wallet } from '@/utils/aeternity'
+import UserStatus from "./UserStatus";
+import { wallet } from "@/utils/aeternity";
 import { computed } from "vue";
 
-const walletNetwork = computed(() => wallet.networkId)
+const walletNetwork = computed(() => wallet.networkId);
 </script>
 <style scoped>
-
 h1 {
   color: #de3f6b;
   font-size: 24px;

@@ -1,10 +1,10 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('CreateSafe.vue', () => {
-  it('Verifies wallet', () => {
-    cy.visit('/')
-    cy.contains('h1', 'Welcome To Aeternity')
+describe("CreateSafe.vue", () => {
+  it("Verifies wallet", () => {
+    cy.visit("/");
+    cy.contains("h1", "Welcome To Aeternity");
 
-    cy.get('.wallet-address', { timeout: 15000 }).should('contain', 'ak_')
-  })
-})
+    cy.get(".wallet-address", { timeout: 15000 }).should("contain", "ak_");
+  });
+});

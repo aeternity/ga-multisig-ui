@@ -1,20 +1,21 @@
 <template>
   <div>
-    <hr>
-    <strong> Send</strong> {{ toAe(proposedAmount) }} ae (Fee: {{ toAe(proposedFee) }} ae) to:
-    <br>
+    <hr />
+    <strong> Send</strong> {{ toAe(proposedAmount) }} ae (Fee:
+    {{ toAe(proposedFee) }} ae) to:
+    <br />
     {{ recipientAddress }}
-    <br>
+    <br />
   </div>
 </template>
 <script>
 import { toAe } from "@aeternity/aepp-sdk";
 
 export default {
-  name: 'propose-list',
-  props: ['proposedAmount', 'proposedFee', 'recipientAddress'],
+  name: "propose-list",
+  props: ["proposedAmount", "proposedFee", "recipientAddress"],
   methods: {
-    toAe: toAe
-  }
-}
+    toAe: toAe,
+  },
+};
 </script>

@@ -1,51 +1,48 @@
 <template>
   <div class="container" v-if="isAppHydrated">
-    <the-header class="header"/>
+    <the-header class="header" />
 
     <aside v-if="route.name !== 'landing'">
-      <the-sidebar/>
+      <the-sidebar />
     </aside>
 
     <main>
       <article>
-        <router-view/>
+        <router-view />
       </article>
     </main>
-
   </div>
-  <loader-image v-else/>
+  <loader-image v-else />
 </template>
 
 <script setup>
-import { onMounted, toRefs, watch } from 'vue'
-import { initWallet, wallet } from './utils/aeternity'
-import { app, contractDetail, hydrateApp } from "./store"
-import { useRoute, useRouter } from "vue-router"
+import { onMounted, toRefs, watch } from "vue";
+import { initWallet, wallet } from "./utils/aeternity";
+import { app, contractDetail, hydrateApp } from "./store";
+import { useRoute, useRouter } from "vue-router";
 
-import TheHeader from "./components/TheHeader"
-import TheSidebar from "./components/TheSidebar"
-import LoaderImage from "./components/LoaderImage"
+import TheHeader from "./components/TheHeader";
+import TheSidebar from "./components/TheSidebar";
+import LoaderImage from "./components/LoaderImage";
 
-const { walletStatus, address } = toRefs(wallet)
-const { contractId } = toRefs(contractDetail)
-const { isAppHydrated } = toRefs(app)
+const { walletStatus, address } = toRefs(wallet);
+const { contractId } = toRefs(contractDetail);
+const { isAppHydrated } = toRefs(app);
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
 onMounted(async () => {
-  await initWallet()
-})
+  await initWallet();
+});
 
-watch(walletStatus,
-  async (newStatus) => {
-    if (newStatus === 'connected') {
-      // wait for wallet connection because wallet =address is needed to filter My Contracts
-      // this should be done in mounted hook
-      await hydrateApp()
-    }
-  },
-)
+watch(walletStatus, async (newStatus) => {
+  if (newStatus === "connected") {
+    // wait for wallet connection because wallet =address is needed to filter My Contracts
+    // this should be done in mounted hook
+    await hydrateApp();
+  }
+});
 </script>
 
 <style scoped>
@@ -85,7 +82,6 @@ article {
   border: 0;
 }
 </style>
-
 
 <style>
 body {
