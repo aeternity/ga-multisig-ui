@@ -66,6 +66,7 @@ import { computed, ref, toRefs } from "vue";
 import { initWallet, sdk, wallet } from "@/utils/aeternity";
 import { app, initSafe } from "@/store";
 import SignersForm from "./SignersForm";
+import { isAddressValid } from "@aeternity/aepp-sdk";
 
 const { address } = toRefs(wallet);
 const { safes, currentSafeContractId } = toRefs(app);
@@ -75,9 +76,16 @@ const step = ref(1);
 const initSigners = ref(["", ""]);
 const initConfirmationsRequired = ref(2);
 
-const isSignerFormFilled = computed(
-  () => initSigners.value[1].length && initConfirmationsRequired.value
-);
+const isSignerFormFilled = computed(() => {
+  const signersUnique =
+    new Set(initSigners.value).size === initSigners.value.length;
+
+  const validSigners = initSigners.value.every((signer) =>
+    isAddressValid(signer)
+  );
+
+  return signersUnique && validSigners && initConfirmationsRequired.value;
+});
 
 async function createSafe() {
   const { contractId, gaAccountId } = await initSafe(
