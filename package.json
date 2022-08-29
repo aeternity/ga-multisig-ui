@@ -9,16 +9,16 @@
     "reinstall": "rm -rf node_modules/ && yarn cache clean && yarn install"
   },
   "dependencies": {
-    "@aeternity/aepp-sdk": "^12.1.2",
+    "@aeternity/aepp-sdk": "^12.1.3",
     "axios": "^0.27.2",
     "bignumber.js": "^9.1.0",
     "buffer": "^6.0.3",
-    "core-js": "^3.24.1",
+    "core-js": "^3.25.0",
     "ga-multisig-contract": "github:aeternity/ga-multisig-contract#02831f1fe0818d4b5c6edb342aea252479df028b",
     "raw-loader": "^4.0.2",
     "simpledotcss": "^2.1.0",
     "vue": "^3.2.37",
-    "vue-router": "^4.1.3"
+    "vue-router": "^4.1.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.8",
