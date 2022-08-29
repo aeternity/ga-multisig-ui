@@ -49,9 +49,17 @@ import {
   proposeTx,
 } from "@/store";
 import { storeTransaction } from "@/store/backend";
-import { generateKeyPair, toAe, toAettos, unpackTx } from "@aeternity/aepp-sdk";
+import {
+  generateKeyPair,
+  MemoryAccount,
+  Tag,
+  toAe,
+  toAettos,
+  unpackTx,
+} from "@aeternity/aepp-sdk";
 import { sdk } from "@/utils/aeternity";
 import BigNumber from "bignumber.js";
+import multisigContract from "ga-multisig-contract/SimpleGAMultiSig.aes";
 
 const {
   accountId,
@@ -100,16 +108,26 @@ async function propose() {
 async function maxAmount() {
   const { accountId } = toRefs(contractDetail);
   const balance = await sdk.getBalance(accountId.value, {});
-  const tx = await getSpendTx(
+
+  const spendTx = await getSpendTx(
     accountId.value,
     generateKeyPair().publicKey,
     balance
-  ).then(unpackTx);
+  );
+
+  const metaTx = await sdk.createMetaTx(
+    spendTx,
+    { source: multisigContract, args: [1] },
+    "authorize",
+    { onAccount: new MemoryAccount({ gaId: accountId.value }) }
+  );
+
   proposedAmountAe.value = toAe(
     BigNumber(balance)
-      .minus(BigNumber(tx.tx.fee))
-      .minus(BigNumber(88748000000000))
-  ); // todo figure out why actual fee is higher, figure out how to estimate correct ga fee
+      .minus(BigNumber(unpackTx(spendTx).tx.fee))
+      .minus(BigNumber(unpackTx(metaTx).tx.encodedTx.tx.fee))
+      .minus(BigNumber(12308).times(1000000000)) // TODO gas currently can't be estimated for this, but is constant
+  );
 }
 </script>
 
