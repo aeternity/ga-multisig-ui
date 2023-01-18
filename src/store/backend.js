@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendUrl = "https://ga-multisig-backend.dev.aepps.com";
+const backendUrl = "https://ga-multisig-backend.prd.aepps.com";
 
 export const getSignerContracts = async (signerAddress) => {
   try {
@@ -19,7 +19,7 @@ export const getSignerContracts = async (signerAddress) => {
 
 export const storeTransaction = async (tx, txHash) => {
   try {
-    await axios.post(`${backendUrl}/tx`, { hash: txHash, data: tx });
+    await axios.post(`${backendUrl}/tx`, { hash: txHash, tx });
   } catch (e) {
     console.error(e);
   }
@@ -28,7 +28,7 @@ export const storeTransaction = async (tx, txHash) => {
 export const getTransactionByHash = async (txHash) => {
   try {
     const { data } = await axios.get(`${backendUrl}/tx/${txHash}`);
-    return data?.data;
+    return data?.tx;
   } catch (e) {
     console.error(e);
     return null;
