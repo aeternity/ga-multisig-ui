@@ -50,7 +50,7 @@ import ConfirmationList from "../components/ConfirmationList";
 import { computed, toRefs } from "vue";
 import { wallet } from "@/utils/aeternity";
 
-const { address } = toRefs(wallet);
+const { address, networkId } = toRefs(wallet);
 
 const {
   accountId,
@@ -87,12 +87,12 @@ const isConfirmationListDisabled = computed(
 );
 
 async function confirm() {
-  await confirmTx(contractId.value, txHash.value);
+  await confirmTx(networkId.value, contractId.value, txHash.value);
   await loadContractDetail(contractId.value);
 }
 
 async function send() {
-  await sendTx(accountId.value, spendTx.value, nonce.value);
+  await sendTx(networkId.value, accountId.value, spendTx.value, nonce.value);
   await loadContractDetail(contractId.value);
 }
 

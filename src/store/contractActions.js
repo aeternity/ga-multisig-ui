@@ -15,8 +15,8 @@ export async function getSpendTx(
   });
 }
 
-export async function proposeTx(spendTx, contractId) {
-  const signerSdk = await getUniversalStamp();
+export async function proposeTx(networkId, spendTx, contractId) {
+  const signerSdk = await getUniversalStamp(networkId);
   const expirationHeight = (await signerSdk.height()) + 50;
   const spendTxHash = await signerSdk.buildAuthTxHash(spendTx);
 
@@ -31,8 +31,8 @@ export async function proposeTx(spendTx, contractId) {
   return Buffer.from(spendTxHash).toString("hex");
 }
 
-export async function confirmTx(contractId, spendTxHash) {
-  const signerSdk = await getUniversalStamp();
+export async function confirmTx(networkId, contractId, spendTxHash) {
+  const signerSdk = await getUniversalStamp(networkId);
   const expirationHeight = (await signerSdk.height()) + 50;
 
   const gaContractRpc = await sdk.getContractInstance({
@@ -45,8 +45,8 @@ export async function confirmTx(contractId, spendTxHash) {
   });
 }
 
-export async function sendTx(accountId, spendTx, nonce) {
-  const signerSdk = await getUniversalStamp();
+export async function sendTx(networkId, accountId, spendTx, nonce) {
+  const signerSdk = await getUniversalStamp(networkId);
   await signerSdk.addAccount(new MemoryAccount({ gaId: accountId }), {
     select: true,
   });

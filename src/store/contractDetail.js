@@ -45,13 +45,14 @@ export const clearContractDetail = () => {
 
 export async function initSafe(signers, confirmationsRequired) {
   const { createdAccount } = toRefs(contractDetail);
+  const { networkId } = toRefs(wallet);
   createdAccount.value = generateKeyPair();
   const { creationPhase1, creationPhase2, creationPhase3, creationPhase4 } =
     toRefs(creationPhases);
 
   const contractArgs = [confirmationsRequired, signers];
 
-  const signerSdk = await getUniversalStamp();
+  const signerSdk = await getUniversalStamp(networkId.value);
 
   const contractInstance = await signerSdk.getContractInstance({
     source: multisigContract,
@@ -118,7 +119,7 @@ export async function loadContractDetail(cid) {
     balance,
     version,
   } = toRefs(contractDetail);
-  const { address } = toRefs(wallet);
+  const { address, networkId } = toRefs(wallet);
   const { safes } = toRefs(app);
   contractId.value = cid;
 
@@ -151,7 +152,7 @@ export async function loadContractDetail(cid) {
   isConfirmedByCurrentUser.value = confirmedBy.value.includes(address.value);
 
   spendTx.value = txHash.value
-    ? await getTransactionByHash(txHash.value)
+    ? await getTransactionByHash(networkId.value, txHash.value)
     : null;
   const offChainTransactionData = spendTx.value
     ? unpackTx(spendTx.value)

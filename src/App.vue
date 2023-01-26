@@ -37,9 +37,11 @@ onMounted(async () => {
 });
 
 watch(walletStatus, async (newStatus) => {
+  console.log(newStatus);
   if (newStatus === "connected") {
     // wait for wallet connection because wallet =address is needed to filter My Contracts
     // this should be done in mounted hook
+    router.push("/");
     await hydrateApp();
   }
 });
