@@ -57,7 +57,7 @@ import {
   toAettos,
   unpackTx,
 } from "@aeternity/aepp-sdk";
-import { sdk } from "@/utils/aeternity";
+import { sdk, wallet } from "@/utils/aeternity";
 import BigNumber from "bignumber.js";
 import multisigContract from "ga-multisig-contract/SimpleGAMultiSig.aes";
 
@@ -99,9 +99,15 @@ async function propose() {
     recipientAddress.value,
     toAettos(proposedAmountAe.value)
   );
-  const txHash = await proposeTx(txToPropose, contractId.value);
+  const { networkId } = toRefs(wallet);
 
-  await storeTransaction(txToPropose, txHash);
+  const txHash = await proposeTx(
+    networkId.value,
+    txToPropose,
+    contractId.value
+  );
+
+  await storeTransaction(networkId.value, txToPropose, txHash);
   await loadContractDetail(contractId.value);
 }
 

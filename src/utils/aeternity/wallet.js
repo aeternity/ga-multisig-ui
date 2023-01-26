@@ -1,6 +1,5 @@
 import {
   AeSdkAepp,
-  Node,
   BrowserWindowMessageConnection,
   AE_AMOUNT_FORMATS,
   AeSdk,
@@ -9,7 +8,7 @@ import {
 } from "@aeternity/aepp-sdk";
 
 import { reactive, toRefs } from "vue";
-import { COMPILER_URL, NETWORKS } from "./configs";
+import { COMPILER_URL, NODES } from "./configs";
 
 export let sdk = null;
 
@@ -25,14 +24,6 @@ export const wallet = reactive({
 export const initWallet = async () => {
   const { walletStatus } = toRefs(wallet);
 
-  const nodes = [];
-
-  for (const { name, url } of NETWORKS) {
-    nodes.push({
-      name,
-      instance: new Node(url),
-    });
-  }
   walletStatus.value = "connecting";
 
   try {
@@ -48,14 +39,8 @@ export const initWallet = async () => {
       });
 
       const client = new AeSdk({
+        nodes: NODES,
         compilerUrl: COMPILER_URL,
-        nodes: [
-          {
-            name: "ae_uat",
-            instance: new Node("https://testnet.aeternity.io"),
-          },
-          //{ name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
-        ],
         accounts: [account],
       });
       sdk = client;
@@ -66,16 +51,10 @@ export const initWallet = async () => {
       // connect to Superhero Wallet
       sdk = new AeSdkAepp({
         name: "AEPP",
-        nodes: [
-          // todo fix nodes
-          {
-            name: "ae_uat",
-            instance: new Node("https://testnet.aeternity.io"),
-          },
-          //{ name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
-        ],
+        nodes: NODES,
         compilerUrl: COMPILER_URL,
         onNetworkChange: async ({ networkId }) => {
+          console.info("onNetworkChange :: ", networkId);
           await connectToNode(networkId);
         },
         onAddressChange: async (addresses) => {
@@ -145,7 +124,7 @@ export const connectToNode = async (selectedNetworkId) => {
     sdk.selectNode(selectedNetworkId);
   } catch (e) {
     alert(
-      `Currently only testnet wallets are supported, please select testnet as network in your wallet.`
+      `The given network is not supported, please select testnet or mainnet as network in your wallet.`
     );
     throw e;
   }
@@ -153,14 +132,14 @@ export const connectToNode = async (selectedNetworkId) => {
   await fetchWalletInfo();
 };
 
-export const getUniversalStamp = async () => {
-  // todo maybe move to client?
-
-  return new AeSdk({
-    nodes: [
-      { name: "ae_uat", instance: new Node("https://testnet.aeternity.io") },
-      //{ name: 'ae_mainnet', instance: new Node('https://mainnet.aeternity.io') }
-    ],
+export const getUniversalStamp = async (networkId) => {
+  const sdk = new AeSdk({
+    nodes: NODES,
     compilerUrl: COMPILER_URL,
   });
+  console.log(networkId);
+
+  sdk.selectNode(networkId);
+
+  return sdk;
 };

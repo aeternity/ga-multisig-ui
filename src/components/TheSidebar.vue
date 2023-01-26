@@ -38,7 +38,9 @@
       <li>
         <a
           target="_blank"
-          :href="`https://explorer.testnet.aeternity.io/account/${accountId}`"
+          :href="`https://explorer${
+            networkId === 'ae_uat' ? 'testnet' : ''
+          }.aeternity.io/account/${accountId}`"
         >
           <button>History</button>
         </a>
@@ -51,14 +53,13 @@
 import { toRefs } from "vue";
 import { wallet } from "@/utils/aeternity";
 import { contractDetail } from "@/store";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import SafeSelect from "./SafeSelect";
 import { toAe } from "@aeternity/aepp-sdk";
 
-const { address } = toRefs(wallet);
+const { address, networkId } = toRefs(wallet);
 const { accountId, balance, contractId } = toRefs(contractDetail);
 
-const route = useRoute();
 const router = useRouter();
 </script>
 

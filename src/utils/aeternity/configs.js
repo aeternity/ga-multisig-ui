@@ -1,14 +1,8 @@
+import { Node } from "@aeternity/aepp-sdk";
+
 export const COMPILER_URL = "https://compiler.aepps.com";
 
-export const NETWORKS = [
-  /*{
-    type: 'ae_mainnet',
-    name: 'mainnet',
-    url: 'https://mainnet.aeternity.io'
-  },*/
-  {
-    type: "ae_uat",
-    name: "testnet",
-    url: "https://testnet.aeternity.io",
-  },
+export const NODES = [
+  { name: "ae_uat", instance: new Node("https://testnet.aeternity.io") },
+  { name: "ae_mainnet", instance: new Node("https://mainnet.aeternity.io") },
 ];
