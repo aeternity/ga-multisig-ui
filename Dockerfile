@@ -1,15 +1,15 @@
-FROM node:18.7.0 as builder
+FROM node:18.13.0 as builder
 
 RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
-COPY package.json yarn.lock /home/node/app/
+COPY package.json package-lock.json /home/node/app/
 RUN chown -R node:node /home/node/
 
 USER node
 
-RUN yarn install --frozen-lockfile
+RUN npm ci
 COPY --chown=node:node . /home/node/app
-RUN yarn build
+RUN npm run build
 
 FROM nginx:1.23.1-alpine
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
