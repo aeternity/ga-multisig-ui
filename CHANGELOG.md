@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/aeternity/ga-multisig-ui/compare/v1.0.0...v1.1.0) (2023-01-27)
+
+
+### Features
+
+* add network switch based on wallet ([51ac24e](https://github.com/aeternity/ga-multisig-ui/commit/51ac24e0932c3071feb74f8ebed5dba9193c527c))
+
+
+### Bug Fixes
+
+* docker build ([0e45dc4](https://github.com/aeternity/ga-multisig-ui/commit/0e45dc4d8eb666768e8489d2f00982789abe5b41))
+
 ## 1.0.0 (2023-01-18)
 
 
