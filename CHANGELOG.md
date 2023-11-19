@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/aeternity/ga-multisig-ui/compare/v1.1.0...v1.1.1) (2023-11-19)
+
+
+### CI / CD
+
+* change gitops repo for stg ([133255c](https://github.com/aeternity/ga-multisig-ui/commit/133255c07b2425189d35bee7626e7a7097ef58ea))
+* change stg urls ([5ef049f](https://github.com/aeternity/ga-multisig-ui/commit/5ef049f53c573f765d51f52627f1c8b83015fcd1))
+
 ## [1.1.0](https://github.com/aeternity/ga-multisig-ui/compare/v1.0.0...v1.1.0) (2023-01-27)
 
 
